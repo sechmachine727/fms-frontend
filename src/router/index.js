@@ -18,6 +18,16 @@ const router = createRouter({
                     name: 'class-management',
                     component: () => import('@/views/Class/ClassList.vue')
                 },
+                {
+                    path: '/class-management/add',
+                    name: 'class-management-add',
+                    component: () => import('@/views/Class/AddClass.vue')
+                },
+                {
+                    path: '/class-management/in-progress-list',
+                    name: 'class-management-in-progress-list',
+                    component: () => import('@/views/Class/InProgress.vue')
+                },
             ]
         },
         {

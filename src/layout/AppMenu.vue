@@ -16,13 +16,13 @@ const model = ref([
                     },
                     {
                         label: 'In progress class',
-                        to: '/#'
+                        to: '/class-management/in-progress-list'
                     }
                 ]
             },
             { label: 'Trainer management', icon: 'pi pi-fw pi-user', to: '/#' },
             { label: 'Trainee management', icon: 'pi pi-fw pi-list', to: '/#' },
-              {
+            {
                 label: 'Content Management',
                 icon: 'pi pi-fw pi-book',
                 items: [
@@ -36,7 +36,7 @@ const model = ref([
                     }
                 ]
             },
-              {
+            {
                 label: 'FMS Settings',
                 icon: 'pi pi-fw pi-cog',
                 items: [
