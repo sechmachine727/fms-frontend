@@ -18,6 +18,11 @@ const router = createRouter({
                     name: 'class-management',
                     component: () => import('@/views/Class/ClassList.vue')
                 },
+                {
+                    path: '/content-management/topic',
+                    name: 'content-management',
+                    component: () => import('@/views/content/TopicList.vue')
+                },
             ]
         },
         {

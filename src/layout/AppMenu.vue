@@ -32,7 +32,7 @@ const model = ref([
                     },
                     {
                         label: 'Topic',
-                        to: '/#'
+                        to: '/content-management/topic'
                     }
                 ]
             },
