@@ -8,6 +8,7 @@ const classStore = useClassStore();
 const router = useRouter();
 
 onMounted(() => {
+    classStore.fetchInprogressClassList();
     classes.value = classStore.classes;
 })
 const getStatusLabel = (status) => {

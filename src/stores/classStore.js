@@ -3,11 +3,16 @@ import { defineStore } from "pinia";
 
 export const useClassStore = defineStore("classStore", {
     state: () => ({
-        classes: [
+        classes: []
+    }),
+
+    actions: {
+        fetchClassList() {
+            this.classes = [
             {
                 no: 1,
                 classCode: 'C001',
-                traineetype: 'Full-time',
+                traineetype: 'Fresher',
                 classAdmin: 'John Doe',
                 technicalGroup: 'Group A',
                 trainingprogram: 'Java Development',
@@ -22,7 +27,7 @@ export const useClassStore = defineStore("classStore", {
             {
                 no: 2,
                 classCode: 'C002',
-                traineetype: 'Part-time',
+                traineetype: 'Fresher',
                 classAdmin: 'Alice Johnson',
                 technicalGroup: 'Group B',
                 trainingprogram: 'Web Development',
@@ -37,7 +42,7 @@ export const useClassStore = defineStore("classStore", {
             {
                 no: 3,
                 classCode: 'C003',
-                traineetype: 'Full-time',
+                traineetype: 'Fresher',
                 classAdmin: 'Michael Lee',
                 technicalGroup: 'Group C',
                 trainingprogram: 'Data Science',
@@ -52,7 +57,7 @@ export const useClassStore = defineStore("classStore", {
             {
                 no: 4,
                 classCode: 'C004',
-                traineetype: 'Part-time',
+                traineetype: 'Fresher',
                 classAdmin: 'Emily Davis',
                 technicalGroup: 'Group D',
                 trainingprogram: 'Cybersecurity',
@@ -67,11 +72,41 @@ export const useClassStore = defineStore("classStore", {
             {
                 no: 5,
                 classCode: 'C005',
+                traineetype: 'Fresher',
+                classAdmin: 'Chris Green',
+                technicalGroup: 'Group E',
+                trainingprogram: 'Cloud Computing',
+                status: 'In Progress',
+                traineeNumber: 28,
+                expectedStartDate: '2024-09-01',
+                actualStartDate: '2024-09-03',
+                expectedEndDate: '2024-11-30',
+                actualEndDate: '2024-11-28',
+                representative: { name: 'Sophie Brown' },
+            },
+            {
+                no: 5,
+                classCode: 'C005',
+                traineetype: 'Fresher',
+                classAdmin: 'Chris Green',
+                technicalGroup: 'Group E',
+                trainingprogram: 'Cloud Computing',
+                status: 'ClIn Progressosed',
+                traineeNumber: 28,
+                expectedStartDate: '2024-09-01',
+                actualStartDate: '2024-09-03',
+                expectedEndDate: '2024-11-30',
+                actualEndDate: '2024-11-28',
+                representative: { name: 'Sophie Brown' },
+            },
+            {
+                no: 5,
+                classCode: 'C005',
                 traineetype: 'Full-time',
                 classAdmin: 'Chris Green',
                 technicalGroup: 'Group E',
                 trainingprogram: 'Cloud Computing',
-                status: 'Closed',
+                status: 'In Progress',
                 traineeNumber: 28,
                 expectedStartDate: '2024-09-01',
                 actualStartDate: '2024-09-03',
@@ -94,41 +129,11 @@ export const useClassStore = defineStore("classStore", {
                 actualEndDate: '2024-11-28',
                 representative: { name: 'Sophie Brown' },
             },
-            {
-                no: 5,
-                classCode: 'C005',
-                traineetype: 'Full-time',
-                classAdmin: 'Chris Green',
-                technicalGroup: 'Group E',
-                trainingprogram: 'Cloud Computing',
-                status: 'Closed',
-                traineeNumber: 28,
-                expectedStartDate: '2024-09-01',
-                actualStartDate: '2024-09-03',
-                expectedEndDate: '2024-11-30',
-                actualEndDate: '2024-11-28',
-                representative: { name: 'Sophie Brown' },
-            },
-            {
-                no: 5,
-                classCode: 'C005',
-                traineetype: 'Full-time',
-                classAdmin: 'Chris Green',
-                technicalGroup: 'Group E',
-                trainingprogram: 'Cloud Computing',
-                status: 'Closed',
-                traineeNumber: 28,
-                expectedStartDate: '2024-09-01',
-                actualStartDate: '2024-09-03',
-                expectedEndDate: '2024-11-30',
-                actualEndDate: '2024-11-28',
-                representative: { name: 'Sophie Brown' },
-            },
-      ],
-    }),
-
-    actions: {
-          
+      ]
+        },
+        fetchInprogressClassList() {
+            this.classes = this.classes.filter(c => c.status === 'In Progress');
+        }
     },
 
     getters: {
