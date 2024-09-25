@@ -19,9 +19,15 @@ const router = createRouter({
                     component: () => import('@/views/Class/ClassList.vue')
                 },
                 {
-                    path: '/content-management/topic',
-                    name: 'content-management',
+                    path: '/topic-management/topic',
+                    name: 'topic-management',
                     component: () => import('@/views/content/TopicList.vue')
+                },
+                {
+                    path: '/topic-management/topic/:id',
+                    name: 'topic-detail',
+                    component: () => import('@/views/content/TopicDetail.vue'),
+                    props: true, // Pass route params as props to the component
                 },
             ]
         },

@@ -3,23 +3,17 @@
 import { ref, onMounted } from 'vue';
 import { TopicStore } from '@/stores/topicStore';
 
+onMounted(() => {
+    TopicStore.getTopicsMedium().then((data) => (topics.value = data));
+});
 
 const op = ref();
 const topics = ref();
-const selectedTopic = ref();
 const toast = ref(null);
 
 const toggle = (event) => {
     op.value.toggle(event);
 }
-
-const hidePopover = () => {
-    op.value.hide();
-}
-
-onMounted(() => {
-    TopicStore.getTopicsMedium().then((data) => (topics.value = data));
-});
 
 const getStatusLabel = (status) => {
     switch (status) {
@@ -68,6 +62,8 @@ const importFile = () => {
         alert('Please choose a valid file before importing.');
     }
 };
+
+
 </script>
 
 <template>
@@ -115,8 +111,16 @@ const importFile = () => {
             </div>
 
             <Column field="id" header="No." style="width: 5%"></Column>
-            <Column field="TopicCode" header="Topic Code" style="width: 15%"></Column>
-            <Column field="TopicName" header="Topic Name" style="width: 25%"></Column>
+            <Column field="TopicCode" header="Topic Code" style="width: 15%">
+                <template #body="slotProps">
+                    <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id }}">{{ slotProps.data.TopicCode }}</router-link>
+                </template>
+            </Column>
+            <Column field="TopicName" header="Topic Name" style="width: 25%">
+                <template #body="slotProps">
+                    <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id }}">{{ slotProps.data.TopicName }}</router-link>
+                </template>
+            </Column>
             <Column field="TechnicalGroup" header="Technical Group" style="width: 25%"></Column>
             <Column field="status" header="Status" style="width: 10%">
                 <template #body="slotProps">
@@ -134,25 +138,14 @@ const importFile = () => {
         </DataTable>
 
         <Popover ref="op">
-            <div v-if="selectedTopic" class="rounded flex flex-col">
-                <div class="pt-4">
-                    <div class="flex gap-2">
-                        <Button icon="pi pi-shopping-cart" :label="`Buy Now | \$${selectedTopic.name}`" :disabled="selectedTopic.status === 'ACTIVE'" class="flex-auto whitespace-nowrap" @click="hidePopover"></Button>
-                        <Button icon="pi pi-download" outlined @click="hidePopover"></Button>
-                    </div>
+            <div class="flex flex-col gap-4 w-[8rem]">
+                <div>
+                    <InputGroup>
+                        <Button label="Deactive" severity="danger" icon="pi pi-times"></Button>
+                    </InputGroup>
                 </div>
             </div>
         </Popover>
-
-<!--        <Popover ref="op">-->
-<!--            <div v-if="selectedProduct" class="rounded flex flex-col">-->
-<!--                    <div class="flex gap-2">-->
-<!--                        <Button icon="pi pi-shopping-cart" :label="`Buy Now | \$${selectedProduct.price}`" :disabled="selectedProduct.inventoryStatus === 'OUTOFSTOCK'" class="flex-auto whitespace-nowrap" @click="hidePopover"></Button>-->
-<!--                        <Button icon="pi pi-heart" outlined @click="hidePopover"></Button>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </Popover>-->
 
     </div>
 </template>

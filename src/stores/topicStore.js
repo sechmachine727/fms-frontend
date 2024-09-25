@@ -118,5 +118,78 @@ export const TopicStore = {
             : '';
 
         return fetch('https://www.primefaces.org/data/customers?' + queryParams).then((res) => res.json());
-    }
+    },
+    getTopicDetail(id) {
+        return Promise.resolve(this.getData().find((topic) => topic.id === id));
+    },
 };
+
+export const sessions = [
+    {
+        session: 1,
+        details: [
+            {
+                content: "Kick off project meeting",
+                learningObjectives: "CPFU-KS",
+                deliveryType: "Class Meeting",
+                duration: "2h",
+                trainingFormat: "Offline",
+                notes: ""
+            },
+            {
+                content: "Discussing in order to choose the subject of the project",
+                learningObjectives: "CPFU-KS",
+                deliveryType: "Guides/Review",
+                duration: "4h",
+                trainingFormat: "Offline",
+                notes: ""
+            }
+        ]
+    },
+    {
+        session: 2,
+        details: [
+            {
+                content: "Daily scrum",
+                learningObjectives: "CPFU-KS",
+                deliveryType: "Class Meeting",
+                duration: "15m",
+                trainingFormat: "Offline",
+                notes: ""
+            },
+            {
+                content: "Discussing in order to choose the subject of the project",
+                learningObjectives: "CPFU-KS",
+                deliveryType: "Product Increment",
+                duration: "4h 45m",
+                trainingFormat: "Offline",
+                notes: ""
+            },
+            {
+                content: "Trainer review and support",
+                learningObjectives: "CPFU-KS",
+                deliveryType: "Guides/Review",
+                duration: "1h",
+                trainingFormat: "Offline",
+                notes: "Trainer/Mentor guide solutions & resolve issues if need"
+            }
+        ]
+    },
+    // Add more sessions as needed
+];
+
+export const generalInfo = {
+    code: 'FR_CP-KS',
+    name: 'Capstone Project FU KS',
+    technicalGroup: 'Others',
+    totalSession: 70,
+    passCriteria: 'Total topic GPA >= 6/10',
+    reTestNumber: ''
+};
+
+export const assessmentScheme = [
+    { assessmentName: 'Final Report', quantity: 1, weightedNumber: 100, note: 'This is the final report submission.' },
+    { assessmentName: 'Midterm Exam', quantity: 1, weightedNumber: 40, note: 'Midterm exam to evaluate progress.' },
+    { assessmentName: 'Project', quantity: 1, weightedNumber: 30, note: 'Grading of the course project.' },
+    { assessmentName: 'Participation', quantity: 1, weightedNumber: 10, note: 'Participation in class activities.' },
+];
