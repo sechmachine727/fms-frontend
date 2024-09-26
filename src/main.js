@@ -11,11 +11,11 @@ import ToastService from 'primevue/toastservice';
 
 import '@/assets/styles.scss';
 import '@/assets/tailwind.css';
-
-
+const pinia = createPinia()
 const app = createApp(App);
 
 app.use(router);
+app.use(pinia)
 app.use(PrimeVue, {
     theme: {
         preset: Aura,
@@ -26,5 +26,4 @@ app.use(PrimeVue, {
 });
 app.use(ToastService);
 app.use(ConfirmationService);
-app.use(createPinia())
 app.mount('#app');
