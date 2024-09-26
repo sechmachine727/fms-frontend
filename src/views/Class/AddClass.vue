@@ -65,61 +65,73 @@ const validationSchema = toTypedSchema(
             .min(1, { message: "Class Name is required" }),
         deliveryType: z
             .object({
-                code: z.string().min(1, { message: "Delivery Type is required" })
+                code: z.string({ required_error: "Delivery Type is required" }).min(1, { message: "Delivery Type is required" }),
             }),
         traineeType: z
             .object({
-                code: z.string().min(1, { message: "Trainee Type is required" })
+                code: z.string({ required_error: "Trainee Type is required" }).min(1, { message: "Trainee Type is required" })
             }),
         formatType: z
             .object({
-                code: z.string().min(1, { message: "Format Type is required" })
+                code: z.string({ required_error: "Format Type is required" }).min(1, { message: "Format Type is required" }),
             }),
         technicalGroup: z
             .object({
-                code: z.string().min(1, { message: "Technical Group is required" })
+                code: z.string({ required_error: "Technical Group is required" }).min(1, { message: "Technical Group is required" })
             }),
         trainingProgram: z
             .object({
-                code: z.string().min(1, { message: "Training Program is required" })
+                code: z.string({ required_error: "Trainee Type is required" }).min(1, { message: "Training Program is required" })
             }),
         site: z
             .object({
-                code: z.string().min(1, { message: "Site is required" })
+                code: z.string({ required_error: "Trainee Type is required" }).min(1, { message: "Site is required" })
             }),
         location: z
             .object({
-                code: z.string().min(1, { message: "Location is required" })
+                code: z.string({ required_error: "Trainee Type is required" }).min(1, { message: "Location is required" })
             }),
         scope: z
             .object({
-                code: z.string().min(1, { message: "Scope is required" })
+                code: z.string({ required_error: "Trainee Type is required" }).min(1, { message: "Scope is required" })
             }),
         plannedTrainee: z
-            .number()
-            .positive({ message: "Planned Trainee must be a positive number" })
+            .number({
+                required_error: "PlannedTrainee is required",
+                invalid_type_error: "Plainned Trainee must be a positive number",
+            })
+            .positive({ message: "Plainned Trainee must be a positive number" })
         ,
         planRevenue: z
-            .number()
+            .number({
+                required_error: "PlanRevenue is required",
+                invalid_type_error: "Planned Revenue must be a positive number",
+            })
             .positive({ message: "Planned Revenue must be a positive number" }),
         keyProgram: z
             .object({
-                code: z.string().min(1, { message: "Key Program is required" })
+                code: z.string({ required_error: "Key Program is required" }).min(1, { message: "Key Program is required" })
             }),
         expectedStart: z
-            .date()
+            .date({
+                required_error: "Expectedt Start Date is required",
+                invalid_type_error: "Expectedt Start Date is required",
+            })
             .refine((date) => date instanceof Date, { message: "Expected Start Date is required" }),
         expectedEnd: z
-            .date()
+            .date({
+                required_error: "Expectedt Start Date is required",
+                invalid_type_error: "Expectedt Start Date is required!",
+            })
             .refine((date) => date instanceof Date, { message: "Expected End Date is required" }),
         note: z
             .string()
             .optional(),
-        classAdminOptions: z
-            .array(z.object({
-                code: z.string().min(1, { message: "Class Admin is required" })
-            }))
-            .nonempty({ message: "At least one Class Admin must be selected" })
+        classAdminOptions: z.array(
+            z.object({
+                code: z.string({ required_error: "Class Admin code is required" }).min(1, { message: "Class Admin code cannot be empty" }), // Thông báo lỗi khi code rỗng
+            })
+        ),
     })
 );
 
@@ -196,7 +208,7 @@ const onSubmit = handleSubmit((values) => {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.deliveryType"> {{
                                             errors.deliveryType
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-3" v-if="errors.traineeType"> {{
@@ -236,12 +248,12 @@ const onSubmit = handleSubmit((values) => {
                                     <div class="flex flex-wrap gap-2 w-full ">
                                         <small class="text-red-600 ml-2" v-if="errors.technicalGroup"> {{
                                             errors.technicalGroup
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.trainingProgram"> {{
                                             errors.trainingProgram
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                 </div>
                                 <div class="flex flex-col md:flex-row gap-4 ">
@@ -304,7 +316,7 @@ const onSubmit = handleSubmit((values) => {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 " v-if="errors.plannedTrainee"> {{
                                             errors.plannedTrainee
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.planRevenue"> {{
@@ -335,7 +347,7 @@ const onSubmit = handleSubmit((values) => {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 " v-if="errors.expectedStart"> {{
                                             errors.expectedStart
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.expectedEnd"> {{
@@ -361,7 +373,8 @@ const onSubmit = handleSubmit((values) => {
                                 <i class="text-red-600">*</i>
                             </label>
                             <MultiSelect v-model="classAdminOptions" :options="classAdmins" optionLabel="name" filter
-                                placeholder="Select Cities" :maxSelectedLabels="3" class="w-full md:w-80" />
+                                placeholder="Select Cities" id="classAdminOptions" :maxSelectedLabels="3"
+                                class="w-full md:w-80" />
                             <small class="text-red-600 " v-if="errors.classAdminOptions"> {{
                                 errors.classAdminOptions
                                 }}</small>
