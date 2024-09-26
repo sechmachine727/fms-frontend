@@ -1,6 +1,6 @@
 // stores/traineeStore.js
+import traineeApi from "@/api/traineeApi";
 import { defineStore } from "pinia";
-import traineeApi from "@/api/trainee_api";
 
 export const useTraineeStore = defineStore("traineeStore", {
     state: () => ({
