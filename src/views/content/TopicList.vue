@@ -1,14 +1,16 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { TopicStore } from '@/stores/topicStore';
-
-onMounted(() => {
-    TopicStore.getTopicsMedium().then((data) => (topics.value = data));
-});
+import { useTopicStore } from '@/stores/topicStore';
 
 const op = ref();
 const topics = ref();
+const selectedTopic = ref();
 const toast = ref(null);
+const topicStore = useTopicStore();
+
+const hidePopover = () => {
+    op.value.hide();
+}
 
 const getStatusLabel = (status) => {
     switch (status) {
@@ -22,6 +24,13 @@ const getStatusLabel = (status) => {
             return null;
     }
 };
+
+onMounted(() => {
+    topicStore.fetchTopics().then(() => {topics.value = topicStore.topics
+                                            console.log(topicStore.topics)
+    });
+});
+
 
 const showDialog = ref(false);
 const selectedFile = ref(null);
@@ -72,7 +81,7 @@ const toggleStatus = (event, topic) => {
     <div class="card">
         <DataTable :value="topics" paginator :rows="6" :rowsPerPageOptions="[6, 12, 20, 50]" tableStyle="min-width: 50rem"
                    paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                   currentPageReportTemplate="{first} to {last} of {totalRecords}">
+                   currentPageReportTemplate="{first} to {last} of {totalRecords}" >
             <div class="flex items-center justify-between">
                 <h1 class="text-2xl">Topic Configuration</h1>
                 <Button icon="pi pi-plus" label="Import Topic"  @click="showDialog = true" />
@@ -111,26 +120,26 @@ const toggleStatus = (event, topic) => {
                     </template>
                 </Dialog>
             </div>
-
-            <Column field="id" header="No." style="width: 5%"></Column>
-            <Column field="TopicCode" header="Topic Code" style="width: 15%">
+            <Column field="id" header="No." style="width: 5%" :body="(_, { rowIndex }) => rowIndex + 1"></Column>
+            <Column field="code" header="Topic Code" style="width: 15%">
                 <template #body="slotProps">
                     <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id }}">{{ slotProps.data.TopicCode }}</router-link>
                 </template>
             </Column>
-            <Column field="TopicName" header="Topic Name" style="width: 25%">
+            <Column field="name" header="Topic Name" style="width: 25%">
                 <template #body="slotProps">
                     <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id }}">{{ slotProps.data.TopicName }}</router-link>
                 </template>
             </Column>
+            <Column field="technicalGroupCode" header="Technical Group" style="width: 25%"></Column>
             <Column field="TechnicalGroup" header="Technical Group" style="width: 25%"></Column>
             <Column field="status" header="Status" style="width: 10%">
                 <template #body="slotProps">
                     <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
                 </template>
             </Column>
-            <Column field="LastModifiedDate" header="Last Modified Date" style="width: 20%"></Column>
-            <Column field="LastModifiedBy" header="Last Modified By" style="width: 20%"></Column>
+            <Column field="modifiedDate" header="Last Modified Date" style="width: 20%"></Column>
+            <Column field="lastModifiedBy" header="Last Modified By" style="width: 20%"></Column>
 
             <Column :exportable="false" header="Action"  style="width: 5%">
                 <template #body="slotProps">
