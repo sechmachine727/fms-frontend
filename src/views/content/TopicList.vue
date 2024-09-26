@@ -1,4 +1,3 @@
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import { TopicStore } from '@/stores/topicStore';
@@ -10,10 +9,6 @@ onMounted(() => {
 const op = ref();
 const topics = ref();
 const toast = ref(null);
-
-const toggle = (event) => {
-    op.value.toggle(event);
-}
 
 const getStatusLabel = (status) => {
     switch (status) {
@@ -63,7 +58,14 @@ const importFile = () => {
     }
 };
 
+const toggle = (event) => {
+    op.value.toggle(event);
 
+}
+const toggleStatus = (event, topic) => {
+    op.value.toggle(event);
+    topic.status = topic.status === 'Active' ? 'Inactive' : 'Active';
+}
 </script>
 
 <template>
@@ -131,22 +133,24 @@ const importFile = () => {
             <Column field="LastModifiedBy" header="Last Modified By" style="width: 20%"></Column>
 
             <Column :exportable="false" header="Action"  style="width: 5%">
-                <template #body>
+                <template #body="slotProps">
                     <Button icon="pi pi-ellipsis-v" @click="toggle" outlined rounded class="mr-2" />
+
+                    <Popover ref="op">
+                        <div class="flex flex-col gap-4 w-[8rem]">
+                            <div>
+                                <InputGroup >
+                                    <Button :label="slotProps.data.status === 'Active' ? 'Deactivate' : 'Activate'"
+                                            :severity="slotProps.data.status === 'Active' ? 'danger' : 'success'"
+                                            @click="toggleStatus($event, slotProps.data)"
+                                            :icon="slotProps.data.status === 'Active' ? 'pi pi-times' : 'pi pi-check'" />
+                                </InputGroup>
+                            </div>
+                        </div>
+                    </Popover>
                 </template>
             </Column>
         </DataTable>
-
-        <Popover ref="op">
-            <div class="flex flex-col gap-4 w-[8rem]">
-                <div>
-                    <InputGroup>
-                        <Button label="Deactive" severity="danger" icon="pi pi-times"></Button>
-                    </InputGroup>
-                </div>
-            </div>
-        </Popover>
-
     </div>
 </template>
 <style>
