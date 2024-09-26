@@ -1,33 +1,45 @@
 <script setup>
 import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
+import { useAuthStore } from "@/stores/authStore";
 import { toTypedSchema } from "@vee-validate/zod";
+import Toast from 'primevue/toast';
+import { useToast } from "primevue/usetoast";
+
 import { useField, useForm } from "vee-validate";
-import { ref } from 'vue';
 import { z } from "zod";
 const validationSchema = toTypedSchema(
   z.object({
-    email: z
-      .string()
-      .min(1, { message: "Plese fill email" })
-      .email("Invalid email address"),
-
-    password: z.string().min(8, "Must be 8 or more characters long"),
+    account: z.string({ required_error: 'Class Name is required' }),
+    password: z.string().min(4, "Must be 4 or more characters long"),
   })
 );
+const toast = useToast();
+const authStore = useAuthStore();
+
 
 const { handleSubmit, errors } = useForm({ validationSchema });
-
-const { value: email } = useField("email");
+const { value: account } = useField("account");
 const { value: password } = useField("password");
-const checked = ref(false);
 
-// const onSubmit = handleSubmit((values) => {
-//       router.push('/class-management/list');
-// });
+const onSubmit = handleSubmit((values) => {
+    authStore.fetchTrainees(values).then((reponse) => {
+            localStorage.setItem("token", reponse.token);
+    }).catch((error) => {
+             console.log( error.response.data.message);
+            if (error.status === 401 && error.response.data.message === 'User is inactive' ) {
+                toast.add({ severity: 'error', summary: 'Your account is inactive.', life: 3000 }); 
+            } else if(error.status === 401 && error.response.data.message === 'Username or password is incorrect'){
+                toast.add({ severity: 'error', summary: 'Username or password is incorrect', life: 3000 }); 
+            } else {
+                toast.add({ severity: 'error', summary: error.message, life: 3000 });
+            }
+        });
+});
 </script>
 
 <template>
     <FloatingConfigurator />
+    <Toast />
     <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
         <div class="flex flex-col items-center justify-center">
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
@@ -40,23 +52,23 @@ const checked = ref(false);
                         <span class="text-muted-color font-medium">Sign in to continue</span>
                     </div>
 
-                    <form @submit.prevent="handleSubmit(onSubmit)">
-                        <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
-                        <InputText id="email1" type="text" placeholder="Email address" class="w-full md:w-[30rem]" :class="{'p-invalid': errors.email}" v-model="email" ></InputText>
-                        <small class="error block pt-0 mb-4"> {{ errors.email }}</small>
+                    <form @submit.prevent="onSubmit">
+                        <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Username</label>
+                        <InputText id="email1" type="text" placeholder="Username" class="w-full md:w-[30rem]" :class="{'p-invalid': errors.account}" v-model="account" ></InputText>
+                        <small class="error block pt-0 mb-4"> {{ errors.account }}</small>
 
                         <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
                         <Password id="password1" :inputClass="{'p-invalid': errors.password}" v-model="password" placeholder="Password" :toggleMask="true" fluid :feedback="false"></Password>
                         <small class="error block">{{ errors.password }}</small>
                         
                         <div class="flex items-center justify-between mt-2 mb-8 gap-8">
-                            <div class="flex items-center">
-                                <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
-                                <label for="rememberme1">Remember me</label>
-                            </div>
+                            
                             <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span>
                         </div>
-                        <Button label="Sign In" class="w-full"></Button>
+                        <button type="submit"
+                        class="bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out w-full">
+                        Sign In
+                    </button>
                     </form>
                 </div>
             </div>
