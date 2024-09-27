@@ -35,6 +35,12 @@ const router = createRouter({
                     component: () => import('@/views/content/TrainingProgramList.vue'),
                     props: true, // Pass route params as props to the component
                 },
+                {
+                    path: '/topic-management/training-program/:id',
+                    name: 'training-program-detail',
+                    component: () => import('@/views/content/TrainingProgramDetail.vue'),
+                    props: true, // Pass route params as props to the component
+                },
             ]
         },
         {
