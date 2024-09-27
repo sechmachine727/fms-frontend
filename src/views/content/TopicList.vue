@@ -144,7 +144,7 @@ const toggleStatus = (event, topic) => {
             <Column field="lastModifiedBy" header="Last Modified By" style="width: 20%"></Column>
 
             <Column :exportable="false" header="Action"  style="width: 5%">
-                <template #body="slotProps">
+                <template #body>
                     <Button icon="pi pi-ellipsis-v" @click="toggle" outlined rounded class="mr-2" />
 
                     <Popover ref="op">
