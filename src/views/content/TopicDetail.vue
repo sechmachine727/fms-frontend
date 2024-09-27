@@ -1,15 +1,18 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { TopicStore,generalInfo, sessions, assessmentScheme   } from '@/stores/topicStore';
+import { assessmentScheme, useTopicStore } from '@/stores/topicStore'
 
+
+const topicStore = useTopicStore();
 onMounted(() => {
-    TopicStore.getTopics().then((data) => (topics.value = data));
+    // topicStore.fetchTopicDetail().then((data) => (topics.value = data));
 });
 
 // Reference the assessment scheme data from the store
 const assessmentSchemeData = ref(assessmentScheme);
-
-const topics = ref();
+const sessions = ref([])
+const generalInfo = ref()
+const topic = ref();
 
 // Map General Info data into a displayable format for DataTable
 const generalInfoData = ref([
@@ -20,9 +23,6 @@ const generalInfoData = ref([
     { label: 'Pass Criteria', value: generalInfo.passCriteria },
     { label: 'Re-Test Number', value: generalInfo.reTestNumber || '-' },
 ]);
-
-
-
 
 
 </script>

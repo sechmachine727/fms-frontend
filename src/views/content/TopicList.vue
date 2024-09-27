@@ -27,8 +27,8 @@ const getStatusLabel = (status) => {
 
 onMounted(() => {
     topicStore.fetchTopics().then(() => {topics.value = topicStore.topics
-                                            console.log(topicStore.topics)
-    });
+                                        console.log(topicStore.topics)
+                                        });
 });
 
 
@@ -75,6 +75,8 @@ const toggleStatus = (event, topic) => {
     op.value.toggle(event);
     topic.status = topic.status === 'Active' ? 'Inactive' : 'Active';
 }
+
+
 </script>
 
 <template>
@@ -120,15 +122,15 @@ const toggleStatus = (event, topic) => {
                     </template>
                 </Dialog>
             </div>
-            <Column field="id" header="No." style="width: 5%" :body="(_, { rowIndex }) => rowIndex + 1"></Column>
-            <Column field="code" header="Topic Code" style="width: 15%">
+            <Column field="code" header="Topic Code"  style="width: 15%">
                 <template #body="slotProps">
-                    <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id }}">{{ slotProps.data.TopicCode }}</router-link>
+                    <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.code}}">{{ slotProps.data.name}}</router-link>
                 </template>
             </Column>
+
             <Column field="name" header="Topic Name" style="width: 25%">
                 <template #body="slotProps">
-                    <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id }}">{{ slotProps.data.TopicName }}</router-link>
+                    <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.code}}">{{ slotProps.data.name}}</router-link>
                 </template>
             </Column>
             <Column field="technicalGroupCode" header="Technical Group" style="width: 25%"></Column>
