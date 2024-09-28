@@ -8,7 +8,7 @@ export const useAuthStore = defineStore("authStore", {
     }),
 
     actions: {
-        async fetchTrainees(data) {
+        async fetchLogin(data) {
             try {
                 const result = await authApi.post(data); // Assuming authApi.post is an axios instance or similar
                 return result.data; // Return the data from the response

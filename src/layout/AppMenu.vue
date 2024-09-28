@@ -46,7 +46,7 @@ const model = ref([
                     },
                     {
                         label: 'User management',
-                        to: '/#'
+                        to: '/fms-settings/user-management'
                     }
                 ]
             },

@@ -127,11 +127,15 @@ const validationSchema = toTypedSchema(
         note: z
             .string()
             .optional(),
-        classAdminOptions: z.array(
-            z.object({
-                code: z.string({ required_error: "Class Admin code is required" }).min(1, { message: "Class Admin code cannot be empty" }), // Thông báo lỗi khi code rỗng
-            })
+        classAdminOptions: z.preprocess(
+            (val) => (val === undefined || val === null ? [] : val),
+            z.array(
+                z.object({
+                    code: z.string().min(1, { message: "Class Admin code is required" })
+                })
+            ).min(1, { message: "Class Admin is required" })
         ),
+
     })
 );
 
