@@ -1,7 +1,7 @@
-import { defineStore } from "pinia";
-import topicApi from "@/api/topicApi";
+import { defineStore } from 'pinia'
+import topicApi from '@/api/topicApi'
 
-export const useTopicStore = defineStore("topicStore", {
+export const useTopicStore = defineStore('topicStore', {
     state: () => ({
         topics: [],
         topic: null,
@@ -11,44 +11,37 @@ export const useTopicStore = defineStore("topicStore", {
     actions: {
         async fetchTopics() {
             try {
-                this.topics = await topicApi.get();
+                this.topics = await topicApi.get()
             } catch (error) {
-                console.error("Failed to fetch topics", error);
+                console.error('Failed to fetch topics', error)
             }
         },
 
         async fetchTopicDetail(params) {
             try {
-                this.topics = await topicApi.getDetail(params);
+                this.topic = await topicApi.getDetail(params)
             } catch (error) {
-                console.error("Failed to fetch topic detail", error);
+                console.error('Failed to fetch topic detail', error)
             }
         },
 
+
         async fetchDeactiveTopic(params) {
             try {
-                this.result = await topicApi.delete(params);
+                this.result = await topicApi.delete(params)
             } catch (error) {
-                console.error("Failed to fetch topic detail", error);
+                console.error('Failed to fetch topic detail', error)
             }
         },
 
         async fetchAddTopic(data) {
             try {
-                this.result = await topicApi.post(data);
+                this.result = await topicApi.post(data)
             } catch (error) {
-                console.error("Failed to fetch topic detail", error);
+                console.error('Failed to fetch topic detail', error)
             }
-        },
+        }
     },
 
-    getters: {
-    }
-});
-
-export const assessmentScheme = [
-    { assessmentName: 'Final Report', quantity: 1, weightedNumber: 100, note: 'This is the final report submission.' },
-    { assessmentName: 'Midterm Exam', quantity: 1, weightedNumber: 40, note: 'Midterm exam to evaluate progress.' },
-    { assessmentName: 'Project', quantity: 1, weightedNumber: 30, note: 'Grading of the course project.' },
-    { assessmentName: 'Participation', quantity: 1, weightedNumber: 10, note: 'Participation in class activities.' },
-];
+    getters: {}
+})
