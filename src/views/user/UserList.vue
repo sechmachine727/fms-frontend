@@ -1,13 +1,14 @@
 <script setup>
-import router from "@/router";
-import { useRoleStore } from "@/stores/roleStore";
-import { useUserStore } from "@/stores/userStore";
-import { toTypedSchema } from "@vee-validate/zod";
-import Toast from "primevue/toast";
-import { useToast } from "primevue/usetoast";
-import { useField, useForm } from "vee-validate";
-import { onMounted, ref } from "vue";
-import { z } from "zod";
+import router from '@/router'
+import { useRoleStore } from '@/stores/roleStore'
+import { useUserStore } from '@/stores/userStore'
+import { toTypedSchema } from '@vee-validate/zod'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
+import { useField, useForm } from 'vee-validate'
+import { onMounted, ref } from 'vue'
+import { z } from 'zod'
+
 const visible = ref(false);
 const users = ref([]);
 const contractTypes = ref([
@@ -211,12 +212,12 @@ const handleReset = () => {
                         </template>
                     </Column>
 
-                    <Column field="status" frozen alignFrozen="right" header="Status" style="min-width: 130px">
+                    <Column alignFrozen="right" field="status" frozen header="Status" style="min-width: 130px">
                         <template #body="slotProps">
                             <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
                         </template>
                     </Column>
-                    <Column header="Actions" style="min-width: 50px">
+                    <Column alignFrozen="right" frozen header="Actions" style="min-width: 50px">
                         <template #body="slotProps">
                             <Button icon="pi pi-ellipsis-v" severity="secondary"
                                 @click="showOptions($event, slotProps.data)" class="p-button-text" />
