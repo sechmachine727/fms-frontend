@@ -1,6 +1,8 @@
 import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
-
+function isLoggedIn() {
+    return !!localStorage.getItem('token');
+}
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -17,6 +19,21 @@ const router = createRouter({
                     path: '/class-management/list',
                     name: 'class-management',
                     component: () => import('@/views/Class/ClassList.vue')
+                },
+                {
+                    path: '/class-management/add',
+                    name: 'class-management-add',
+                    component: () => import('@/views/Class/AddClass.vue')
+                },
+                {
+                    path: '/class-management/in-progress-list',
+                    name: 'class-management-in-progress-list',
+                    component: () => import('@/views/Class/InProgress.vue')
+                },
+                {
+                    path: '/fms-settings/user-management',
+                    name: 'fms-settings-user-management',
+                    component: () => import('@/views/user/UserList.vue')
                 },
             ]
         },
@@ -42,6 +59,21 @@ const router = createRouter({
             component: () => import('@/views/auth/Error.vue')
         }
     ]
+});
+
+router.beforeEach((to, from, next) => {
+    // Nếu không phải là trang đăng nhập và người dùng chưa đăng nhập
+    if (to.name !== 'login' && !isLoggedIn()) {
+        next({ name: 'login' });  // Chuyển hướng tới trang đăng nhập
+    } 
+    // Nếu đã đăng nhập và muốn vào trang login, chuyển đến class list
+    else if (to.name === 'login' && isLoggedIn()) {
+        next({ name: 'class-management' });  // Chuyển hướng đến class list
+    } 
+    // Cho phép chuyển tiếp tới trang yêu cầu
+    else {
+        next();
+    }
 });
 
 export default router;

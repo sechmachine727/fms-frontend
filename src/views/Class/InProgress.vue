@@ -8,7 +8,7 @@ const classStore = useClassStore();
 const router = useRouter();
 
 onMounted(() => {
-    classStore.fetchClassList();
+    classStore.fetchInprogressClassList();
     classes.value = classStore.classes;
 })
 const getStatusLabel = (status) => {
@@ -42,8 +42,9 @@ const navigateToAdd = () => {
 <template>
     <div class="card">
         <div class="text-xl mb-4 flex justify-between items-center">
-            <span class="!font-semibold text-2xl">Class List</span>
-            <Button label="Add" icon="pi pi-plus" iconPos="right" @click="navigateToAdd" />
+            <span class="font-semibold text-2xl">Class List</span>
+            <Button label="Add" class="bg-slate-500 text-white" icon="pi pi-plus" iconPos="right"
+                @click="navigateToAdd" />
         </div>
         <Divider />
         <DataTable :value="classes" scrollable scrollHeight="500px" class="mt-6">
