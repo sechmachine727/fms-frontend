@@ -28,12 +28,12 @@ const model = ref([
                 items: [
                     {
                         label: 'Training Program',
-                        to: '/#'
+                        to: '/topic-management/training-program'
                     },
                     {
                         label: 'Topic',
-                        to: '/#'
-                    }
+                        to: '/topic-management/topic'
+                    },
                 ]
             },
             {

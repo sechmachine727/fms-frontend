@@ -21,6 +21,29 @@ const router = createRouter({
                     component: () => import('@/views/Class/ClassList.vue')
                 },
                 {
+                    path: '/topic-management/topic',
+                    name: 'topic-management',
+                    component: () => import('@/views/content/TopicList.vue')
+                },
+                {
+                    path: '/topic-management/topic/:id',
+                    name: 'topic-detail',
+                    component: () => import('@/views/content/TopicDetail.vue'),
+                    props: true, // Pass route params as props to the component
+                },
+                {
+                    path: '/topic-management/training-program',
+                    name: 'training-program',
+                    component: () => import('@/views/content/TrainingProgramList.vue'),
+                    props: true, // Pass route params as props to the component
+                },
+                {
+                    path: '/topic-management/training-program/:id',
+                    name: 'training-program-detail',
+                    component: () => import('@/views/content/TrainingProgramDetail.vue'),
+                    props: true, // Pass route params as props to the component
+                },
+                {
                     path: '/class-management/add',
                     name: 'class-management-add',
                     component: () => import('@/views/Class/AddClass.vue')
@@ -65,11 +88,11 @@ router.beforeEach((to, from, next) => {
     // Nếu không phải là trang đăng nhập và người dùng chưa đăng nhập
     if (to.name !== 'login' && !isLoggedIn()) {
         next({ name: 'login' });  // Chuyển hướng tới trang đăng nhập
-    } 
+    }
     // Nếu đã đăng nhập và muốn vào trang login, chuyển đến class list
     else if (to.name === 'login' && isLoggedIn()) {
         next({ name: 'class-management' });  // Chuyển hướng đến class list
-    } 
+    }
     // Cho phép chuyển tiếp tới trang yêu cầu
     else {
         next();
