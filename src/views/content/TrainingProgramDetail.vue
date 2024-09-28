@@ -1,25 +1,38 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { assessmentScheme, useTopicStore } from '@/stores/topicStore'
+import { computed, onMounted, ref } from 'vue'
+import { useTrainingProgramStore } from '@/stores/trainingProgramStore'
+import { useRoute } from 'vue-router'
 
+
+const trainingProgramStore = useTrainingProgramStore()
+const trainingProgram = ref()
+const topicInfo = ref([])
+
+const generalInfo = computed(() => {
+    if (trainingProgramStore.trainingProgram) {
+        return [
+            { label: 'Course Code', value: trainingProgramStore.trainingProgram.code },
+            { label: 'Name', value: trainingProgramStore.trainingProgram.trainingProgramName },
+            { label: 'Region', value: trainingProgramStore.trainingProgram.region },
+            { label: 'Version', value: trainingProgramStore.trainingProgram.version },
+            { label: 'Technical Group', value: trainingProgramStore.trainingProgram.technicalGroupCode },
+            { label: 'Description', value: trainingProgramStore.trainingProgram.description }
+        ]
+    } else {
+        return []
+    }
+})
 
 onMounted(() => {
-    // topicStore.fetchTopicDetail().then((data) => (topics.value = data));
-});
-
-// Reference the assessment scheme data from the store
-const assessmentSchemeData = ref(assessmentScheme);
-const generalInfo = ref()
-
-// Map General Info data into a displayable format for DataTable
-const generalInfoData = ref([
-    { label: 'Course Code', value: generalInfo.code },
-    { label: 'Name', value: generalInfo.name },
-    { label: 'Region', value: generalInfo.passCriteria },
-    { label: 'Technical Group', value: generalInfo.technicalGroup },
-    { label: 'Content Link', value: generalInfo.totalSession },
-    { label: 'Description', value: generalInfo.reTestNumber || '-' },
-]);
+    const route = useRoute()
+    const trainingProgramId = route.params.id
+    trainingProgramStore.fetchTrainingProgramDetail(trainingProgramId).then(() => {
+        trainingProgram.value = trainingProgramStore.trainingProgram
+        console.log(trainingProgram.value)
+        topicInfo.value = trainingProgramStore.trainingProgram.topicInfoList
+        console.log(topicInfo.value)
+    })
+})
 
 
 </script>
@@ -34,8 +47,9 @@ const generalInfoData = ref([
                     <div class="grid">
                         <div class="general-info mb-8">
                             <h2 class="text-xl font-semibold mb-2">1. Training Program Info</h2>
-                            <DataTable :value="generalInfoData" class="training-program-info-table" responsiveLayout="scroll">
-                                <Column field="label"  class="highlight-label-column"></Column>
+                            <DataTable :value="generalInfo" class="training-program-info-table"
+                                       responsiveLayout="scroll">
+                                <Column class="highlight-label-column" field="label"></Column>
                                 <Column field="value" ></Column>
                             </DataTable>
                         </div>
@@ -44,18 +58,17 @@ const generalInfoData = ref([
                     <!-- Assessment Scheme Table -->
                     <div class="assessment-scheme mb-8">
                         <h2 class="text-xl font-semibold mb-2">2. Topic Info</h2>
-                        <DataTable :value="assessmentSchemeData" class="assessment-scheme-table" responsiveLayout="scroll">
+                        <DataTable :value="topicInfo" class="assessment-scheme-table" responsiveLayout="scroll">
                             <!-- Highlighting Label Column -->
-                            <Column  header="No." style="width: 5%"></Column>
-                            <Column field="assessmentName" header="Topic Code - Version" style="width: 20%"></Column>
-                            <Column field="quantity" header="Topic Name" style="width: 20%"></Column>
-                            <Column field="weightedNumber" header="Total Section/Day" style="width: 10%"></Column>
-                            <Column field="note" header="Training Time" style="width: 5%"></Column>
-                            <Column :exportable="false" header="Action" style="width: 5%">
-                                <template #body>
-                                    <Button icon="pi pi-download" outlined rounded class="mr-2" />
+                            <Column header="No." style="width: 5%">
+                                <template #body="slotProps">
+                                    {{ slotProps.index + 1 }}
                                 </template>
                             </Column>
+                            <Column field="topicCode" header="Topic Code " style="width: 15%"></Column>
+                            <Column field="version" header="Version" style="width: 10%"></Column>
+                            <Column field="topicName" header="Total Section/Day" style="width: 10%"></Column>
+                            <Column field="note" header="Training Time" style="width: 5%"></Column>
                         </DataTable>
                     </div>
         </div>
