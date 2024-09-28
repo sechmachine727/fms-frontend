@@ -1,30 +1,38 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { assessmentScheme, useTopicStore } from '@/stores/topicStore'
+import { ref, onMounted, computed } from 'vue'
+import { useTopicStore } from '@/stores/topicStore'
+import { useRoute } from 'vue-router'
 
 
-const topicStore = useTopicStore();
-onMounted(() => {
-    // topicStore.fetchTopicDetail().then((data) => (topics.value = data));
-});
-
-// Reference the assessment scheme data from the store
-const assessmentSchemeData = ref(assessmentScheme);
-const sessions = ref([])
-const generalInfo = ref()
-const topic = ref();
-
+const topicStore = useTopicStore()
+const topic = ref()
+const assessmentScheme = ref([])
+const units = ref([])
+const unitSections = ref([])
 // Map General Info data into a displayable format for DataTable
-const generalInfoData = ref([
-    { label: 'Code', value: generalInfo.code },
-    { label: 'Name', value: generalInfo.name },
-    { label: 'Technical Group', value: generalInfo.technicalGroup },
-    { label: 'Total Session/Day', value: generalInfo.totalSession },
-    { label: 'Pass Criteria', value: generalInfo.passCriteria },
-    { label: 'Re-Test Number', value: generalInfo.reTestNumber || '-' },
-]);
+const generalInfo = computed(() => {
+    if (topicStore.topic) {
+        return [
+            { label: 'Code', value: topicStore.topic.code },
+            { label: 'Name', value: topicStore.topic.name },
+            { label: 'Technical Group', value: topicStore.topic.technicalGroupCode },
+            { label: 'Pass Criteria', value: topicStore.topic.passCriteria }
+        ]
+    } else {
+        return []
+    }
+})
 
-
+onMounted(() => {
+    const route = useRoute()
+    const topicId = route.params.id
+    topicStore.fetchTopicDetail(topicId).then(() => {
+        topic.value = topicStore.topic
+        assessmentScheme.value = topicStore.topic.topicAssessments
+        units.value = topicStore.topic.units
+        unitSections.value = topicStore.topic.units[0].unitSections
+    })
+})
 </script>
 
 <template>
@@ -44,7 +52,7 @@ const generalInfoData = ref([
                         <!-- General Info Table -->
                         <div class="general-info mb-8">
                             <h2 class="text-xl font-semibold mb-2">1. General Info</h2>
-                            <DataTable :value="generalInfoData" class="general-info-table" responsiveLayout="scroll">
+                            <DataTable :value="generalInfo" class="general-info-table" responsiveLayout="scroll">
                                 <Column field="label" header="Label" class="highlight-label-column"></Column>
                                 <Column field="value" header="Value"></Column>
                             </DataTable>
@@ -60,9 +68,9 @@ const generalInfoData = ref([
                     <!-- Assessment Scheme Table -->
                     <div class="assessment-scheme mb-8">
                         <h2 class="text-xl font-semibold mb-2">2. Assessment Scheme</h2>
-                        <DataTable :value="assessmentSchemeData" class="assessment-scheme-table" responsiveLayout="scroll">
+                        <DataTable :value="assessmentScheme" class="assessment-scheme-table" responsiveLayout="scroll">
                             <!-- Highlighting Label Column -->
-                            <Column field="assessmentName" header="Assessment Name" ></Column>
+                            <Column field="assessmentName" header="Assessment Name"></Column>
                             <Column field="quantity" header="Quantity"></Column>
                             <Column field="weightedNumber" header="Weighted Number"></Column>
                             <Column field="note" header="Note"></Column>
@@ -71,19 +79,20 @@ const generalInfoData = ref([
                 </TabPanel>
 
                 <TabPanel header="Schedule Detail">
-                    <!-- Accordion for each session -->
-                    <Accordion>
-                        <AccordionTab v-for="session in sessions" :key="session.session" :header="'Session ' + session.session">
-                            <!-- PrimeVue DataTable inside each Accordion Tab -->
-                            <DataTable :value="session.details" responsiveLayout="scroll">
-                                <Column field="content" header="Content"></Column>
-                                <Column field="learningObjectives" header="Learning Objectives"></Column>
-                                <Column field="deliveryType" header="Delivery Type"></Column>
-                                <Column field="duration" header="Duration"></Column>
-                                <Column field="trainingFormat" header="Training Format"></Column>
-                                <Column field="notes" header="Training Materials / Logistics & General Notes"></Column>
-                            </DataTable>
-                        </AccordionTab>
+                    <Accordion value="0" v-for="unit in units" :key="unit.unitName">
+                        <AccordionPanel value="0">
+                            <AccordionHeader>{{ unit.unitName }}</AccordionHeader>
+                            <AccordionContent>
+                                <DataTable :value="unit.unitSections" responsiveLayout="scroll">
+                                    <Column field="title" header="Content"></Column>
+                                    <Column field="deliveryType" header="Delivery Type"></Column>
+                                    <Column field="duration" header="Duration"></Column>
+                                    <Column field="trainingFormat" header="Training Format"></Column>
+                                    <Column field="note"
+                                            header="Training Materials / Logistics & General Notes"></Column>
+                                </DataTable>
+                            </AccordionContent>
+                        </AccordionPanel>
                     </Accordion>
                 </TabPanel>
             </TabView>
@@ -98,6 +107,7 @@ const generalInfoData = ref([
     color: #2c3e50;
     width: 20%;
 }
+
 .assessment-scheme-table .p-datatable-tbody > tr > td {
     padding: 0.5rem 1rem;
 }

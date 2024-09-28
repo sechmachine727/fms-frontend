@@ -4,33 +4,22 @@ import { useTopicStore } from '@/stores/topicStore';
 
 const op = ref();
 const topics = ref();
-const selectedTopic = ref();
+
 const toast = ref(null);
 const topicStore = useTopicStore();
 
-const hidePopover = () => {
-    op.value.hide();
-}
-
 const getStatusLabel = (status) => {
     switch (status) {
-        case 'Active':
+        case 'ACTIVE':
             return 'success'; // Change color to green for active status
 
-        case 'Inactive':
+        case 'INACTIVE':
             return 'warn'; // Change color to red for inactive status
 
         default:
             return null;
     }
 };
-
-onMounted(() => {
-    topicStore.fetchTopics().then(() => {topics.value = topicStore.topics
-                                        console.log(topicStore.topics)
-                                        });
-});
-
 
 const showDialog = ref(false);
 const selectedFile = ref(null);
@@ -73,9 +62,14 @@ const toggle = (event) => {
 }
 const toggleStatus = (event, topic) => {
     op.value.toggle(event);
-    topic.status = topic.status === 'Active' ? 'Inactive' : 'Active';
+    topic.status = topic.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
 }
 
+onMounted(() => {
+    topicStore.fetchTopics().then(() => {topics.value = topicStore.topics
+        console.log(topicStore.topics)
+    });
+});
 
 </script>
 
@@ -122,20 +116,19 @@ const toggleStatus = (event, topic) => {
                     </template>
                 </Dialog>
             </div>
-            <Column field="code" header="Topic Code"  style="width: 15%">
+            <Column field="code" header="Topic Code"  style="width: 20%">
                 <template #body="slotProps">
-                    <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.code}}">{{ slotProps.data.name}}</router-link>
+                    <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id}}" class="router-link-active">{{ slotProps.data.name}}</router-link>
                 </template>
             </Column>
 
             <Column field="name" header="Topic Name" style="width: 25%">
                 <template #body="slotProps">
-                    <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.code}}">{{ slotProps.data.name}}</router-link>
+                    <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id}}" class="router-link-active">{{ slotProps.data.name}}</router-link>
                 </template>
             </Column>
             <Column field="technicalGroupCode" header="Technical Group" style="width: 25%"></Column>
-            <Column field="TechnicalGroup" header="Technical Group" style="width: 25%"></Column>
-            <Column field="status" header="Status" style="width: 10%">
+            <Column field="status" header="Status" style="width: 15%">
                 <template #body="slotProps">
                     <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
                 </template>
@@ -144,13 +137,13 @@ const toggleStatus = (event, topic) => {
             <Column field="lastModifiedBy" header="Last Modified By" style="width: 20%"></Column>
 
             <Column :exportable="false" header="Action"  style="width: 5%">
-                <template #body>
+                <template #body="slotProps">
                     <Button icon="pi pi-ellipsis-v" @click="toggle" outlined rounded class="mr-2" />
 
                     <Popover ref="op">
                         <div class="flex flex-col gap-4 w-[8rem]">
                             <div>
-                                <InputGroup >
+                                <InputGroup  >
                                     <Button :label="slotProps.data.status === 'Active' ? 'Deactivate' : 'Activate'"
                                             :severity="slotProps.data.status === 'Active' ? 'danger' : 'success'"
                                             @click="toggleStatus($event, slotProps.data)"
@@ -169,6 +162,10 @@ const toggleStatus = (event, topic) => {
     font-size: 1.5rem;
     line-height: 2rem;
     font-weight: 700;
+}
+
+.router-link-active {
+    color: #2196F3;
 }
 </style>
 
