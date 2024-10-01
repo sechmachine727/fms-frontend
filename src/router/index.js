@@ -12,13 +12,13 @@ const router = createRouter({
             children: [
                 {
                     path: '/',
-                    redirect: "/class-management/list"
+                    redirect: "/group-management/list"
                 },
 
                 {
-                    path: '/class-management/list',
-                    name: 'class-management',
-                    component: () => import('@/views/Class/ClassList.vue')
+                    path: '/group-management/list',
+                    name: 'group-management',
+                    component: () => import('@/views/Class/GroupList.vue')
                 },
                 {
                     path: '/topic-management/topic',
@@ -44,13 +44,13 @@ const router = createRouter({
                     props: true, // Pass route params as props to the component
                 },
                 {
-                    path: '/class-management/add',
-                    name: 'class-management-add',
-                    component: () => import('@/views/Class/AddClass.vue')
+                    path: '/group-management/add',
+                    name: 'group-management-add',
+                    component: () => import('@/views/Class/GroupAdd.vue')
                 },
                 {
-                    path: '/class-management/in-progress-list',
-                    name: 'class-management-in-progress-list',
+                    path: '/group-management/in-progress-list',
+                    name: 'group-management-in-progress-list',
                     component: () => import('@/views/Class/InProgress.vue')
                 },
                 {
