@@ -11,6 +11,10 @@ class TrainingProgramApi {
         const newUrl = url + `/${id}`
         return get(newUrl)
     }
+     getAllByTechnicalGroupId = (id) => {
+        const newUrl = url + "/technical-group" + `/${id}`
+        return get(newUrl)
+    }
     post = (data) => {
         const result = post(url, data)
         return result

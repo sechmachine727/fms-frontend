@@ -4,13 +4,21 @@ import { defineStore } from "pinia";
 
 export const useUserStore = defineStore("userStore", {
     state: () => ({
-        users: []
+        users: [],
+        classAdmins: []
     }),
 
     actions: {
         async fetchUserList() {
             try {
                 this.users = await userApi.get();
+            } catch (error) {
+                console.error("Failed to fetch trainees", error);
+            }
+        },
+        async fetchClassAdmins() {
+            try {
+                this.classAdmins = await userApi.getAllClassAdmins();
             } catch (error) {
                 console.error("Failed to fetch trainees", error);
             }

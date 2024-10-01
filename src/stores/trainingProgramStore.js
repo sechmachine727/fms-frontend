@@ -6,15 +6,24 @@ export const useTrainingProgramStore = defineStore('trainingProgramStore', {
     state: () => ({
         trainingPrograms: [],
         trainingProgram: null,
+        trainingProgramsByTecnicalGroups: [],
         result: null
     }),
 
     actions: {
-        async fetchTrainingPrograms() {
+        async fetchTrainingPrograms(id) {
             try {
-                this.trainingPrograms = await trainingProgramApi.get()
+                this.trainingPrograms = await trainingProgramApi.getAllByTechnicalGroupId(id)
             } catch (error) {
                 console.error('Failed to fetch trainees', error)
+            }
+        },
+
+         async fetchTrainingProgramsByTechnicalGroup(id) {
+            try {
+                this.trainees = await trainingProgramApi.getAllByTechnicalGroupId(id);
+            } catch (error) {
+                console.error("Failed to fetch trainees", error);
             }
         },
 

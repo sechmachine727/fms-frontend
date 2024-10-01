@@ -1,5 +1,5 @@
 <script setup>
-import { useClassStore } from "@/stores/classStore"; // Correct the import to use `useTraineeStore`
+import { useClassStore } from "@/stores/groupStore"; // Correct the import to use `useTraineeStore`
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 

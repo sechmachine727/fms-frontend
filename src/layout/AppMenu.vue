@@ -7,16 +7,16 @@ const model = ref([
     {
         items: [
             {
-                label: 'Class Management',
+                label: 'Group Management',
                 icon: 'pi pi-fw pi-users',
                 items: [
                     {
-                        label: 'Class List',
-                        to: '/class-management/list'
+                        label: 'Group List',
+                        to: '/group-management/list'
                     },
                     {
-                        label: 'In progress class',
-                        to: '/class-management/in-progress-list'
+                        label: 'In progress group',
+                        to: '/group-management/in-progress-list'
                     }
                 ]
             },

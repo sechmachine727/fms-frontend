@@ -1,16 +1,12 @@
 import { del, get, post, put } from "../axios";
-const url = "/users";
-class UserApi {
+const url = "/groups";
+class ClassApi {
   get = (params) => {
     return get(url, { params });
   };
 
   getDetail = (id) => {
     const newUrl = url + `/${id}`;
-    return get(newUrl);
-  };
-    getAllClassAdmins = () => {
-    const newUrl = url + "/class-admins";
     return get(newUrl);
   };
   post = (data) => {
@@ -29,5 +25,5 @@ class UserApi {
   };
 }
 
-const userApi = new UserApi();
-export default userApi;
+const classApi = new ClassApi();
+export default classApi;

@@ -1,5 +1,6 @@
 <script setup>
 import router from '@/router'
+import { useDepartmentStore } from '@/stores/departmentStore'
 import { useRoleStore } from '@/stores/roleStore'
 import { useUserStore } from '@/stores/userStore'
 import { toTypedSchema } from '@vee-validate/zod'
@@ -23,21 +24,17 @@ const convertToObject = (values) => {
         email: values.email || '',
         employeeId: values.employeeId || '',
         status: values.status ? "Active" : "Inactive",  // Chuyển đổi boolean sang trạng thái
-        contactType: values.contractType ? values.contractType.code : '',
-        department: values.department ? values.department.code : '',
+        contractType: values.contractType ? values.contractType.code : '',
+        departmentId: values.department ? values.department.id : '',
         roles: values.rolesOptions ? values.rolesOptions.map(role => role.id) : [],
     };
 };
-const departments = ref([
-    { code: "hr", name: "Human Resources" },
-    { code: "it", name: "IT Department" },
-    { code: "fin", name: "Finance" },
-]);
+const departments = ref([]);
 const searchQuery = ref()
 const overlay = ref(null);
 const userStore = useUserStore();
 const roleStore = useRoleStore();
-
+const departmentStore = useDepartmentStore();
 
 
 const validationSchema = toTypedSchema(
@@ -71,12 +68,12 @@ const validationSchema = toTypedSchema(
         ),
         department: z
             .object({
-                code: z.string({ required_error: "Department is required" }).min(1, { message: "Department is required" }),
+                id: z.number({ required_error: "Department is required" }).min(1, { message: "Department is required" }),
             }),
         status: z.boolean().default(false),
     })
 );
-const { handleSubmit, errors } = useForm({ validationSchema });
+const { handleSubmit, errors, resetForm } = useForm({ validationSchema });
 const { value: account } = useField("account")
 const { value: email } = useField("email");
 const { value: name } = useField("name");
@@ -88,17 +85,15 @@ const { value: status } = useField("status");
 
 const onSubmit = handleSubmit((values) => {
     const convertedObject = convertToObject(values);
-    console.log(convertedObject);
     userStore.fetchAddUser(convertedObject).then(() => {
         userStore.fetchUserList().then(() => {
             users.value = userStore.users;
-            console.log(userStore.users);
         })
         visible.value = false;
+        resetForm(); // Reset form sau khi thêm thành công
         toast.add({ severity: 'success', summary: 'User successfully added ', life: 3000 });
     }).catch((errors) => {
         if (errors.status === 400) {
-            console.log(errors.response.data);
             toast.add({ severity: 'error', summary: errors.response.data, life: 3000 });
         }
     })
@@ -124,14 +119,17 @@ const handleSearch = (event) => {
     });
 };
 onMounted(() => {
+    departmentStore.fetchDepartments().then(() => {
+        departments.value = departmentStore.departments;
+    })
     userStore.fetchUserList().then(() => {
         users.value = userStore.users;
-        console.log(userStore.users);
     })
     roleStore.fetchRoleList().then(() => {
         roles.value = roleStore.roles;
-        console.log(roleStore.roles);
     })
+
+
 })
 
 
@@ -308,8 +306,8 @@ const handleReset = () => {
                         </div>
                         <div class="flex flex-col gap-2">
                             <label for="department">Department<i class="text-red-600">*</i></label>
-                            <Select id="department" v-model="department" :options="departments" optionLabel="name"
-                                placeholder="Select One" class="w-full"></Select>
+                            <Select id="department" v-model="department" :options="departments"
+                                optionLabel="departmentName" placeholder="Select One" class="w-full"></Select>
                             <small class="text-red-600 " v-if="errors.department">{{ errors.department }}</small>
                         </div>
                         <div class="flex  gap-2">
@@ -322,7 +320,7 @@ const handleReset = () => {
                                 Cancel
                             </button>
                             <button type="submit"
-                                class="bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
+                                class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
                                 Save
                             </button>
                         </div>
