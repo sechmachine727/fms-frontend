@@ -76,10 +76,10 @@ onMounted(() => {
 
 <template>
     <div class="card">
-        <DataTable :rows="6" :rowsPerPageOptions="[6, 12, 20, 50]" :value="topics" currentPageReportTemplate="{first} to {last} of {totalRecords}"
-                   paginator
-                   paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                   tableStyle="min-width: 50rem">
+        <DataTable :rows="6" :rowsPerPageOptions="[6, 12, 20, 50]" :value="topics"
+            currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
+            paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+            tableStyle="min-width: 50rem">
             <div class="flex items-center justify-between">
                 <h1 class="text-2xl">Topic Configuration</h1>
                 <Button icon="pi pi-plus" label="Import Topic" @click="showDialog = true" />
@@ -89,7 +89,7 @@ onMounted(() => {
 
                 <!-- Dialog -->
                 <Dialog :style="{ top: '100px' }" :visible="showDialog" class="w-1/3" header="Import Topic" modal
-                        @visible="showDialog = false">
+                    @visible="showDialog = false">
                     <div class="p-4">
                         <!-- File type and size rules -->
                         <ul class="list-disc ml-4">
@@ -107,8 +107,9 @@ onMounted(() => {
                         <div class="flex items-center mt-4">
                             <!-- Text and FileUpload aligned horizontally using Flexbox -->
                             <p class="mr-4">Select a file to upload:</p>
-                            <FileUpload :auto="false" :maxFileSize="5000000" accept=".xls,.xlsx" chooseLabel="Choose file..." customUpload
-                                        mode="basic" name="file" @select="onFileSelect" />
+                            <FileUpload :auto="false" :maxFileSize="5000000" accept=".xls,.xlsx"
+                                chooseLabel="Choose file..." customUpload mode="basic" name="file"
+                                @select="onFileSelect" />
                         </div>
 
                     </div>
@@ -122,16 +123,16 @@ onMounted(() => {
             </div>
             <Column field="code" header="Topic Code" style="width: 20%">
                 <template #body="slotProps">
-                    <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id}}"
-                                 class="router-link-active">{{ slotProps.data.name }}
+                    <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }"
+                        class="router-link-active">{{ slotProps.data.name }}
                     </router-link>
                 </template>
             </Column>
 
             <Column field="name" header="Topic Name" style="width: 25%">
                 <template #body="slotProps">
-                    <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id}}"
-                                 class="router-link-active">{{ slotProps.data.name }}
+                    <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }"
+                        class="router-link-active">{{ slotProps.data.name }}
                     </router-link>
                 </template>
             </Column>
@@ -153,9 +154,9 @@ onMounted(() => {
                             <div>
                                 <InputGroup>
                                     <Button :label="slotProps.data.status === 'Active' ? 'Deactivate' : 'Activate'"
-                                            :severity="slotProps.data.status === 'Active' ? 'danger' : 'success'"
-                                            @click="toggleStatus($event, slotProps.data)"
-                                            :icon="slotProps.data.status === 'Active' ? 'pi pi-times' : 'pi pi-check'" />
+                                        :severity="slotProps.data.status === 'Active' ? 'danger' : 'success'"
+                                        @click="toggleStatus($event, slotProps.data)"
+                                        :icon="slotProps.data.status === 'Active' ? 'pi pi-times' : 'pi pi-check'" />
                                 </InputGroup>
                             </div>
                         </div>
@@ -176,4 +177,3 @@ onMounted(() => {
     color: #2196F3;
 }
 </style>
-

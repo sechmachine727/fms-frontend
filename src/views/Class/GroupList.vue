@@ -8,32 +8,10 @@ import { useRouter } from 'vue-router';
 const classes = ref([]);
 const classStore = useClassStore();
 const router = useRouter();
-const token = localStorage.getItem("token");
+
 const toast = useToast();
 
-const parseJwt = (token) => {
-    try {
-        const base64Url = token.split('.')[1]; // Extract the payload
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        return JSON.parse(jsonPayload); // Return parsed JSON payload
-    } catch (e) {
-        console.error('Invalid token');
-        return null;
-    }
-}
-const tokenInfo = parseJwt(token);
 
-if (tokenInfo) {
-    // Extract and display the relevant data
-    console.log("Username (sub):", tokenInfo.sub);
-    console.log("Authorities (roles):", tokenInfo.authorities.split(',')); // Split into an array
-    console.log("Expiration (exp):", new Date(tokenInfo.exp * 1000)); // Convert from seconds to date
-} else {
-    console.log("Unable to parse token.");
-}
 onMounted(() => {
     classStore.fetchClassList().then(() => {
         classes.value = classStore.classes;
@@ -68,6 +46,23 @@ const getStatusLabel = (status) => {
     }
 };
 
+const searchQuery = ref("")
+const handleSearch = (event) => {
+    searchQuery.value = event.target.value;
+    console.log(searchQuery.value);
+    if (searchQuery.value) {
+        classStore.fetchClassList(searchQuery.value).then(() => {
+            classes.value = classStore.classes;
+            console.log(classStore.classes);
+        })
+    }
+    router.push({
+        path: '/group-management/list',
+        query: { q: searchQuery.value },
+    });
+
+};
+
 
 const navigateToAdd = () => {
     router.push('/group-management/add');
@@ -82,7 +77,14 @@ const navigateToAdd = () => {
             <Button label="Add" icon="pi pi-plus" iconPos="right" @click="navigateToAdd" />
         </div>
         <Divider />
-        <DataTable :value="classes" scrollable scrollHeight="500px" class="mt-6">
+        <IconField iconPosition="left" class="w-1/4">
+            <InputText class="w-full" type="text" placeholder="Search" @keyup.enter="handleSearch" />
+            <InputIcon class="pi pi-search" />
+        </IconField>
+        <DataTable :value="classes" :rows="4" :rowsPerPageOptions="[4, 6, 12, 20, 50]"
+            currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
+            paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+            tableStyle="min-width: 50rem" scrollable scrollHeight="500px" class="mt-6">
             <Column field="no" header="No" style="min-width: 100px">
                 <template #body="slotProps">
                     {{ classes.indexOf(slotProps.data) + 1 }}
