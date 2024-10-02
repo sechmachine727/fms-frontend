@@ -1,5 +1,6 @@
-import AppLayout from '@/layout/AppLayout.vue';
-import { createRouter, createWebHistory } from 'vue-router';
+import AppLayout from '@/layout/AppLayout.vue'
+import { createRouter, createWebHistory } from 'vue-router'
+
 function isLoggedIn() {
     return !!localStorage.getItem('token');
 }
