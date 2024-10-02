@@ -29,7 +29,6 @@ const handleSearch = (event) => {
         query: { q: searchQuery.value }
     })
 };
-const showDialog = ref(false)
 const overlay = ref(null)
 const selectedItem = ref(null) // Khai báo selectedItem sử dụng ref
 
@@ -54,8 +53,8 @@ const handleDeactive = () => {
 
 const handleEdit = () => {
     if (selectedItem.value) {
+        router.push('/topic-management/training-program/edit/' + selectedItem.value.id)
         console.log('Editing:', selectedItem.value)
-        // Thực hiện các hành động với selectedItem
     }
 }
 
@@ -64,6 +63,10 @@ const handleDelete = () => {
         console.log('Delete training program', selectedItem.value)
         // Thực hiện các hành động với selectedItem
     }
+}
+
+const navigateToAdd = () => {
+    router.push('/topic-management/training-program/add')
 }
 
 onMounted(() => {
@@ -86,7 +89,7 @@ onMounted(() => {
             <template #header>
                 <div class="flex items-center justify-between mb-2">
                     <h1 class="text-2xl">Training Program List</h1>
-                    <Button icon="pi pi-plus" label="Add" @click="showDialog = true" />
+                    <Button icon="pi pi-plus" label="Add" @click="navigateToAdd" />
                 </div>
                 <div class="flex items-center gap-2">
                     <Dropdown v-model="searchQuery" class="w-40" placeholder="Status">
