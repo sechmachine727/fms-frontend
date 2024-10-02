@@ -5,10 +5,12 @@ import { useRoleStore } from '@/stores/roleStore'
 import { useUserStore } from '@/stores/userStore'
 import { toTypedSchema } from '@vee-validate/zod'
 import Toast from 'primevue/toast'
+import { useConfirm } from "primevue/useconfirm"
 import { useToast } from 'primevue/usetoast'
 import { useField, useForm } from 'vee-validate'
 import { onMounted, ref } from 'vue'
 import { z } from 'zod'
+import UpdateUser from './UpdateUser.vue'
 
 const visible = ref(false);
 const users = ref([]);
@@ -18,25 +20,28 @@ const contractTypes = ref([
 ]);
 const toast = useToast();
 const roles = ref([]);
+const departments = ref([]);
+const searchQuery = ref("")
+const overlay = ref(null);
+const userStore = useUserStore();
+const roleStore = useRoleStore();
+const departmentStore = useDepartmentStore();
+const selectedUser = ref(null);
+const isDialogVisible = ref(false);
+const selectedItem = ref(null);
+
+
 const convertToObject = (values) => {
     return {
         account: values.account || '',
         email: values.email || '',
         employeeId: values.employeeId || '',
-        status: values.status ? "Active" : "Inactive",  // Chuyển đổi boolean sang trạng thái
+        status: values.status ? "Active" : "Inactive",
         contractType: values.contractType ? values.contractType.code : '',
         departmentId: values.department ? values.department.id : '',
         roles: values.rolesOptions ? values.rolesOptions.map(role => role.id) : [],
     };
 };
-const departments = ref([]);
-const searchQuery = ref()
-const overlay = ref(null);
-const userStore = useUserStore();
-const roleStore = useRoleStore();
-const departmentStore = useDepartmentStore();
-
-
 const validationSchema = toTypedSchema(
     z.object({
         account: z
@@ -82,6 +87,7 @@ const { value: contractType } = useField("contractType");
 const { value: rolesOptions } = useField("rolesOptions");
 const { value: department } = useField("department");
 const { value: status } = useField("status");
+const confirm = useConfirm();
 
 const onSubmit = handleSubmit((values) => {
     const convertedObject = convertToObject(values);
@@ -99,6 +105,64 @@ const onSubmit = handleSubmit((values) => {
     })
 });
 
+
+const confirmActive = () => {
+    confirm.require({
+        message: 'Are you sure you want to activate this user?',
+        header: 'Activate User',
+        acceptProps: {
+            label: 'Save',
+            outlined: true
+        },
+        rejectProps: {
+            label: 'Cancel',
+            severity: 'secondary',
+            outlined: true
+        },
+        accept: () => {
+            userStore.fetchUpdateStatus(selectedItem.value.id).then(() => {
+                toast.add({ severity: 'success', summary: 'User successfully activated', life: 3000 });
+                userStore.fetchUserList().then(() => {
+                    users.value = userStore.users;
+                })
+            }).catch((errors) => {
+                if (errors.status === 400) {
+                    toast.add({ severity: 'error', summary: errors.response.data, life: 3000 });
+                }
+            })
+        },
+    });
+};
+
+const confirmDeactive = () => {
+    confirm.require({
+        message: 'Are you sure you want to deactivate this user?',
+        header: 'Deactivate User',
+        acceptProps: {
+            label: 'Save',
+            outlined: true
+        },
+        rejectProps: {
+            label: 'Cancel',
+            severity: 'secondary',
+            outlined: true
+        },
+        accept: () => {
+            userStore.fetchUpdateStatus(selectedItem.value.id).then(() => {
+                userStore.fetchUserList().then(() => {
+                    users.value = userStore.users;
+                })
+                toast.add({ severity: 'success', summary: 'Update status success', life: 3000 });
+            }).catch((errors) => {
+                if (errors.status === 400) {
+                    toast.add({ severity: 'error', summary: errors.response.data, life: 3000 });
+                }
+            })
+        },
+    });
+
+}
+
 const getStatusLabel = (status) => {
     switch (status) {
         case 'Active':
@@ -112,13 +176,20 @@ const getStatusLabel = (status) => {
 
 const handleSearch = (event) => {
     searchQuery.value = event.target.value;
-    console.log('Input value:', searchQuery.value);
+    if (searchQuery.value) {
+        userStore.fetchUserList(searchQuery.value).then(() => {
+            users.value = userStore.users;
+            console.log(userStore.users);
+        })
+    }
     router.push({
         path: '/fms-settings/user-management',
         query: { q: searchQuery.value },
     });
+
 };
-onMounted(() => {
+
+const fetchData = () => {
     departmentStore.fetchDepartments().then(() => {
         departments.value = departmentStore.departments;
     })
@@ -128,51 +199,54 @@ onMounted(() => {
     roleStore.fetchRoleList().then(() => {
         roles.value = roleStore.roles;
     })
-
-
+}
+onMounted(() => {
+    fetchData();
 })
 
 
 
-const selectedItem = ref(null); // Khai báo selectedItem sử dụng ref
-
 const showOptions = (event, item) => {
-    selectedItem.value = item; // Lưu đối tượng hiện tại khi mở Popover
-    overlay.value.toggle(event); // Mở Popover
+    selectedItem.value = item;
+    overlay.value.toggle(event);
 };
 
 const handleActive = () => {
     if (selectedItem.value) {
-        // Kích hoạt đối tượng
-        console.log("Activating:", selectedItem.value);
+        confirmActive();
     }
 };
 
 const handleDeactive = () => {
     if (selectedItem.value) {
-        selectedItem.value.isActive = false; // Hủy kích hoạt đối tượng
-        console.log("Deactivating:", selectedItem.value);
+        confirmDeactive();
     }
 };
-
 const handleEdit = () => {
+    isDialogVisible.value = true;
     if (selectedItem.value) {
-        console.log("Editing:", selectedItem.value);
-        // Thực hiện các hành động với selectedItem
+        userStore.fetchUserDetail(selectedItem.value.id).then(() => {
+            selectedUser.value = userStore.user;
+        })
     }
 };
 
 const handleReset = () => {
     if (selectedItem.value) {
         console.log("Resetting password for:", selectedItem.value);
-        // Thực hiện các hành động với selectedItem
     }
+};
+
+const handleUserUpdated = () => {
+    fetchData();
 };
 
 </script>
 
 <template>
     <div>
+        <UpdateUser :visible="isDialogVisible" :selectedUser="selectedUser" :departments="departments"
+            @userUpdated="handleUserUpdated" :roles="roles" />
         <Toast />
         <div class="card">
             <div class="text-xl mb-4 flex justify-between items-center">
@@ -185,7 +259,10 @@ const handleReset = () => {
                     <InputText class="w-full" type="text" placeholder="Search" @keyup.enter="handleSearch" />
                     <InputIcon class="pi pi-search" />
                 </IconField>
-                <DataTable :value="users" scrollable scrollHeight="500px" class="mt-6">
+                <DataTable :rows="4" :rowsPerPageOptions="[4, 6, 12, 20, 50]" :value="users"
+                    currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
+                    paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                    tableStyle="min-width: 50rem" scrollable scrollHeight="500px" class="mt-6">
                     <Column header="No" style="min-width: 35px">
                         <template #body="slotProps">
                             {{ users.indexOf(slotProps.data) + 1 }}
@@ -195,18 +272,18 @@ const handleReset = () => {
                     <Column field="account" header="Account" style="min-width: 100px"></Column>
                     <Column field="contactType" header="Name" style="min-width: 90px"></Column>
                     <Column field="email" header="Email" style="min-width: 100px"></Column>
-                    <Column field="department" header="Department" style="min-width: 150px"></Column>
+                    <Column field="department.departmentName" header="Department" style="min-width: 150px"></Column>
                     <Column header="Roles" style="min-width: 150px">
                         <template #body="slotProps">
                             <!-- slotProps.data đại diện cho dữ liệu của một user (một hàng trong bảng) -->
-                            <span v-if="slotProps.data.roleNames && slotProps.data.roleNames.length">
+                            <span v-if="slotProps.data.roles && slotProps.data.roles.length">
                                 <!-- Hiển thị các vai trò của user -->
-                                <span v-for="(role, index) in slotProps.data.roleNames" :key="index">
-                                    {{ role }}
-                                    <span v-if="index < slotProps.data.roleNames.length - 1">, </span>
+                                <span v-for="(role, index) in slotProps.data.roles" :key="index">
+                                    {{ role.name }}
+                                    <span v-if="index < slotProps.data.roles.length - 1">, </span>
                                 </span>
                             </span>
-                            <span v-else>No roles assigned</span>
+
                         </template>
                     </Column>
 
@@ -219,27 +296,30 @@ const handleReset = () => {
                         <template #body="slotProps">
                             <Button icon="pi pi-ellipsis-v" severity="secondary"
                                 @click="showOptions($event, slotProps.data)" class="p-button-text" />
-                            <Popover ref="overlay" :dismissable="true" class="no-triangle">
+                            <Popover ref="overlay">
                                 <div class="flex flex-col gap-4 w-40">
-                                    <ul class="list-none p-0 m-0 flex flex-col">
+                                    <ul>
                                         <li v-if="selectedItem.status === 'Inactive'"
-                                            @click="handleActive(slotProps.data)"
-                                            class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border">
+                                            class="flex items-center gap-2 px-2 py-3  cursor-pointer rounded-border
+                                    text-green-500 hover:bg-green-100 active:bg-green-100 focus:outline-none focus:ring focus:ring-green-100"
+                                            severity="slotProps.data.status === 'Active' ? 'warn' : 'success'"
+                                            @click="handleActive(slotProps.data)">
 
                                             <i class="pi pi-check"></i>
                                             Activate
                                         </li>
-
                                         <li v-if="selectedItem.status === 'Active'"
-                                            @click="handleDeactive(slotProps.data)"
-                                            class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border">
+                                            class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border
+                                    text-orange-500 hover:bg-orange-100 active:bg-orange-100 focus:outline-none focus:ring focus:ring-orange-100"
+                                            severity="danger" @click="handleDeactive(slotProps.data)">
 
-                                            <i class="pi pi-check"></i>
+                                            <i class="pi pi-times"></i>
                                             Deactive
                                         </li>
-                                        <li @click="handleEdit(slotProps.data)"
-                                            class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border">
-                                            <i class="pi pi-pencil"></i> <!-- Icon cho Edit -->
+                                        <li class="flex items-center gap-2 px-2 py-3  cursor-pointer rounded-border
+                                    text-zinc-500 hover:bg-zinc-100 active:bg-zinc-100 focus:outline-none focus:ring focus:ring-zinc-100"
+                                            severity="secondary" @click="handleEdit(slotProps.data)">
+                                            <i class="pi pi-pencil"></i>
                                             Edit
                                         </li>
                                         <li @click="handleReset(slotProps.data)"
@@ -247,10 +327,10 @@ const handleReset = () => {
                                             <i class="pi pi-sync"></i> <!-- Icon cho Reset Password -->
                                             Reset Password
                                         </li>
+
                                     </ul>
                                 </div>
                             </Popover>
-
                         </template>
                     </Column>
                     <!-- Custom template for no data -->
@@ -328,10 +408,10 @@ const handleReset = () => {
                 </form>
             </Fluid>
         </Dialog>
+        <ConfirmDialog></ConfirmDialog>
     </div>
 </template>
 <style>
-/* Ghi đè class để tắt đầu nhọn của popover */
 .no-triangle::before,
 .no-triangle::after {
     display: none !important;

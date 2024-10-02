@@ -5,13 +5,14 @@ import { defineStore } from "pinia";
 export const useUserStore = defineStore("userStore", {
     state: () => ({
         users: [],
-        classAdmins: []
+        classAdmins: [],
+        user: null,
     }),
 
     actions: {
-        async fetchUserList() {
+        async fetchUserList(params) {
             try {
-                this.users = await userApi.get();
+                this.users = await userApi.get(params);
             } catch (error) {
                 console.error("Failed to fetch trainees", error);
             }
@@ -27,6 +28,34 @@ export const useUserStore = defineStore("userStore", {
             try {
                 const result = await userApi.post(data); 
                 return result.data; 
+            } catch (error) {
+                console.error("Error fetching trainees:", error);
+                throw error; 
+            }
+        },
+         async fetchUpdateUser(id, data) {
+            try {
+                const result = await userApi.put(id,data); 
+                return result.data; 
+            } catch (error) {
+                console.error("Error fetching trainees:", error);
+                throw error; 
+            }
+        },
+         
+        async fetchUpdateStatus(id) {
+            try {
+                const result = await userApi.putUpdateStatus(id); 
+                return result.data; 
+            } catch (error) {
+                console.error("Error fetching trainees:", error);
+                throw error; 
+            }
+        }, 
+         
+         async fetchUserDetail(id) {
+            try {
+                this.user = await userApi.getDetail(id); 
             } catch (error) {
                 console.error("Error fetching trainees:", error);
                 throw error; 

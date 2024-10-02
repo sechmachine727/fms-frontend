@@ -20,8 +20,8 @@ const model = ref([
                     }
                 ]
             },
-            { label: 'Trainer management', icon: 'pi pi-fw pi-user', to: '/#' },
-            { label: 'Trainee management', icon: 'pi pi-fw pi-list', to: '/#' },
+            { label: 'Trainer management', icon: 'pi pi-fw pi-user', to: '#' },
+            { label: 'Trainee management', icon: 'pi pi-fw pi-list', to: '#' },
             {
                 label: 'Content Management',
                 icon: 'pi pi-fw pi-book',
@@ -42,7 +42,7 @@ const model = ref([
                 items: [
                     {
                         label: 'Email template',
-                        to: '/#'
+                        to: '/fams-settings/email-template'
                     },
                     {
                         label: 'User management',

@@ -2,7 +2,11 @@ import { del, get, post, put } from "../axios";
 const url = "/groups";
 class ClassApi {
   get = (params) => {
-    return get(url, { params });
+    if (params === undefined) {
+      params = ""
+    }
+    const newUrl = url + "?search=" + params;
+    return get(newUrl, { params });
   };
 
   getDetail = (id) => {

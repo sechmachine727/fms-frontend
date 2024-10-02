@@ -1,8 +1,12 @@
 import { del, get, post, put } from "../axios";
 const url = "/users";
 class UserApi {
-  get = (params) => {
-    return get(url, { params });
+  get = (search) => {
+    if (search === undefined) {
+      search = ""
+    }
+    const newUrl = url + "?search=" + search
+    return get(newUrl, { search });
   };
 
   getDetail = (id) => {
@@ -21,6 +25,11 @@ class UserApi {
   put = (id, data) => {
     const newUrl = url + `/${id}`;
     return put(newUrl, data);
+  };
+
+  putUpdateStatus = (id) => {
+    const newUrl = url + `/change-status` + `/${id}`;
+    return put(newUrl);
   };
 
   delete = (id) => {

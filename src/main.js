@@ -16,6 +16,7 @@ const app = createApp(App);
 
 app.use(router);
 app.use(pinia)
+app.use(ConfirmationService);
 app.use(PrimeVue, {
     theme: {
         preset: Aura,
