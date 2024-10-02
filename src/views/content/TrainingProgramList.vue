@@ -68,11 +68,12 @@ const handleDelete = () => {
 const navigateToAdd = () => {
     router.push('/topic-management/training-program/add')
 }
-
+const topicInfoList = ref()
 onMounted(() => {
     trainingProgramStore.fetchTrainingPrograms().then(() => {
         trainingPrograms.value = trainingProgramStore.trainingPrograms
         console.log(trainingProgramStore.trainingPrograms)
+        topicInfoList.value = trainingProgramStore.trainingPrograms.topicInfoList
     })
 })
 </script>
@@ -128,9 +129,9 @@ onMounted(() => {
                     </router-link>
                 </template>
             </Column>
-            <Column field="Region" header="Region" style="min-width: 100px"></Column>
+            <Column field="region" header="Region" style="min-width: 100px"></Column>
             <Column field="technicalGroupCode" header="Technical Group" style="min-width: 150px"></Column>
-            <Column field="Topic" header="Topic" style="min-width: 150px"></Column>
+            <Column field="topicInfoList" header="Topic" style="min-width: 150px"></Column>
 
             <Column field="modifiedDate" header="Last Modified Date" style="min-width: 160px"></Column>
             <Column field="lastModifiedBy" header="Last Modified By" style="min-width: 160px"></Column>

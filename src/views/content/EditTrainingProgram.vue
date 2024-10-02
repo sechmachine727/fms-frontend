@@ -1,6 +1,7 @@
 <script setup>
 import { useTopicStore } from '@/stores/topicStore'
 import { useTrainingProgramStore } from '@/stores/trainingProgramStore'
+import { useTechnicalGroupStore } from '@/stores/technicalGroupStore'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import { onMounted, ref } from 'vue'
@@ -11,7 +12,10 @@ import { useRoute } from 'vue-router'
 // const topicName = ref()
 const topicStore = useTopicStore()
 const trainingProgramStore = useTrainingProgramStore()
+const technicalGroupStore = useTechnicalGroupStore()
 
+const trainingProgram = ref(null)
+const technicalGroupCodeOptions = ref([])
 const regionOptions = ref([
     { name: '-', code: '-' },
     { name: 'FSA.HN', code: 'HN' },
@@ -20,44 +24,6 @@ const regionOptions = ref([
     { name: 'FSA.QN', code: 'QN' }
 ])
 
-const technicalGroupTypes = ref([
-    { name: 'C#', code: 'C#' },
-    { name: 'Front End', code: 'FE' },
-    { name: 'Java', code: 'Java' },
-    { name: 'Out System', code: 'Out System' },
-    { name: 'CPP', code: 'CPP' },
-    { name: 'DevOps', code: 'DevOps' },
-    { name: 'SAP', code: 'SAP' },
-    { name: 'Certificate', code: 'Certificate' },
-    { name: 'Python', code: 'Python' },
-    { name: 'ABAP', code: 'ABAP' },
-    { name: 'MBD', code: 'MBD' },
-    { name: 'QA', code: 'QA' },
-    { name: 'Azure', code: 'Azure' },
-    { name: 'Cloud Computing', code: 'Cloud Computing' },
-    { name: 'ASE', code: 'ASE' },
-    { name: 'Sharepoint', code: 'Sharepoint' },
-    { name: 'Data Analytics', code: 'Data Analytics' },
-    { name: 'NodeJS', code: 'NodeJS' },
-    { name: 'Infra', code: 'Infra' },
-    { name: 'PHP', code: 'PHP' },
-    { name: 'Angular', code: 'Angular' },
-    { name: 'IT Fundamental', code: 'IT Fundamental' },
-    { name: 'React Native', code: 'React Native' },
-    { name: 'Docker', code: 'Docker' },
-    { name: '.NET', code: '.NET' },
-    { name: 'CAE', code: 'CAE' },
-    { name: 'Cobol', code: 'Cobol' },
-    { name: 'AI', code: 'AI' },
-    { name: 'Data Engineer', code: 'Data Engineer' },
-    { name: 'IOS', code: 'IOS' },
-    { name: 'Automation Test', code: 'Automation Test' },
-    { name: 'SQL', code: 'SQL' },
-    { name: 'AUTOSAR', code: 'AUTOSAR' },
-    { name: 'Manual Test', code: 'Manual Test' },
-    { name: 'Maven', code: 'Maven' },
-    { name: 'Linux', code: 'Linux' }
-])
 
 // Validation schema using Zod
 const validationSchema = toTypedSchema(
@@ -71,14 +37,10 @@ const validationSchema = toTypedSchema(
         trainingProgramName: z
             .string({ required_error: 'Name is required' })
             .min(1, { message: 'Name is required' }),
-        technicalGroupCode: z.preprocess(
-            (val) => (val === undefined || val === null ? [] : val),
-            z.array(
-                z.object({
-                    code: z.string().min(1, { message: 'Technical Group code is required' })
-                })
-            ).min(1, { message: 'Technical Group is required' })
-        ),
+        technicalGroupCode: z
+            .object({
+                id: z.number({ required_error: 'Technical Group code is required' }).min(1, { message: 'Technical Group code is required' })
+            }),
         status: z
             .boolean()
             .default(false),
@@ -91,9 +53,16 @@ const validationSchema = toTypedSchema(
         description: z
             .string()
             .optional(),
-        topicData: z
-            .string()
-            .optional()
+        topicData: z.tuple([
+            z.array(z.object({
+                label: z.string(),
+                value: z.string()
+            })),
+            z.array(z.object({
+                label: z.string(),
+                value: z.string()
+            })).nonempty({ message: 'At least one topic must be selected' }) // Second array for selected topics
+        ])
     })
 )
 
@@ -112,14 +81,23 @@ const { value: topicData } = useField('topicData')
 // const { value: version } = useField('version')
 
 const onSubmit = handleSubmit((values) => {
+
     console.log('Form values:', values)
+    // console.log('Selected topics:', topicData.value[1]);
+    const selectedTopics = values.topicData[1]
+    console.log(selectedTopics)
+    // router.push('/topic-management/training-program')
 })
 
 const navigateToBack = () => {
     router.push('/topic-management/training-program')
 }
 
-const trainingProgram = ref()
+const onChange = (value) => {
+    console.log('Selected Topics Changed:', value)
+    topicData.value.target = value // Update the selected topics
+}
+
 onMounted(() => {
     const route = useRoute()
     const trainingProgramId = route.params.id
@@ -127,18 +105,20 @@ onMounted(() => {
     trainingProgramStore.fetchTrainingProgramDetail(trainingProgramId).then(() => {
         trainingProgram.value = trainingProgramStore.trainingProgram
 
-        // Populate form fields with the fetched training program data
-        code.value = trainingProgram.value?.code || ''
-        version.value = trainingProgram.value?.version || ''
-        trainingProgramName.value = trainingProgram.value?.trainingProgramName || ''
-        contentLink.value = trainingProgram.value?.contentLink || ''
-        description.value = trainingProgram.value?.description || ''
-        status.value = trainingProgram.value?.status || false
-
-        region.value = trainingProgram.value?.regionOptions || ''
-        technicalGroupCode.value = trainingProgram.value?.technicalGroupTypes || []
-        topicData.value = trainingProgram.value?.topicData || []
+        if (trainingProgram.value) {
+            // Populate form fields with the fetched training program data
+            code.value = trainingProgram.value.code || ''
+            version.value = trainingProgram.value.version || ''
+            trainingProgramName.value = trainingProgram.value.trainingProgramName || ''
+            contentLink.value = trainingProgram.value.contentLink || ''
+            description.value = trainingProgram.value.description || ''
+            status.value = trainingProgram.value.status
+            region.value = trainingProgram.value.regionOptions || ''
+            technicalGroupCode.value = trainingProgram.value.technicalGroupCode || []
+            topicData.value = trainingProgram.value.topicData || []
+        }
     })
+
 
     topicStore.fetchTopics().then(() => {
         const data = topicStore.topics.map(topic => ({
@@ -146,6 +126,11 @@ onMounted(() => {
             value: topic.code
         }))
         topicData.value = [data, []]
+        console.log('Topic data:', topicData.value)
+    })
+
+    technicalGroupStore.fetchTechnicalGroup().then(() => {
+        technicalGroupCodeOptions.value = technicalGroupStore.technicalGroups
     })
 })
 </script>
@@ -209,19 +194,17 @@ onMounted(() => {
                                 }}</small>
                         </div>
 
-                        <div class="flex flex-wrap gap-2 w-full mt-5">
-                            <label for="technicalType"> Technical Group
-                                <i class="text-red-600">*</i>
-                            </label>
-                            <MultiSelect id="technicalType" v-model="technicalGroupCode" :maxSelectedLabels="3"
-                                         :options="technicalGroupTypes"
-                                         class="w-full md:w-80" filter optionLabel="name"
-                                         placeholder="Select Technical Group"></MultiSelect>
-                            <!--                        <small class="text-red-600 " v-if="errors.technicalGroupTypeOptions"> {{ errors.technicalGroupTypeOptions }}</small>-->
-                        </div>
-                        <div class="flex flex-wrap gap-2 w-full">
-                            <small v-if="errors.technicalGroupCode" class="text-red-600 ml-2">
-                                {{ errors.technicalGroupCode }}</small>
+                        <div class="flex flex-col md:flex-row gap-4 mt-3">
+                            <div class="flex flex-wrap gap-2 w-full">
+                                <label for="technicalGroupCode"> Technical Group
+                                    <i class="text-red-600">*</i>
+                                </label>
+                                <Select id="technicalGroupCode" v-model="technicalGroupCode"
+                                        :options="technicalGroupCodeOptions" class="w-full md:w-80" filter
+                                        optionLabel="code" placeholder="Select Technical Group"></Select>
+                                <small v-if="errors.technicalGroupCode" class="text-red-600 ml-2">
+                                    {{ errors.technicalGroupCode }}</small>
+                            </div>
                         </div>
 
                         <div class="flex flex-wrap gap-2 w-full mt-5">
@@ -268,22 +251,21 @@ onMounted(() => {
                         </div>
                     </div>
 
-                    <div class="flex-1 ">
-                        <div class="flex-1 ">
-                            <div class="flex flex-wrap gap-2 w-full mt-3">
-                                <label for="topicData">
-                                    Topic
-                                    <i class="text-red-600">*</i>
-                                </label>
-                                <PickList v-model="topicData" breakpoint="1400px" dataKey="value">
-                                    <template #option="{ option }">
-                                        {{ option.label }}
-                                    </template>
-                                </PickList>
-                            </div>
-                            <div class="flex flex-wrap gap-2 w-full">
-                                <!--                            <small class="text-red-600 ml-2" v-if="errors.topicData"> {{ errors.topicData }}</small>-->
-                            </div>
+                    <div class="flex-1">
+                        <div class="flex flex-wrap gap-2 w-full mt-3">
+                            <label for="topicData">
+                                Topic
+                                <i class="text-red-600">*</i>
+                            </label>
+                            <PickList v-model="topicData" breakpoint="1400px" dataKey="value"
+                                      @update:modelValue="onChange">
+                                <template #option="{ option }">
+                                    {{ option.label }}
+                                </template>
+                            </PickList>
+                        </div>
+                        <div class="flex flex-wrap gap-2 w-full">
+                            <small v-if="errors.topicData" class="text-red-600 ml-2">{{ errors.topicData }}</small>
                         </div>
                     </div>
                 </div>

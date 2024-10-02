@@ -57,7 +57,7 @@ const router = createRouter({
                 {
                     path: '/class-management/add',
                     name: 'class-management-add',
-                    component: () => import('@/views/Class/AddClass.vue')
+                    component: () => import('@/views/Class/GroupAdd.vue')
                 },
 
                 {

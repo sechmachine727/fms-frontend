@@ -11,9 +11,9 @@ export const useTrainingProgramStore = defineStore('trainingProgramStore', {
     }),
 
     actions: {
-        async fetchTrainingPrograms(id) {
+        async fetchTrainingPrograms() {
             try {
-                this.trainingPrograms = await trainingProgramApi.getAllByTechnicalGroupId(id)
+                this.trainingPrograms = await trainingProgramApi.get()
             } catch (error) {
                 console.error('Failed to fetch trainees', error)
             }

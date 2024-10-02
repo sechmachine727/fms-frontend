@@ -1,13 +1,16 @@
 <script setup>
+import router from '@/router'
 import { useTopicStore } from '@/stores/topicStore'
+import { useTechnicalGroupStore } from '@/stores/technicalGroupStore'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import { onMounted, ref } from 'vue'
 import { z } from 'zod'
-import router from '@/router'
 
-// const topicName = ref()
 const topicStore = useTopicStore()
+const technicalGroupStore = useTechnicalGroupStore()
+
+const technicalGroupTypeOptions = ref([])
 
 const regionOptions = ref([
     { name: '-', code: '-' },
@@ -15,45 +18,6 @@ const regionOptions = ref([
     { name: 'FSA.DN', code: 'DN' },
     { name: 'FSA.HCM', code: 'HCM' },
     { name: 'FSA.QN', code: 'QN' }
-])
-
-const technicalGroupTypes = ref([
-    { name: 'C#', code: 'C#' },
-    { name: 'Front End', code: 'FE' },
-    { name: 'Java', code: 'Java' },
-    { name: 'Out System', code: 'Out System' },
-    { name: 'CPP', code: 'CPP' },
-    { name: 'DevOps', code: 'DevOps' },
-    { name: 'SAP', code: 'SAP' },
-    { name: 'Certificate', code: 'Certificate' },
-    { name: 'Python', code: 'Python' },
-    { name: 'ABAP', code: 'ABAP' },
-    { name: 'MBD', code: 'MBD' },
-    { name: 'QA', code: 'QA' },
-    { name: 'Azure', code: 'Azure' },
-    { name: 'Cloud Computing', code: 'Cloud Computing' },
-    { name: 'ASE', code: 'ASE' },
-    { name: 'Sharepoint', code: 'Sharepoint' },
-    { name: 'Data Analytics', code: 'Data Analytics' },
-    { name: 'NodeJS', code: 'NodeJS' },
-    { name: 'Infra', code: 'Infra' },
-    { name: 'PHP', code: 'PHP' },
-    { name: 'Angular', code: 'Angular' },
-    { name: 'IT Fundamental', code: 'IT Fundamental' },
-    { name: 'React Native', code: 'React Native' },
-    { name: 'Docker', code: 'Docker' },
-    { name: '.NET', code: '.NET' },
-    { name: 'CAE', code: 'CAE' },
-    { name: 'Cobol', code: 'Cobol' },
-    { name: 'AI', code: 'AI' },
-    { name: 'Data Engineer', code: 'Data Engineer' },
-    { name: 'IOS', code: 'IOS' },
-    { name: 'Automation Test', code: 'Automation Test' },
-    { name: 'SQL', code: 'SQL' },
-    { name: 'AUTOSAR', code: 'AUTOSAR' },
-    { name: 'Manual Test', code: 'Manual Test' },
-    { name: 'Maven', code: 'Maven' },
-    { name: 'Linux', code: 'Linux' }
 ])
 
 // Validation schema using Zod
@@ -68,20 +32,13 @@ const validationSchema = toTypedSchema(
         name: z
             .string({ required_error: 'Name is required' })
             .min(1, { message: 'Name is required' }),
-        technicalGroupType: z.preprocess(
-            (val) => (val === undefined || val === null ? [] : val),
-            z.array(
-                z.object({
-                    code: z.string().min(1, { message: 'Technical Group code is required' })
-                })
-            ).min(1, { message: 'Technical Group is required' })
-        ),
+        technicalGroupType: z
+            .object({
+                id: z.number({ required_error: 'Technical Group code is required' }).min(1, { message: 'Technical Group code is required' })
+            }),
         status: z
             .boolean()
             .default(false),
-        // region: z
-        //     .string()
-        //     .optional(),
         region: z
             .object({
                 code: z.string()
@@ -93,15 +50,23 @@ const validationSchema = toTypedSchema(
         description: z
             .string()
             .optional(),
-        selectedTopics: z.array(z.object({
-            label: z.string(),
-            value: z.string()
-        })).min(1, { message: 'At least one topic must be selected' })
+        topicData: z.tuple([
+            z.array(z.object({
+                label: z.string(),
+                value: z.string()
+            })),
+            z.array(z.object({
+                label: z.string(),
+                value: z.string()
+            })).nonempty({ message: 'At least one topic must be selected' }) // Second array for selected topics
+        ])
     })
 )
 
 // Set up form validation with VeeValidate
-const { handleSubmit, errors } = useForm({ validationSchema })
+const { handleSubmit, errors } = useForm({
+    validationSchema
+})
 const { value: code } = useField('code')
 const { value: version } = useField('version')
 const { value: name } = useField('name')
@@ -110,13 +75,16 @@ const { value: region } = useField('region')
 const { value: contentLink } = useField('contentLink')
 const { value: status } = useField('status')
 const { value: description } = useField('description')
-const { value: selectedTopics } = useField('selectedTopics')
-const topicData = ref([])
+const { value: topicData } = useField('topicData')
+
 
 const onSubmit = handleSubmit((values) => {
 
     console.log('Form values:', values)
     // console.log('Selected topics:', topicData.value[1]);
+    const selectedTopics = values.topicData[1]
+    console.log(selectedTopics)
+    // router.push('/topic-management/training-program')
 })
 
 const navigateToBack = () => {
@@ -125,14 +93,27 @@ const navigateToBack = () => {
 
 onMounted(() => {
     topicStore.fetchTopics().then(() => {
-        topicData.value = topicStore.topics.map(topic => ({
+        const data = topicStore.topics.map(topic => ({
             label: `${topic.code} - ${topic.name} - ${topic.version}`,
             value: topic.code
         }))
-        selectedTopics.value = []
+        topicData.value = [data, []]
         console.log('Topic data:', topicData.value)
+
+    })
+
+    technicalGroupStore.fetchTechnicalGroup().then(() => {
+        technicalGroupTypeOptions.value = technicalGroupStore.technicalGroups
+        console.log('Technical group type:', technicalGroupTypeOptions.value)
     })
 })
+
+const onChange = (value) => {
+    console.log('Selected Topics Changed:', value)
+    topicData.value.target = value // Update the selected topics
+}
+
+
 </script>
 
 <template>
@@ -152,9 +133,8 @@ onMounted(() => {
                                     Code
                                     <i class="text-red-600">*</i>
                                 </label>
-                                <InputText id="Code" v-model="code"
-                                           :class="`{ 'p-invalid': errors.code }`" placeholder="Code"
-                                           type="text" />
+                                <InputText id="Code" v-model="code" :class="`{ 'p-invalid': errors.code }`"
+                                           placeholder="Code" type="text" />
                             </div>
                         </div>
                         <div class="flex flex-wrap gap-2 w-full">
@@ -167,9 +147,8 @@ onMounted(() => {
                                     Version
                                     <i class="text-red-600">*</i>
                                 </label>
-                                <InputText id="Version" v-model="version"
-                                           :class="`{ 'p-invalid': errors.version }`" placeholder="Version"
-                                           type="text" />
+                                <InputText id="Version" v-model="version" :class="`{ 'p-invalid': errors.version }`"
+                                           placeholder="Version" type="text" />
                             </div>
                         </div>
                         <div class="flex flex-wrap gap-2 w-full">
@@ -182,30 +161,27 @@ onMounted(() => {
                                     Name
                                     <i class="text-red-600">*</i>
                                 </label>
-                                <InputText id="Name" v-model="name"
-                                           :class="`{ 'p-invalid': errors.name }`" placeholder="Name"
-                                           type="text" />
+                                <InputText id="Name" v-model="name" :class="`{ 'p-invalid': errors.name }`"
+                                           placeholder="Name" type="text" />
                             </div>
                         </div>
                         <div class="flex flex-wrap gap-2 w-full">
                             <small v-if="errors.name" class="text-red-600"> {{ errors.name }}</small>
                         </div>
 
-                        <div class="flex flex-wrap gap-2 w-full mt-5">
-                            <label for="technicalType"> Technical Group
-                                <i class="text-red-600">*</i>
-                            </label>
-                            <MultiSelect id="technicalGroupTypeOptions" v-model="technicalGroupType" :maxSelectedLabels="3"
-                                         :options="technicalGroupTypes"
-                                         class="w-full md:w-80" filter
-                                         optionLabel="name"
-                                         placeholder="Select Technical Group"></MultiSelect>
-                            <!--                        <small class="text-red-600 " v-if="errors.technicalGroupTypeOptions"> {{ errors.technicalGroupTypeOptions }}</small>-->
+                        <div class="flex flex-col md:flex-row gap-4 mt-3">
+                            <div class="flex flex-wrap gap-2 w-full">
+                                <label for="technicalType"> Technical Group
+                                    <i class="text-red-600">*</i>
+                                </label>
+                                <Select id="technicalType" v-model="technicalGroupType"
+                                        :options="technicalGroupTypeOptions" class="w-full md:w-80" filter
+                                        optionLabel="code" placeholder="Select Technical Group"></Select>
+                                <small v-if="errors.technicalGroupType" class="text-red-600 ml-2">
+                                    {{ errors.technicalGroupType }}</small>
+                            </div>
                         </div>
-                        <div class="flex flex-wrap gap-2 w-full">
-                            <small v-if="errors.technicalGroupType" class="text-red-600 ml-2">
-                                {{ errors.technicalGroupType }}</small>
-                        </div>
+
 
                         <div class="flex flex-wrap gap-2 w-full mt-5">
                             <label for="status">Status</label>
@@ -216,16 +192,18 @@ onMounted(() => {
 
                             <!-- Dynamic Status Text with oval border and lighter background -->
                             <span :class="status
-                                    ? 'text-green-600 bg-green-100 '
-                                    : 'text-yellow-600 bg-yellow-100'" class="ml-2 font-semibold px-3 py-1 rounded-full">{{ status ? 'Active' : 'Inactive' }}</span>
+                                ? 'text-green-600 bg-green-100 '
+                                : 'text-yellow-600 bg-yellow-100'"
+                                  class="ml-2 font-semibold px-3 py-1 rounded-full">{{ status ? 'Active' : 'Inactive'
+                                }}</span>
                         </div>
 
                         <div class="flex flex-wrap gap-2 w-full mt-3">
                             <label for="Region">
                                 Region
                             </label>
-                            <Select id="Region" v-model="region" :options="regionOptions"
-                                    class="w-full" optionLabel="name" placeholder="Select One"></Select>
+                            <Select id="Region" v-model="region" :options="regionOptions" class="w-full"
+                                    optionLabel="name" placeholder="Select One"></Select>
                         </div>
 
                         <div class="flex flex-col md:flex-row gap-4 mt-3">
@@ -257,33 +235,23 @@ onMounted(() => {
                                 Topic
                                 <i class="text-red-600">*</i>
                             </label>
-                            <PickList
-                                v-model="selectedTopics"
-                                :source="topicData"
-                                :target="selectedTopics"
-                                breakpoint="1400px"
+                            <PickList v-model="topicData" breakpoint="1400px" @update:modelValue="onChange"
                                 dataKey="value">
-                                <template #sourceheader>
-                                    <h4>Available Topics</h4>
-                                </template>
-                                <template #targetheader>
-                                    <h4>Selected Topics</h4>
-                                </template>
                                 <template #option="{ option }">
                                     {{ option.label }}
                                 </template>
                             </PickList>
                         </div>
                         <div class="flex flex-wrap gap-2 w-full">
-                            <small v-if="errors.selectedTopics" class="text-red-600 ml-2">{{ errors.selectedTopics
-                                }}</small>
+                            <small v-if="errors.topicData" class="text-red-600 ml-2">{{ errors.topicData }}</small>
                         </div>
                     </div>
                 </div>
 
                 <div class="mt-4 flex justify-between">
-                    <button class="mr-2 bg-gray-200 hover:bg-gray-400 active:bg-gray-200 text-black font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-                            @click="navigateToBack">
+                    <button
+                        class="mr-2 bg-gray-200 hover:bg-gray-400 active:bg-gray-200 text-black font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
+                        @click="navigateToBack">
                         Back to Training Program List
                     </button>
                     <div class="flex gap-2">
@@ -291,8 +259,9 @@ onMounted(() => {
                             class="bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
                             Cancel
                         </button>
-                        <button class="bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-                                type="submit">
+                        <button
+                            class="bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
+                            type="submit">
                             Save
                         </button>
                     </div>
@@ -301,4 +270,3 @@ onMounted(() => {
         </Fluid>
     </div>
 </template>
-
