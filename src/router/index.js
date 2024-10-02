@@ -58,6 +58,11 @@ const router = createRouter({
                     name: 'fms-settings-user-management',
                     component: () => import('@/views/user/UserList.vue')
                 },
+                 {
+                    path: '/fams-settings/email-template',
+                    name: 'fms-settings-email-template-management',
+                    component: () => import('@/views/templateEmail/TemplateEmailList.vue')
+                },
             ]
         },
         {

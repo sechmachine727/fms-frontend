@@ -35,7 +35,7 @@ const getStatusLabel = (status) => {
 };
 
 const navigateToAdd = () => {
-    router.push('/class-management/add');
+    router.push('/group-management/add');
 };
 </script>
 
@@ -47,7 +47,10 @@ const navigateToAdd = () => {
                 @click="navigateToAdd" />
         </div>
         <Divider />
-        <DataTable :value="classes" scrollable scrollHeight="500px" class="mt-6">
+        <DataTable :value="classes" :rows="4" :rowsPerPageOptions="[4, 6, 12, 20, 50]"
+            currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
+            paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+            tableStyle="min-width: 50rem" scrollable scrollHeight="500px" class="mt-6">
             <Column field="no" header="No" style="min-width: 100px"></Column>
             <Column field="classCode" header="Class Code" style="min-width: 100px"></Column>
             <Column field="traineetype" header="Trainee Type" style="min-width: 150px"></Column>

@@ -8,9 +8,9 @@ export const useClassStore = defineStore("classStore", {
     }),
 
     actions: {
-       async fetchClassList() {
+       async fetchClassList(search) {
              try {
-                this.classes = await classApi.get();
+                this.classes = await classApi.get(search);
             } catch (error) {
                 console.error("Failed to fetch trainees", error);
             }
