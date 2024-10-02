@@ -93,7 +93,7 @@ const validationSchema = toTypedSchema(
         description: z
             .string()
             .optional(),
-        topicData: z.array(z.object({
+        selectedTopics: z.array(z.object({
             label: z.string(),
             value: z.string()
         })).min(1, { message: 'At least one topic must be selected' })
@@ -111,7 +111,7 @@ const { value: contentLink } = useField('contentLink')
 const { value: status } = useField('status')
 const { value: description } = useField('description')
 const { value: selectedTopics } = useField('selectedTopics')
-
+const topicData = ref([])
 
 const onSubmit = handleSubmit((values) => {
 
@@ -122,7 +122,7 @@ const onSubmit = handleSubmit((values) => {
 const navigateToBack = () => {
     router.push('/topic-management/training-program')
 }
-const topicData = ref([])
+
 onMounted(() => {
     topicStore.fetchTopics().then(() => {
         topicData.value = topicStore.topics.map(topic => ({
@@ -263,13 +263,20 @@ onMounted(() => {
                                 :target="selectedTopics"
                                 breakpoint="1400px"
                                 dataKey="value">
+                                <template #sourceheader>
+                                    <h4>Available Topics</h4>
+                                </template>
+                                <template #targetheader>
+                                    <h4>Selected Topics</h4>
+                                </template>
                                 <template #option="{ option }">
                                     {{ option.label }}
                                 </template>
                             </PickList>
                         </div>
                         <div class="flex flex-wrap gap-2 w-full">
-                            <small v-if="errors.topicData" class="text-red-600 ml-2">{{ errors.topicData }}</small>
+                            <small v-if="errors.selectedTopics" class="text-red-600 ml-2">{{ errors.selectedTopics
+                                }}</small>
                         </div>
                     </div>
                 </div>
