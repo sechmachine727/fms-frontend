@@ -9,6 +9,7 @@ import { useConfirm } from "primevue/useconfirm"
 import { useToast } from 'primevue/usetoast'
 import { useField, useForm } from 'vee-validate'
 import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { z } from 'zod'
 import UpdateUser from './UpdateUser.vue'
 
@@ -17,6 +18,12 @@ const users = ref([]);
 const contractTypes = ref([
     { code: "Official", name: "Official" },
     { code: "Collaborator", name: "Collaborator" },
+]);
+
+const statuses = ref([
+    { id: "All", name: "All" },
+    { id: "Active", name: "Active" },
+    { id: "Inactive", name: "Inactive" },
 ]);
 const toast = useToast();
 const roles = ref([]);
@@ -35,6 +42,7 @@ const convertToObject = (values) => {
     return {
         account: values.account || '',
         email: values.email || '',
+        name: values.name || '',
         employeeId: values.employeeId || '',
         status: values.status ? "Active" : "Inactive",
         contractType: values.contractType ? values.contractType.code : '',
@@ -78,7 +86,7 @@ const validationSchema = toTypedSchema(
         status: z.boolean().default(false),
     })
 );
-const { handleSubmit, errors, resetForm } = useForm({ validationSchema });
+const { handleSubmit, errors, resetForm, setFieldError } = useForm({ validationSchema });
 const { value: account } = useField("account")
 const { value: email } = useField("email");
 const { value: name } = useField("name");
@@ -96,19 +104,34 @@ const onSubmit = handleSubmit((values) => {
             users.value = userStore.users;
         })
         visible.value = false;
-        resetForm(); // Reset form sau khi thêm thành công
+        resetForm();
         toast.add({ severity: 'success', summary: 'User successfully added ', life: 3000 });
-    }).catch((errors) => {
-        if (errors.status === 400) {
-            toast.add({ severity: 'error', summary: errors.response.data, life: 3000 });
+    }).catch((error) => {
+
+        if (error.status === 400) {
+
+            if (error.response.data.employeeId) {
+                setFieldError('employeeId', error.response.data.employeeId);
+            }
+
+            if (error.response.data.account) {
+                setFieldError('account', error.response.data.account);
+            }
+
+            if (error.response.data.email) {
+                setFieldError('email', error.response.data.email);
+            }
+        } else {
+            toast.add({ severity: 'error', summary: error.response.data.error, life: 3000 });
         }
     })
 });
 
 
-const confirmActive = () => {
+const confirmActive = (value) => {
     confirm.require({
-        message: 'Are you sure you want to activate this user?',
+        group: 'templating',
+        message: 'Are you sure you want to activate this account.' + value.account,
         header: 'Activate User',
         acceptProps: {
             label: 'Save',
@@ -134,9 +157,10 @@ const confirmActive = () => {
     });
 };
 
-const confirmDeactive = () => {
+const confirmDeactive = (value) => {
     confirm.require({
-        message: 'Are you sure you want to deactivate this user?',
+        group: 'templating',
+        message: 'Are you sure you want to deactivate this account.' + value.account,
         header: 'Deactivate User',
         acceptProps: {
             label: 'Save',
@@ -152,7 +176,7 @@ const confirmDeactive = () => {
                 userStore.fetchUserList().then(() => {
                     users.value = userStore.users;
                 })
-                toast.add({ severity: 'success', summary: 'Update status success', life: 3000 });
+                toast.add({ severity: 'success', summary: 'User successfully deactivated', life: 3000 });
             }).catch((errors) => {
                 if (errors.status === 400) {
                     toast.add({ severity: 'error', summary: errors.response.data, life: 3000 });
@@ -174,20 +198,7 @@ const getStatusLabel = (status) => {
     }
 };
 
-const handleSearch = (event) => {
-    searchQuery.value = event.target.value;
-    if (searchQuery.value) {
-        userStore.fetchUserList(searchQuery.value).then(() => {
-            users.value = userStore.users;
-            console.log(userStore.users);
-        })
-    }
-    router.push({
-        path: '/fms-settings/user-management',
-        query: { q: searchQuery.value },
-    });
-
-};
+const route = useRoute(); // Khởi tạo route
 
 const fetchData = () => {
     departmentStore.fetchDepartments().then(() => {
@@ -195,17 +206,114 @@ const fetchData = () => {
     })
     userStore.fetchUserList().then(() => {
         users.value = userStore.users;
+        querySearchFromUrl();
     })
     roleStore.fetchRoleList().then(() => {
         roles.value = roleStore.roles;
     })
 }
+
+const querySearchFromUrl = () => {
+    const getQueryFromUrl = ref(route.query.q || "");
+    const getQueryActiveFromUrl = ref(route.query.active || "");
+    const getQueryRoleFromUrl = ref(route.query.role || "");
+    const getQueryDepartmentFromUrl = ref(route.query.department || "");
+    if (getQueryFromUrl.value !== "" || getQueryActiveFromUrl.value !== ""
+        || getQueryRoleFromUrl.value !== "" || getQueryDepartmentFromUrl.value !== "") {
+        if (getQueryFromUrl.value !== "") {
+            searchQuery.value = getQueryFromUrl.value;
+        }
+
+        if (getQueryActiveFromUrl.value !== "") {
+            const value = getQueryActiveFromUrl.value;
+            statusOptions.value = { id: value, name: value };
+        }
+
+        if (getQueryRoleFromUrl.value !== "") {
+            const values = getQueryRoleFromUrl.value.split(',').map(role => ({ name: role }));
+            const filteredRole = roles.value.filter(item1 => values.some(item2 => item1.name === item2.name));
+            roleFilterOptions.value = filteredRole;
+        }
+
+        if (getQueryDepartmentFromUrl.value !== "") {
+            const values = getQueryDepartmentFromUrl.value.split(',').map(department => ({ departmentName: department }));
+            const filteredDepartment = departments.value.filter(item1 => values.some(item2 => item1.departmentName === item2.departmentName));
+            departmentOptionsSearch.value = filteredDepartment;
+        }
+        applyFilters()
+    }
+}
+
+
 onMounted(() => {
     fetchData();
 })
 
 
 
+
+const roleFilterOptions = ref([])
+const departmentOptionsSearch = ref([]);
+const statusOptions = ref("");
+const buildQueryObject = () => {
+    const query = {};
+
+    if (searchQuery.value) {
+        query.q = searchQuery.value;
+    }
+    if (roleFilterOptions.value.length > 0) {
+        const roles = roleFilterOptions.value.map(role => role.name);
+        query.role = roles.join(',');
+    }
+    if (departmentOptionsSearch.value.length > 0) {
+        const departmentNames = departmentOptionsSearch.value.map(department => department.departmentName);
+        query.department = departmentNames.join(',');
+    }
+    if (statusOptions.value && statusOptions.value.id !== "All") {
+        query.active = statusOptions.value.name; // Adjust this to match your status logic
+    }
+
+    return query;
+};
+
+const applyFilters = () => {
+    const criteria = {
+        searchQuery: searchQuery.value,
+        rolesOptions: roleFilterOptions.value,
+        departmentOptionsSearch: departmentOptionsSearch.value,
+        statusOptions: statusOptions.value,
+    };
+    userStore.fetchFilterUsers(criteria)
+    users.value = userStore.filterUsers
+};
+const updateQueryParams = () => {
+    // Push the constructed query object to the router
+    const query = buildQueryObject();
+    router.push({
+        path: '/fms-settings/user-management',
+        query: query,
+    });
+    applyFilters()
+};
+
+
+
+
+const handleSearch = () => {
+    updateQueryParams();
+};
+
+const handleRoleChange = () => {
+    updateQueryParams();
+}
+
+const handleDepartmentChange = () => {
+    updateQueryParams();
+}
+
+const handleStatusChange = () => {
+    updateQueryParams();
+}
 const showOptions = (event, item) => {
     selectedItem.value = item;
     overlay.value.toggle(event);
@@ -213,13 +321,13 @@ const showOptions = (event, item) => {
 
 const handleActive = () => {
     if (selectedItem.value) {
-        confirmActive();
+        confirmActive(selectedItem.value);
     }
 };
 
 const handleDeactive = () => {
     if (selectedItem.value) {
-        confirmDeactive();
+        confirmDeactive(selectedItem.value);
     }
 };
 const handleEdit = () => {
@@ -250,30 +358,50 @@ const handleUserUpdated = () => {
         <Toast />
         <div class="card">
             <div class="text-xl mb-4 flex justify-between items-center">
-                <span class="!font-semibold text-2xl">User List</span>
-                <Button label="Add" @click="visible = true" icon="pi pi-plus" iconPos="right" />
+                <span class="!font-semibold text-xl">User List</span>
+                <Button label="Add" @click="visible = true" />
             </div>
             <Divider />
             <div>
-                <IconField iconPosition="left" class="w-1/4">
-                    <InputText class="w-full" type="text" placeholder="Search" @keyup.enter="handleSearch" />
-                    <InputIcon class="pi pi-search" />
-                </IconField>
-                <DataTable :rows="4" :rowsPerPageOptions="[4, 6, 12, 20, 50]" :value="users"
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex flex-col w-60 mt-1 gap-2">
+                        <label for="contractType" class="w-60">Active</label>
+                        <Select id="contractType" v-model="statusOptions" :options="statuses" optionLabel="name"
+                            placeholder="Filter status" @change="handleStatusChange" class="w-full"></Select>
+                    </div>
+                    <div class="flex flex-wrap w-60 gap-2">
+                        <label for="role" class="w-32">Role</label>
+                        <MultiSelect @change="handleRoleChange" v-model="roleFilterOptions" :options="roles"
+                            optionLabel="name" filter placeholder="Filter Roles" id="rolesOptions"
+                            :maxSelectedLabels="3" class="w-full" />
+                    </div>
+                    <div class="flex flex-wrap w-60 gap-2">
+                        <label for="department">Department</label>
+                        <MultiSelect v-model="departmentOptionsSearch" @change="handleDepartmentChange"
+                            :options="departments" optionLabel="departmentName" filter placeholder="Filter Department"
+                            id="department" :maxSelectedLabels="3" class="w-full" />
+                    </div>
+                    <div class="flex flex-wrap w-60 gap-2">
+                        <label for="search">Search</label>
+                        <InputText class="h-11 w-full" v-model="searchQuery" type="text" id="search"
+                            placeholder="Enter name, account ..." @keyup.enter="handleSearch" />
+                    </div>
+                </div>
+                <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="users"
                     currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                     tableStyle="min-width: 50rem" scrollable scrollHeight="500px" class="mt-6">
-                    <Column header="No" style="min-width: 35px">
+                    <Column header="No" style="width: 10%">
                         <template #body="slotProps">
                             {{ users.indexOf(slotProps.data) + 1 }}
                         </template>
                     </Column>
-                    <Column field="employeeId" header="Employee ID" style="min-width: 150px"></Column>
-                    <Column field="account" header="Account" style="min-width: 100px"></Column>
-                    <Column field="contactType" header="Name" style="min-width: 90px"></Column>
-                    <Column field="email" header="Email" style="min-width: 100px"></Column>
-                    <Column field="department.departmentName" header="Department" style="min-width: 150px"></Column>
-                    <Column header="Roles" style="min-width: 150px">
+                    <Column field="employeeId" header="Employee ID" style="width: 5%"></Column>
+                    <Column field="account" header="Account" style="width: 10%"></Column>
+                    <Column field="name" header="Name" style="width: 20%"></Column>
+                    <Column field="email" header="Email" style="width: 10%"></Column>
+                    <Column field="department.departmentName" header="Department" style="width: 5%"></Column>
+                    <Column header="Roles" style="width: 10%">
                         <template #body="slotProps">
                             <!-- slotProps.data đại diện cho dữ liệu của một user (một hàng trong bảng) -->
                             <span v-if="slotProps.data.roles && slotProps.data.roles.length">
@@ -287,12 +415,12 @@ const handleUserUpdated = () => {
                         </template>
                     </Column>
 
-                    <Column alignFrozen="right" field="status" frozen header="Status" style="min-width: 130px">
+                    <Column alignFrozen="right" field="status" frozen header="Status" style="width: 10%">
                         <template #body="slotProps">
                             <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
                         </template>
                     </Column>
-                    <Column alignFrozen="right" frozen header="Actions" style="min-width: 50px">
+                    <Column alignFrozen="right" frozen header="Actions" style="width: 10%">
                         <template #body="slotProps">
                             <Button icon="pi pi-ellipsis-v" severity="secondary"
                                 @click="showOptions($event, slotProps.data)" class="p-button-text" />
@@ -408,7 +536,17 @@ const handleUserUpdated = () => {
                 </form>
             </Fluid>
         </Dialog>
-        <ConfirmDialog></ConfirmDialog>
+        <ConfirmDialog group="templating">
+            <template #message="slotProps">
+                <div
+                    class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700">
+                    <i v-for="(line, index) in slotProps.message.message.split('.')" :key="index"
+                        :class="{ 'text-red-500 font-bold': index === 1 }">
+                        {{ line }}
+                    </i>
+                </div>
+            </template>
+        </ConfirmDialog>
     </div>
 </template>
 <style>

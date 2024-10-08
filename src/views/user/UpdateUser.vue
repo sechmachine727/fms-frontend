@@ -62,7 +62,7 @@ const validationSchema = toTypedSchema(
     })
 );
 
-const { handleSubmit, errors, resetForm } = useForm({ validationSchema });
+const { handleSubmit, errors, resetForm, setFieldError } = useForm({ validationSchema });
 const { value: account } = useField("account");
 const { value: email } = useField("email");
 const { value: name } = useField("name");
@@ -102,6 +102,7 @@ const onSubmit = handleSubmit((values) => {
     const updatedUser = {
         account: values.account || '',
         email: values.email || '',
+        name: values.name || '',
         employeeId: values.employeeId || '',
         status: values.status ? "Active" : "Inactive",
         contractType: values.contractType ? values.contractType.code : '',
@@ -117,7 +118,22 @@ const onSubmit = handleSubmit((values) => {
             router.push('/fms-settings/user-management');
         })
         .catch((error) => {
-            toast.add({ severity: 'error', summary: error.response.data, life: 3000 });
+            if (error.status === 400) {
+
+                if (error.response.data.employeeId) {
+                    setFieldError('employeeId', error.response.data.employeeId);
+                }
+
+                if (error.response.data.account) {
+                    setFieldError('account', error.response.data.account);
+                }
+
+                if (error.response.data.email) {
+                    setFieldError('email', error.response.data.email);
+                }
+            } else {
+                toast.add({ severity: 'error', summary: error.response.data.error, life: 3000 });
+            }
         });
 });
 
@@ -141,7 +157,7 @@ const closeDialog = () => {
                             <small class="text-red-600" v-if="errors.account">{{ errors.account }}</small>
                         </div>
                         <div class="flex flex-col gap-2">
-                            <label for="email">FPT Email<i class="text-red-600">*</i></label>
+                            <label for="email">Email<i class="text-red-600">*</i></label>
                             <InputText id="email" :class="`{ 'p-invalid': errors.email }`" v-model="email"
                                 type="text" />
                             <small class="text-red-600 " v-if="errors.email">{{ errors.email }}</small>

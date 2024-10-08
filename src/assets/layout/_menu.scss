@@ -1,11 +1,11 @@
 .layout-sidebar {
     position: fixed;
     width: 20rem;
-    height: calc(100vh - 8rem);
+    height: 100vh;
     z-index: 999;
     overflow-y: auto;
     user-select: none;
-    top: 6rem;
+    top: 5rem;
     left: 2rem;
     transition:
         transform var(--layout-section-transition-duration),
@@ -81,7 +81,6 @@
             }
 
             &.active-route {
-                font-weight: 700;
                 color: var(--primary-color);
             }
 

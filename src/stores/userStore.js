@@ -7,6 +7,7 @@ export const useUserStore = defineStore("userStore", {
         users: [],
         classAdmins: [],
         user: null,
+        filterUsers: [],
     }),
 
     actions: {
@@ -60,12 +61,40 @@ export const useUserStore = defineStore("userStore", {
                 console.error("Error fetching trainees:", error);
                 throw error; 
             }
+        },
+         
+        fetchFilterUsers(criteria) {
+            const departmentNames = criteria.departmentOptionsSearch.map(department => department.departmentName.toLowerCase());
+            const searchQuery = criteria.searchQuery.toLowerCase() === "" ? null : criteria.searchQuery.trim().toLowerCase()
+            const roleNames = criteria.rolesOptions.map(role => role.name.toLowerCase());
+            const statusSearchQuery = criteria.statusOptions.id === "All" ? null : criteria.statusOptions
+            console.log(statusSearchQuery);
+            this.filterUsers = this.users.filter((user) => {
+            // Kiểm tra điều kiện lọc theo phòng ban
+            const matchesDepartment = departmentNames.length
+                ? departmentNames.includes(user.department.departmentName.toLowerCase())
+                   : true; 
+            const matchsRole = roleNames.length
+              ? roleNames.some(role => user.roles.map(r => r.name.toLowerCase()).includes(role.toLowerCase()))
+                   : true;
+               
+            const matchesSearchQuery = searchQuery
+                ? user.email.toLowerCase().includes(searchQuery) ||
+                user.employeeId.toLowerCase().includes(searchQuery) ||
+                user.account.toLowerCase().includes(searchQuery)
+                   : true; 
+               
+            const matchStatusSearch = statusSearchQuery
+                ? user.status.toLowerCase() === statusSearchQuery.id.toLowerCase()
+                : true; 
+
+             return matchesDepartment && matchesSearchQuery && matchsRole && matchStatusSearch;
+    });
         }
     },
 
     getters: {
-
-
+        
     }
 });
 

@@ -227,8 +227,9 @@ const onSubmits = handleSubmitcode((values) => {
     data.value.groupCode = values.classCode
     visible.value = false;
     assignedVisible.value = false;
+    console.log(data.value);
+
     classStore.fetchAddGroup(data.value).then(() => {
-        console.log();
         sessionStorage.setItem('toastMessage', JSON.stringify({
             severity: 'success',
             summary: 'Data saved successfully with class code ' + values.classCode,
@@ -274,7 +275,7 @@ function convertToSchema(data) {
         <Toast />
         <Fluid>
             <div class="font-bold mb-2 block">
-                <span class="font-semibold text-2xl">Add Class</span>
+                <span class="font-semibold text-xl">Add Group</span>
             </div>
             <Divider />
             <form @submit.prevent="onSubmit">
@@ -286,7 +287,7 @@ function convertToSchema(data) {
                                 <div class="flex flex-col md:flex-row gap-4 ">
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <label for="classname">
-                                            Class Name
+                                            Group Name
                                             <i class="text-red-600">*</i>
                                         </label>
                                         <InputText id="classname" placeholder="Class Name"
@@ -505,22 +506,22 @@ function convertToSchema(data) {
                 <div class="mt-4">
                     <button type="submit" @click="handleFormtTypeandStatus(true, 'Planning')"
                         class="mr-2 bg-gray-200 hover:bg-gray-400 active:bg-gray-200 text-black font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
-                        Plan Class
+                        Plan Group
                     </button>
                     <button type="submit" @click="handleFormtTypeandStatus(true, 'Assigned')"
                         class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
-                        Assign to Class Admin
+                        Assign to Group Admin
                     </button>
                 </div>
             </form>
         </Fluid>
-        <Dialog v-model:visible="visible" modal header="Plan Class)" :style="{ width: '34rem' }">
+        <Dialog v-model:visible="visible" modal header="Plan Group" :style="{ width: '34rem' }">
             <span class="text-surface-500 dark:text-surface-400 block mb-8">Are you sure you want to save this planning
-                class?</span>
+                Group?</span>
             <form @submit.prevent="onSubmits">
                 <div class="flex flex-col gap-2">
                     <div class="flex flex-col gap-2">
-                        <label for="account">Class Code<i class="text-red-600">*</i></label>
+                        <label for="account">Group Code<i class="text-red-600">*</i></label>
                         <InputText id="classCode" :class="`{ 'p-invalid': finalError.classCode }`" v-model="classCode"
                             type="text" />
                         <small class="text-red-600" v-if="finalError.classCode">{{ finalError.classCode }}</small>
@@ -538,13 +539,13 @@ function convertToSchema(data) {
                 </div>
             </form>
         </Dialog>
-        <Dialog v-model:visible="assignedVisible" modal header="Assign to class admin(s)" :style="{ width: '34rem' }">
-            <span class="text-surface-500 dark:text-surface-400 block mb-8">Are you sure you want to assign class with
-                the following code to class admin(s)?</span>
+        <Dialog v-model:visible="assignedVisible" modal header="Assign to group admin(s)" :style="{ width: '34rem' }">
+            <span class="text-surface-500 dark:text-surface-400 block mb-8">Are you sure you want to assign group with
+                the following code to group admin(s)?</span>
             <form @submit.prevent="onSubmits">
                 <div class="flex flex-col gap-2">
                     <div class="flex flex-col gap-2">
-                        <label for="account">Class Code<i class="text-red-600">*</i></label>
+                        <label for="account">Group Code<i class="text-red-600">*</i></label>
                         <InputText id="classCode" :class="`{ 'p-invalid': finalError.classCode }`" v-model="classCode"
                             type="text" />
                         <small class="text-red-600" v-if="finalError.classCode">{{ finalError.classCode }}</small>

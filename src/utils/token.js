@@ -35,10 +35,3 @@ export const getUserInfo = () => {
 };
 
 // Example usage:
-const userInfo = getUserInfo();
-
-if (userInfo) {
-    console.log("User Info:", userInfo);
-} else {
-    console.log("Failed to retrieve user info.");
-}
