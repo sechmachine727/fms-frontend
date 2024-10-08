@@ -29,8 +29,8 @@ onMounted(() => {
 })
 
 const querySearchFromUrl = () => {
-    const getQueryFromUrl = ref(route.query.q || ""); // Lấy giá trị trường q từ URL
-    const getQueryStatusFromUrl = ref(route.query.status || ""); // Lấy giá trị trường q từ URL
+    const getQueryFromUrl = ref(route.query.q || "");
+    const getQueryStatusFromUrl = ref(route.query.status || "");
     if (getQueryFromUrl.value !== "" || getQueryStatusFromUrl.value !== "") {
         if (getQueryFromUrl.value !== "") {
             searchQuery.value = getQueryFromUrl.value;
@@ -126,7 +126,7 @@ const navigateToAdd = () => {
         <Toast />
         <div class="text-xl mb-4 flex justify-between items-center">
             <span class="font-semibold text-xl">Group List</span>
-            <Button label="Add" icon="pi pi-plus" iconPos="right" @click="navigateToAdd" />
+            <Button label="Add" @click="navigateToAdd" />
         </div>
         <Divider />
         <div class="flex flex-col md:flex-row gap-4">
