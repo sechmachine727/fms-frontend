@@ -9,7 +9,6 @@ import { useRoute } from 'vue-router'
 const trainingPrograms = ref()
 const trainingProgramStore = useTrainingProgramStore()
 const departmentStore = useDepartmentStore()
-const technicalGroup = ref()
 
 const getStatusLabel = (status) => {
     switch (status) {
