@@ -2,6 +2,8 @@
 import router from '@/router'
 import { useTopicStore } from '@/stores/topicStore'
 import { useTechnicalGroupStore } from '@/stores/technicalGroupStore'
+import { useTrainingProgramStore } from '@/stores/trainingProgramStore' // Import the store handling the training programs
+import { useDepartmentStore } from '@/stores/departmentStore'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import { onMounted, ref } from 'vue'
@@ -9,16 +11,11 @@ import { z } from 'zod'
 
 const topicStore = useTopicStore()
 const technicalGroupStore = useTechnicalGroupStore()
+const trainingProgramStore = useTrainingProgramStore()  // Get the store instance
+const departmentStore = useDepartmentStore()
 
 const technicalGroupTypeOptions = ref([])
-
-const regionOptions = ref([
-    { name: '-', code: '-' },
-    { name: 'FSA.HN', code: 'HN' },
-    { name: 'FSA.DN', code: 'DN' },
-    { name: 'FSA.HCM', code: 'HCM' },
-    { name: 'FSA.QN', code: 'QN' }
-])
+const departments = ref([])
 
 // Validation schema using Zod
 const validationSchema = toTypedSchema(
@@ -39,23 +36,21 @@ const validationSchema = toTypedSchema(
         status: z
             .boolean()
             .default(false),
-        region: z
+        department: z
             .object({
-                code: z.string()
-                    .optional()
+                id: z.number({ required_error: 'Department is required' }).min(1, { message: 'Department is required' })
             }),
-        contentLink: z
-            .string()
-            .optional(),
         description: z
             .string()
             .optional(),
         topicData: z.tuple([
             z.array(z.object({
+                id: z.number(),
                 label: z.string(),
                 value: z.string()
             })),
             z.array(z.object({
+                id: z.number(),
                 label: z.string(),
                 value: z.string()
             })).nonempty({ message: 'At least one topic must be selected' }) // Second array for selected topics
@@ -71,21 +66,38 @@ const { value: code } = useField('code')
 const { value: version } = useField('version')
 const { value: name } = useField('name')
 const { value: technicalGroupType } = useField('technicalGroupType')
-const { value: region } = useField('region')
-const { value: contentLink } = useField('contentLink')
+const { value: department } = useField('department')
 const { value: status } = useField('status')
 const { value: description } = useField('description')
 const { value: topicData } = useField('topicData')
 
+const onSubmit = handleSubmit(async (values) => {
+    // Extract the topic IDs (assuming `id` exists in topic objects)
+    const selectedTopics = values.topicData[1].map(topic => topic.id)  // Assuming `topic.id` is the correct field
+    console.log('Selected topics:', values.topicData[1])
+    // Construct payload to match the required schema
+    const payload = {
+        trainingProgramName: values.name,
+        code: values.code,
+        region: values.department?.departmentName || '',
+        version: parseInt(values.version, 10),
+        description: values.description || '',
+        status: values.status ? 'Active' : 'Inactive',
+        technicalGroupId: values.technicalGroupType.id,
+        topicIds: selectedTopics  // Sending only topic IDs as per API requirement
+    }
 
-const onSubmit = handleSubmit((values) => {
+    try {
+        // Send the payload to your API
+        console.log('Payload:', payload)  // This will help ensure you're sending the correct data
+        await trainingProgramStore.fetchAddTrainingProgram(payload)
 
-    console.log('Form values:', values)
-    // console.log('Selected topics:', topicData.value[1]);
-    const selectedTopics = values.topicData[1]
-    console.log(selectedTopics)
-    // router.push('/topic-management/training-program')
-})
+        // Redirect to the list of training programs upon success
+        router.push('/topic-management/training-program')
+    } catch (error) {
+        console.error('Error while saving training program:', error)
+    }
+});
 
 const navigateToBack = () => {
     router.push('/topic-management/training-program')
@@ -95,25 +107,28 @@ onMounted(() => {
     topicStore.fetchTopics().then(() => {
         const data = topicStore.topics.map(topic => ({
             label: `${topic.code} - ${topic.name} - ${topic.version}`,
-            value: topic.code
+            value: topic.code,
+            id: topic.id
         }))
         topicData.value = [data, []]
         console.log('Topic data:', topicData.value)
-
     })
 
     technicalGroupStore.fetchTechnicalGroup().then(() => {
         technicalGroupTypeOptions.value = technicalGroupStore.technicalGroups
         console.log('Technical group type:', technicalGroupTypeOptions.value)
     })
+
+    departmentStore.fetchDepartments().then(() => {
+        departments.value = departmentStore.departments
+    })
+
 })
 
 const onChange = (value) => {
     console.log('Selected Topics Changed:', value)
     topicData.value.target = value // Update the selected topics
 }
-
-
 </script>
 
 <template>
@@ -199,22 +214,11 @@ const onChange = (value) => {
                         </div>
 
                         <div class="flex flex-wrap gap-2 w-full mt-3">
-                            <label for="Region">
+                            <label for="department">
                                 Region
                             </label>
-                            <Select id="Region" v-model="region" :options="regionOptions" class="w-full"
-                                    optionLabel="name" placeholder="Select One"></Select>
-                        </div>
-
-                        <div class="flex flex-col md:flex-row gap-4 mt-3">
-                            <div class="flex flex-wrap gap-2 w-full">
-                                <label for="ContentLink">
-                                    Content Link
-                                </label>
-                                <InputText id="ContentLink" v-model="contentLink"
-                                           :class="`{ 'p-invalid': errors.contentLink }`" placeholder="Content Link"
-                                           type="text" />
-                            </div>
+                            <Select id="department" v-model="department" :options="departments" class="w-full"
+                                    optionLabel="departmentName" placeholder="Select One"></Select>
                         </div>
 
                         <div class="flex flex-wrap mt-3">

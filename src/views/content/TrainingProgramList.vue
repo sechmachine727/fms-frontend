@@ -73,7 +73,15 @@ onMounted(() => {
     trainingProgramStore.fetchTrainingPrograms().then(() => {
         trainingPrograms.value = trainingProgramStore.trainingPrograms
         console.log(trainingProgramStore.trainingPrograms)
-        topicInfoList.value = trainingProgramStore.trainingPrograms.topicInfoList
+        topicInfoList.value = trainingProgramStore.trainingPrograms.map(program => {
+            return program.topicInfoList.map(topic => {
+                return {
+                    topicCode: topic.topicCode,
+                    version: topic.version,
+                    topicName: topic.topicName
+                }
+            })
+        }).flat()
     })
 })
 </script>
@@ -131,7 +139,13 @@ onMounted(() => {
             </Column>
             <Column field="region" header="Region" style="min-width: 100px"></Column>
             <Column field="technicalGroupCode" header="Technical Group" style="min-width: 150px"></Column>
-            <Column field="topicInfoList" header="Topic" style="min-width: 150px"></Column>
+            <Column field="topicInfoList" header="Topic" style="min-width: 150px">
+                <template #body="slotProps">
+                    <div v-for="topic in slotProps.data.topicInfoList" :key="topic.topicCode">
+                        {{ topic.topicName }}
+                    </div>
+                </template>
+            </Column>
 
             <Column field="modifiedDate" header="Last Modified Date" style="min-width: 160px"></Column>
             <Column field="lastModifiedBy" header="Last Modified By" style="min-width: 160px"></Column>
