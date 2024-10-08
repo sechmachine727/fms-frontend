@@ -1,5 +1,6 @@
-import AppLayout from '@/layout/AppLayout.vue';
-import { createRouter, createWebHistory } from 'vue-router';
+import AppLayout from '@/layout/AppLayout.vue'
+import { createRouter, createWebHistory } from 'vue-router'
+
 function isLoggedIn() {
     return !!localStorage.getItem('token');
 }
@@ -44,10 +45,21 @@ const router = createRouter({
                     props: true, // Pass route params as props to the component
                 },
                 {
-                    path: '/group-management/add',
-                    name: 'group-management-add',
+                    path: '/topic-management/training-program/add',
+                    name: 'training-program-add',
+                    component: () => import('@/views/content/AddTrainingProgram.vue')
+                },
+                {
+                    path: '/topic-management/training-program/edit/:id',
+                    name: 'training-program-edit',
+                    component: () => import('@/views/content/EditTrainingProgram.vue')
+                },
+                {
+                    path: '/class-management/add',
+                    name: 'class-management-add',
                     component: () => import('@/views/Class/GroupAdd.vue')
                 },
+
                 {
                     path: '/group-management/detail/:id',
                     name: 'group-detail',

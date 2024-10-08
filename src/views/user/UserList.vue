@@ -5,7 +5,7 @@ import { useRoleStore } from '@/stores/roleStore'
 import { useUserStore } from '@/stores/userStore'
 import { toTypedSchema } from '@vee-validate/zod'
 import Toast from 'primevue/toast'
-import { useConfirm } from "primevue/useconfirm"
+import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { useField, useForm } from 'vee-validate'
 import { onMounted, ref } from 'vue'

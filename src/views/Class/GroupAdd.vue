@@ -1,24 +1,24 @@
 <script setup>
-import router from "@/router";
-import { useDeliveryTypeStore } from "@/stores/deliveryTypeStore";
-import { useFormatTypeStore } from "@/stores/formatTypeStore";
-import { useClassStore } from "@/stores/groupStore";
-import { useKeyProgramStore } from "@/stores/keyProgramStore";
-import { useLocationStore } from "@/stores/locationStore";
-import { useScopeStore } from "@/stores/scopeStore";
-import { useSiteStore } from "@/stores/siteStore";
-import { useTechnicalGroupStore } from "@/stores/technicalGroupStore";
-import { useTraineeTypeStore } from "@/stores/traineeTypeStore";
-import { useTrainingProgramStore } from "@/stores/trainingProgramStore";
-import { useUserStore } from "@/stores/userStore";
-import { convertToVietnamTime } from "@/utils/date";
-import { generateClassCode } from "@/utils/generate";
-import { toTypedSchema } from "@vee-validate/zod";
-import Toast from "primevue/toast";
-import { useToast } from "primevue/usetoast";
-import { useField, useForm } from "vee-validate";
-import { onMounted, ref } from "vue";
-import { z } from "zod";
+import router from '@/router'
+import { useDeliveryTypeStore } from '@/stores/deliveryTypeStore'
+import { useFormatTypeStore } from '@/stores/formatTypeStore'
+import { useClassStore } from '@/stores/groupStore'
+import { useKeyProgramStore } from '@/stores/keyProgramStore'
+import { useLocationStore } from '@/stores/locationStore'
+import { useScopeStore } from '@/stores/scopeStore'
+import { useSiteStore } from '@/stores/siteStore'
+import { useTechnicalGroupStore } from '@/stores/technicalGroupStore'
+import { useTraineeTypeStore } from '@/stores/traineeTypeStore'
+import { useTrainingProgramStore } from '@/stores/trainingProgramStore'
+import { useUserStore } from '@/stores/userStore'
+import { convertToVietnamTime } from '@/utils/date'
+import { generateClassCode } from '@/utils/generate'
+import { toTypedSchema } from '@vee-validate/zod'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
+import { useField, useForm } from 'vee-validate'
+import { onMounted, ref } from 'vue'
+import { z } from 'zod'
 
 const deliveryTypeOptions = ref([]);
 const traineeTypeOptions = ref([]);
@@ -75,7 +75,7 @@ onMounted(() => {
 
 const handleTechnicalGroupChange = () => {
     let technicalId = technicalGroup.value.id;
-    trainingProgramStore.fetchTrainingPrograms(technicalId).then(() => {
+    trainingProgramStore.fetchTrainingProgramsByTechnicalGroup(technicalId).then(() => {
         trainingProgramOptions.value = trainingProgramStore.trainingPrograms
     })
 }
