@@ -81,14 +81,11 @@
             }
 
             &.active-route {
-                background-color: gray;
-                opacity: 0.6;
-                border-radius: 10px;
+                color: var(--primary-color);
             }
 
             &:hover {
-                background-color: gray;
-                border-radius: 10px;
+                background-color: var(--surface-hover);
             }
 
             &:focus {

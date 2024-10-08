@@ -72,37 +72,148 @@ const generalInfo = ref([])
             <!-- Topic Detail Header -->
             <div class="flex justify-between items-center mb-4">
                 <span class="font-semibold text-xl" v-if="classe">
-                    Group Details : {{ classe.groupCode }}
-                    <Tag :value="classe.status" :class="getStatusLabel(classe.statuss)" />
+                    Group Details : {{ classe?.groupCode }}
+                    <Tag :value="classe.status" :class="getStatusLabel(classe?.statuss)" />
                 </span>
             </div>
             <Divider />
             <TabView>
                 <TabPanel header="Group Info">
-                    <Accordion value="0">
-                        <AccordionPanel value="0">
-                            <AccordionHeader class="!font-bold">General Information</AccordionHeader>
-                            <AccordionContent>
-                                <div class="grid grid-cols-1 md:grid-cols-3 p-4">
-                                    <div class="flex items-center border h-14">
-                                        <div class="bg-gray-200 h-full w-2/5 flex items-center justify-center">
-                                        </div>
-                                        <span class="font-semibold w-3/5">21313</span>
-                                    </div>
-                                    <div class="flex items-center border h-14">
-                                        <div class="bg-gray-200 h-full w-2/5 flex items-center justify-center">Class
-                                            Name</div>
-                                        <span class="font-semibold w-3/5">21313</span>
-                                    </div>
-                                    <div class="flex items-center border h-14">
-                                        <div class="bg-gray-200 h-full w-2/5 flex items-center justify-center">Class
-                                            Name</div>
-                                        <span class="font-semibold w-3/5">21313</span>
-                                    </div>
-                                </div>
-                            </AccordionContent>
-                        </AccordionPanel>
-                    </Accordion>
+                    <div class="grid grid-cols-1 md:grid-cols-3  p-4">
+                        <div class="flex items-center h-14 border-t border-b border-l">
+                            <div
+                                class="font-semibold border-r border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                Group Name
+                            </div>
+                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">
+                                {{ classe?.groupName }}
+                            </div>
+                        </div>
+
+                        <div class="flex items-center h-14 border-t border-b border-l">
+                            <div
+                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                Delivery Type
+                            </div>
+                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">{{
+                                classe?.deliveryTypeName }}</div>
+                        </div>
+                        <div class="flex items-center h-14 border-t border-b border-l">
+                            <div
+                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                Trainee Type</div>
+                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
+                                classe?.traineeTypeName }}</div>
+                        </div>
+                        <!-- <---!--->
+                        <div class="flex items-center h-14 border-t border-b border-l">
+                            <div
+                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                Format Type
+                            </div>
+                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">
+                                {{ classe?.formatTypeName }}
+                            </div>
+                        </div>
+                        <div class="flex items-center h-14 border-t border-b border-l">
+                            <div
+                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                Technical Group
+                            </div>
+                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">{{
+                                classe?.technicalGroupCode }}
+                            </div>
+                        </div>
+                        <div class="flex items-center h-14 border-t border-b border-l">
+                            <div
+                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                Training Program</div>
+                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
+                                classe?.trainingProgramName }}</div>
+                        </div>
+
+                        <div class="flex items-center h-14 border-t border-b border-l">
+                            <div
+                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                Site
+                            </div>
+                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">
+                                {{ classe?.siteName }}
+                            </div>
+                        </div>
+
+
+                        <div class="flex items-center h-14 border-t border-b border-l">
+                            <div
+                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                Location
+                            </div>
+                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">
+                                {{ classe?.locationName }}
+                            </div>
+                        </div>
+                        <div class="flex items-center h-14 border-t border-b border-l">
+                            <div
+                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                Scope
+                            </div>
+                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
+                                classe?.scopeName }}
+                            </div>
+                        </div>
+                        <div class="flex items-center  h-14 border-t border-b border-l">
+                            <div
+                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                Planned Trainee No</div>
+                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
+                                classe?.traineeNumber }}</div>
+                        </div>
+
+                        <div class="flex items-center h-14 border-t border-b border-l">
+                            <div
+                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                Planned Revenue</div>
+                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">{{
+                                classe?.planRevenue }}</div>
+                        </div>
+
+                        <div class="flex items-center h-14 border-t border-b border-l">
+                            <div
+                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                Key Program</div>
+                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
+                                classe?.keyProgramName
+                            }}</div>
+                        </div>
+                        <div class="flex items-center h-14 border-t border-b border-l">
+                            <div
+                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                Expected Start Date</div>
+                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
+                                classe?.expectedStartDate
+                            }}</div>
+                        </div>
+                        <div class="flex items-center h-14 border-t border-b border-l">
+                            <div
+                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                Expected End Date</div>
+                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
+                                classe?.expectedEndDate
+                            }}</div>
+                        </div>
+                        <div class="flex items-center h-14 border-t border-b border-l">
+                            <div
+                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                Group Admin</div>
+                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">
+                                <span v-for="(user, index) in classe?.assignedUserAccounts" :key="index">
+                                    {{ user }}
+                                    <!-- Thêm dấu phẩy giữa các phần tử, bỏ dấu phẩy cuối cùng -->
+                                    <span v-if="index < classe.assignedUserAccounts.length - 1">, </span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </TabPanel>
 
                 <TabPanel header="Trainee List">
@@ -121,7 +232,7 @@ const generalInfo = ref([])
 
 <style>
 .highlight-label-column {
-    background-color: #f5f5f5;
+    background-color: #ffffff;
     font-weight: bold;
     font-size: 13px;
     width: 15%;
