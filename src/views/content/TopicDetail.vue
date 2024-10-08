@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { useTopicStore } from '@/stores/topicStore'
-import { useRoute } from 'vue-router'
+import { useTopicStore } from '@/stores/topicStore';
+import { computed, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 
 
 const topicStore = useTopicStore()
@@ -16,7 +16,7 @@ const generalInfo = computed(() => {
             { label: 'Code', value: topicStore.topic.code },
             { label: 'Name', value: topicStore.topic.name },
             { label: 'Technical Group', value: topicStore.topic.technicalGroupCode },
-            { label: 'Pass Criteria', value: topicStore.topic.passCriteria }
+            { label: 'Pass Criteria', value: topicStore.topic.passCriteria },
         ]
     } else {
         return []
@@ -53,8 +53,8 @@ onMounted(() => {
                         <div class="general-info mb-8">
                             <h2 class="text-xl font-semibold mb-2">1. General Info</h2>
                             <DataTable :value="generalInfo" class="general-info-table" responsiveLayout="scroll">
-                                <Column field="label" header="Label" class="highlight-label-column"></Column>
-                                <Column field="value" header="Value"></Column>
+                                <Column field="label" class="highlight-label-column"></Column>
+                                <Column field="value"></Column>
                             </DataTable>
                         </div>
 
@@ -88,8 +88,8 @@ onMounted(() => {
                                     <Column field="deliveryType" header="Delivery Type"></Column>
                                     <Column field="duration" header="Duration"></Column>
                                     <Column field="trainingFormat" header="Training Format"></Column>
-                                    <Column field="note"
-                                            header="Training Materials / Logistics & General Notes"></Column>
+                                    <Column field="note" header="Training Materials / Logistics & General Notes">
+                                    </Column>
                                 </DataTable>
                             </AccordionContent>
                         </AccordionPanel>
@@ -108,11 +108,11 @@ onMounted(() => {
     width: 20%;
 }
 
-.assessment-scheme-table .p-datatable-tbody > tr > td {
+.assessment-scheme-table .p-datatable-tbody>tr>td {
     padding: 0.5rem 1rem;
 }
 
-.assessment-scheme-table .p-datatable-thead > tr > th {
+.assessment-scheme-table .p-datatable-thead>tr>th {
     padding: 0.75rem 1rem;
 }
 </style>

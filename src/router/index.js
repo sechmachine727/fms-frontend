@@ -49,6 +49,11 @@ const router = createRouter({
                     component: () => import('@/views/Class/GroupAdd.vue')
                 },
                 {
+                    path: '/group-management/detail/:id',
+                    name: 'group-detail',
+                    component: () => import('@/views/Class/GroupDetail.vue')
+                },
+                 {
                     path: '/group-management/in-progress-list',
                     name: 'group-management-in-progress-list',
                     component: () => import('@/views/Class/InProgress.vue')

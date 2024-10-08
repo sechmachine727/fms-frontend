@@ -1,20 +1,21 @@
 <script setup>
 import { useClassStore } from "@/stores/groupStore"; // Correct the import to use `useTraineeStore`
+import { getStatusArray } from "@/utils/status";
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const classes = ref([]);
 const classStore = useClassStore();
 const router = useRouter();
-
 const toast = useToast();
-
+const route = useRoute();
 
 onMounted(() => {
     classStore.fetchClassList().then(() => {
         classes.value = classStore.classes;
+        querySearchFromUrl();
     })
 
     const toastMessage = sessionStorage.getItem('toastMessage');
@@ -24,7 +25,25 @@ onMounted(() => {
         sessionStorage.removeItem('toastMessage');
     }
 
+
 })
+
+const querySearchFromUrl = () => {
+    const getQueryFromUrl = ref(route.query.q || ""); // Lấy giá trị trường q từ URL
+    const getQueryStatusFromUrl = ref(route.query.status || ""); // Lấy giá trị trường q từ URL
+    if (getQueryFromUrl.value !== "" || getQueryStatusFromUrl.value !== "") {
+        if (getQueryFromUrl.value !== "") {
+            searchQuery.value = getQueryFromUrl.value;
+        }
+
+        if (getQueryStatusFromUrl.value !== "") {
+            const values = getQueryStatusFromUrl.value.split(',').map(status => ({ id: status }));
+            const filteredStatus = getStatusArray().filter(item1 => values.some(item2 => item1.id === item2.id));
+            statusOptions.value = filteredStatus;
+        }
+        applyFilters()
+    }
+}
 const getStatusLabel = (status) => {
     switch (status) {
         case 'Active':
@@ -45,53 +64,101 @@ const getStatusLabel = (status) => {
             return '!bg-gray-200 !text-black'; // Default color
     }
 };
-
+const statusValues = getStatusArray();
 const searchQuery = ref("")
-const handleSearch = (event) => {
-    searchQuery.value = event.target.value;
-    console.log(searchQuery.value);
-    if (searchQuery.value) {
-        classStore.fetchClassList(searchQuery.value).then(() => {
-            classes.value = classStore.classes;
-            console.log(classStore.classes);
-        })
-    }
-    router.push({
-        path: '/group-management/list',
-        query: { q: searchQuery.value },
-    });
+const statusOptions = ref([]);
+const buildQueryObject = () => {
+    const query = {};
 
+    if (searchQuery.value) {
+        query.q = searchQuery.value;
+    }
+    if (statusOptions.value.length > 0) {
+        const statusNames = statusOptions.value.map(status => status.id);
+        query.status = statusNames.join(',');
+    }
+    return query;
+};
+
+const applyFilters = () => {
+    const criteria = {
+        searchQuery: searchQuery.value,
+        statusOptions: statusOptions.value,
+    };
+    classStore.fetchFilterClass(criteria)
+    classes.value = classStore.filterClasses
+};
+
+
+const updateQueryParams = () => {
+    // Push the constructed query object to the router
+    const query = buildQueryObject();
+    router.replace({
+        path: '/group-management/list',
+        query: query,
+    })
+    console.log("crie");
+    console.log(query);
+    applyFilters()
+};
+
+
+const handleStatusChange = () => {
+    updateQueryParams();
+}
+
+
+
+const handleSearch = () => {
+    updateQueryParams();
 };
 
 
 const navigateToAdd = () => {
     router.push('/group-management/add');
 };
+
+
 </script>
 
 <template>
     <div class="card">
         <Toast />
         <div class="text-xl mb-4 flex justify-between items-center">
-            <span class="!font-semibold text-2xl">Training Group List</span>
+            <span class="font-semibold text-xl">Group List</span>
             <Button label="Add" icon="pi pi-plus" iconPos="right" @click="navigateToAdd" />
         </div>
         <Divider />
-        <IconField iconPosition="left" class="w-1/4">
-            <InputText class="w-full" type="text" placeholder="Search" @keyup.enter="handleSearch" />
-            <InputIcon class="pi pi-search" />
-        </IconField>
-        <DataTable :value="classes" :rows="4" :rowsPerPageOptions="[4, 6, 12, 20, 50]"
+        <div class="flex flex-col md:flex-row gap-4">
+            <div class="flex flex-wrap w-60 gap-2">
+                <label for="department">Status</label>
+                <MultiSelect v-model="statusOptions" @change="handleStatusChange" :options="statusValues"
+                    optionLabel="name" filter placeholder="Filter Department" id="department" :maxSelectedLabels="3"
+                    class="w-full" />
+            </div>
+            <div class="flex flex-wrap w-60 gap-2">
+                <label for="search">Search</label>
+                <InputText class="h-11 w-full" v-model="searchQuery" type="text" id="search"
+                    placeholder="Enter name, account ..." @keyup.enter="handleSearch" />
+            </div>
+        </div>
+        <DataTable :value="classes" :rows="4" scrollable scrollHeight="300px" :rowsPerPageOptions="[4, 6, 12, 20, 50]"
             currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-            tableStyle="min-width: 50rem" scrollable scrollHeight="500px" class="mt-6">
-            <Column field="no" header="No" style="min-width: 100px">
+            tableStyle="min-width: 50rem" class="mt-6">
+            <Column field="no" header="No" style="min-width: 50px">
                 <template #body="slotProps">
                     {{ classes.indexOf(slotProps.data) + 1 }}
                 </template>
             </Column>
-            <Column field="groupCode" header="Class Code" style="min-width: 100px"></Column>
-            <Column field="traineetype" header="Trainee Type" style="min-width: 150px"></Column>
+            <Column header="Class Code" style="min-width: 100px">
+                <template #body="slotProps">
+                    <router-link :to="{ name: 'group-detail', params: { id: slotProps.data.id } }"
+                        class="router-link-active">{{ slotProps.data.groupCode }}
+                    </router-link>
+                </template>
+            </Column>
+            <Column field="traineeTypeName" header="Trainee Type" style="min-width: 150px"></Column>
             <Column header="Class Admin" style="min-width: 150px">
                 <template #body="slotProps">
                     <span v-if="slotProps.data.classAdminAccount && slotProps.data.classAdminAccount.length">
@@ -102,11 +169,11 @@ const navigateToAdd = () => {
                     </span>
                 </template>
             </Column>
-            <Column field="technicalGroup" header="Technical Group" style="min-width: 150px"></Column>
+            <Column field="technicalGroupCode" header="Technical Group" style="min-width: 150px"></Column>
             <Column field="trainingProgramName" header="Training Program" style="min-width: 150px">
 
             </Column>
-            <Column field="siteName" header="Site" style="min-width: 50px"></Column>
+            <Column field="siteName" header="Site" style="min-width: 100px"></Column>
             <Column field="traineeNumber" header="Trainee number" style="min-width: 150px"></Column>
             <Column field="expectedStartDate" header="Expected Start Date" style="min-width: 160px"></Column>
             <Column field="actualStartDate" header="Actual Start Date" style="min-width: 150px"></Column>
