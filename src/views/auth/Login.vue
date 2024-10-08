@@ -1,5 +1,4 @@
 <script setup>
-import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
 import router from '@/router';
 import { useAuthStore } from "@/stores/authStore";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -25,7 +24,7 @@ const { value: password } = useField("password");
 const onSubmit = handleSubmit((values) => {
     authStore.fetchLogin(values).then((reponse) => {
         localStorage.setItem("token", reponse.token);
-        router.push('/class-management/list')
+        router.push('/group-management/list')
     }).catch((error) => {
         if (error.status === 401 && error.response.data.message === 'User is inactive') {
             toast.add({ severity: 'error', summary: 'Your account is inactive.', life: 3000 });
@@ -39,7 +38,6 @@ const onSubmit = handleSubmit((values) => {
 </script>
 
 <template>
-    <FloatingConfigurator />
     <Toast />
     <div
         class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
