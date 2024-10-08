@@ -9,7 +9,9 @@ import { z } from 'zod'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import { useDepartmentStore } from '@/stores/departmentStore'
+import { useToast } from 'primevue/usetoast'
 
+const toast = useToast()
 // const topicName = ref()
 const topicStore = useTopicStore()
 const trainingProgramStore = useTrainingProgramStore()
@@ -49,10 +51,12 @@ const validationSchema = toTypedSchema(
             .optional(),
         topicData: z.tuple([
             z.array(z.object({
+                id: z.number(),
                 label: z.string(),
                 value: z.string()
             })),
             z.array(z.object({
+                id: z.number(),
                 label: z.string(),
                 value: z.string()
             })).nonempty({ message: 'At least one topic must be selected' }) // Second array for selected topics
@@ -61,7 +65,7 @@ const validationSchema = toTypedSchema(
 )
 
 // Set up form validation with VeeValidate
-const { handleSubmit, errors } = useForm({ validationSchema })
+const { handleSubmit, errors, setFieldError } = useForm({ validationSchema })
 const { value: code } = useField('code')
 const { value: version } = useField('version')
 const { value: trainingProgramName } = useField('trainingProgramName')
@@ -70,24 +74,42 @@ const { value: department } = useField('department')
 const { value: status } = useField('status')
 const { value: description } = useField('description')
 const { value: topicData } = useField('topicData')
-// const { value: code } = useField('code')
-// const { value: version } = useField('version')
 
-const onSubmit = handleSubmit(async (values) => {
-    try {
-        await trainingProgramStore.fetchUpdateTrainingProgram(trainingProgramId, values)
-        router.push('/topic-management/training-program')
-    } catch (error) {
-        console.error('Error updating the training program:', error)
+const onSubmit = handleSubmit((values) => {
+
+    // Prepare the request body according to the expected format
+    const payload = {
+        trainingProgramName: values.trainingProgramName,
+        code: values.code,
+        departmentId: values.department.id,  // Extract department ID
+        version: values.version,
+        description: values.description || '',  // Ensure description is not undefined
+        status: values.status ? 'Active' : 'Inactive',  // Convert boolean to "Active"/"Inactive"
+        technicalGroupId: values.technicalGroupCode.id,  // Extract technical group ID
+        topicIds: values.topicData[1].map(topic => topic.id)
     }
+    trainingProgramStore.fetchUpdateTrainingProgram(trainingProgramId, payload).then(() => {
+        toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Training Program added successfully',
+            life: 3000
+        })
+        router.push('/topic-management/training-program')
+
+    }).catch((error) => {
+        console.error('Error updating training program:', error.response.data.error)
+        setFieldError('code', error.response.data.trainingProgram)
+        // setFieldError('version', error.message)
+    })
 })
+
 
 const navigateToBack = () => {
     router.push('/topic-management/training-program')
 }
 
 const onChange = (value) => {
-    console.log('Selected Topics Changed:', value)
     topicData.value.target = value // Update the selected topics
 }
 
@@ -109,21 +131,22 @@ onMounted(async () => {
         description.value = trainingProgram.value.description || ''
         status.value = trainingProgram.value.status === 'Active'
         department.value = trainingProgram.value.department || ''
-
+        technicalGroupCode.value = trainingProgram.value.technicalGroup || {}
         // Lấy danh sách topic đã chọn từ topicInfoList
         const selectedTopics = trainingProgram.value.topicInfoList.map(topic => ({
             label: `${topic.topicCode} - ${topic.topicName} - ${topic.version}`,
-            value: topic.topicCode
+            value: topic.topicCode,
+            id: topic.id
         }))
-
         // Lấy tất cả các topic từ store
         await topicStore.fetchTopics()
         const allTopics = topicStore.topics.map(topic => ({
             label: `${topic.code} - ${topic.name} - ${topic.version}`,
-            value: topic.code
+            value: topic.code,
+            id: topic.id
         }));
 
-        // Lọc các topic chưa chọn (tức là không thuộc danh sách selectedTopics)
+        // Lọc các topic chưa chọn
         const selectedTopicValues = selectedTopics.map(topic => topic.value) // lấy các giá trị đã chọn
         const availableTopics = allTopics.filter(topic => !selectedTopicValues.includes(topic.value))
 
@@ -149,6 +172,8 @@ onMounted(async () => {
                 <span class="font-semibold text-2xl">Training Program Edit</span>
             </div>
             <Divider />
+
+            <Toast />
 
             <form :value="trainingProgram" @submit.prevent="onSubmit">
                 <div class="flex gap-4">
@@ -203,11 +228,11 @@ onMounted(async () => {
 
                         <div class="flex flex-col md:flex-row gap-4 mt-3">
                             <div class="flex flex-wrap gap-2 w-full">
-                                <label for="technicalGroupCode"> Technical Group
+                                <label class="block mb-2" for="technicalGroupCode"> Technical Group
                                     <i class="text-red-600">*</i>
                                 </label>
                                 <Select id="technicalGroupCode" v-model="technicalGroupCode"
-                                        :options="technicalGroupCodeOptions" class="w-full md:w-80" filter
+                                        :options="technicalGroupCodeOptions" class="w-full " filter
                                         optionLabel="code" placeholder="Select Technical Group"></Select>
                                 <small v-if="errors.technicalGroupCode" class="text-red-600 ml-2">
                                     {{ errors.technicalGroupCode }}</small>

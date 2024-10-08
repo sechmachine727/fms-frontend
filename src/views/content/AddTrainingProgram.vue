@@ -8,12 +8,13 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import { onMounted, ref } from 'vue'
 import { z } from 'zod'
+import { useToast } from 'primevue/usetoast'
 
 const topicStore = useTopicStore()
 const technicalGroupStore = useTechnicalGroupStore()
 const trainingProgramStore = useTrainingProgramStore()  // Get the store instance
 const departmentStore = useDepartmentStore()
-
+const toast = useToast()
 const technicalGroupTypeOptions = ref([])
 const departments = ref([])
 
@@ -59,7 +60,7 @@ const validationSchema = toTypedSchema(
 )
 
 // Set up form validation with VeeValidate
-const { handleSubmit, errors } = useForm({
+const { handleSubmit, errors, setFieldError } = useForm({
     validationSchema
 })
 const { value: code } = useField('code')
@@ -71,32 +72,33 @@ const { value: status } = useField('status')
 const { value: description } = useField('description')
 const { value: topicData } = useField('topicData')
 
-const onSubmit = handleSubmit(async (values) => {
+const onSubmit = handleSubmit((values) => {
     // Extract the topic IDs (assuming `id` exists in topic objects)
-    const selectedTopics = values.topicData[1].map(topic => topic.id)  // Assuming `topic.id` is the correct field
-    console.log('Selected topics:', values.topicData[1])
-    // Construct payload to match the required schema
+    const selectedTopics = values.topicData[1].map(topic => topic.id)
     const payload = {
         trainingProgramName: values.name,
         code: values.code,
-        region: values.department?.departmentName || '',
+        departmentId: values.department.id,
         version: parseInt(values.version, 10),
         description: values.description || '',
         status: values.status ? 'Active' : 'Inactive',
         technicalGroupId: values.technicalGroupType.id,
         topicIds: selectedTopics  // Sending only topic IDs as per API requirement
     }
-
-    try {
-        // Send the payload to your API
-        console.log('Payload:', payload)  // This will help ensure you're sending the correct data
-        await trainingProgramStore.fetchAddTrainingProgram(payload)
-
-        // Redirect to the list of training programs upon success
+    trainingProgramStore.fetchAddTrainingProgram(payload).then(() => {
+        toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Training Program added successfully',
+            life: 3000
+        })
         router.push('/topic-management/training-program')
-    } catch (error) {
-        console.error('Error while saving training program:', error)
-    }
+
+    }).catch((error) => {
+        console.error('Error updating training program:', error.response.data.error)
+        setFieldError('code', error.response.data.trainingProgram)
+        // setFieldError('version', error.response.data.version)
+    })
 });
 
 const navigateToBack = () => {
@@ -111,12 +113,10 @@ onMounted(() => {
             id: topic.id
         }))
         topicData.value = [data, []]
-        console.log('Topic data:', topicData.value)
     })
 
     technicalGroupStore.fetchTechnicalGroup().then(() => {
         technicalGroupTypeOptions.value = technicalGroupStore.technicalGroups
-        console.log('Technical group type:', technicalGroupTypeOptions.value)
     })
 
     departmentStore.fetchDepartments().then(() => {
@@ -126,7 +126,6 @@ onMounted(() => {
 })
 
 const onChange = (value) => {
-    console.log('Selected Topics Changed:', value)
     topicData.value.target = value // Update the selected topics
 }
 </script>
@@ -138,6 +137,8 @@ const onChange = (value) => {
                 <span class="font-semibold text-2xl">Add Training Program</span>
             </div>
             <Divider />
+
+            <Toast />
 
             <form @submit.prevent="onSubmit">
                 <div class="flex gap-4">
@@ -186,11 +187,11 @@ const onChange = (value) => {
 
                         <div class="flex flex-col md:flex-row gap-4 mt-3">
                             <div class="flex flex-wrap gap-2 w-full">
-                                <label for="technicalType"> Technical Group
+                                <label class="block mb-2" for="technicalType"> Technical Group
                                     <i class="text-red-600">*</i>
                                 </label>
                                 <Select id="technicalType" v-model="technicalGroupType"
-                                        :options="technicalGroupTypeOptions" class="w-full md:w-80" filter
+                                        :options="technicalGroupTypeOptions" class="w-full" filter
                                         optionLabel="code" placeholder="Select Technical Group"></Select>
                                 <small v-if="errors.technicalGroupType" class="text-red-600 ml-2">
                                     {{ errors.technicalGroupType }}</small>
