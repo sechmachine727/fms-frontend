@@ -53,8 +53,7 @@ const querySearchFromUrl = () => {
 
         if (getQueryDepartmentFromUrl.value !== '') {
             const values = getQueryDepartmentFromUrl.value.split(',').map(department => ({ departmentName: department }))
-            const filteredDepartment = departments.value.filter(item1 => values.some(item2 => item1.departmentName === item2.departmentName))
-            departmentOptionsSearch.value = filteredDepartment
+            departmentOptionsSearch.value = departments.value.filter(item1 => values.some(item2 => item1.departmentName === item2.departmentName))
         }
         applyFilters()
     }

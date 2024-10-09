@@ -1,4 +1,4 @@
-import { del, get, post, put } from '../axios'
+import { del, get, post, put } from '@/axios'
 
 const url = '/training-programs'
 
