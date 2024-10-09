@@ -85,8 +85,7 @@
             }
 
             &:hover {
-                background-color: gray;
-                border-radius: 10px;
+                background-color: var(--surface-hover);
             }
 
             &:focus {

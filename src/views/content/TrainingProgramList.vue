@@ -224,7 +224,7 @@ onMounted(() => {
     <div class="card">
         <div class="flex items-center justify-between mb-2">
             <h1 class="text-2xl">Training Program List</h1>
-            <Button icon="pi pi-plus" label="Add" @click="navigateToAdd" />
+            <Button label="Add Training Program" @click="navigateToAdd" />
         </div>
         <Divider />
 
@@ -235,13 +235,13 @@ onMounted(() => {
                 <div class="flex flex-col w-60 mt-1 gap-2">
                     <label class="w-60" for="contractType">Active</label>
                     <Select id="contractType" v-model="statusOptions" :options="statuses" class="w-full"
-                            optionLabel="name" placeholder="Filter status" @change="handleStatusChange"></Select>
+                        optionLabel="name" placeholder="Filter status" @change="handleStatusChange"></Select>
                 </div>
                 <div class="flex flex-wrap w-60 gap-2">
                     <label for="department">Region</label>
-                    <MultiSelect id="department" v-model="departmentOptionsSearch"
-                                 :maxSelectedLabels="3" :options="departments" class="w-full" filter
-                                 optionLabel="departmentName" placeholder="Filter Region" @change="handleDepartmentChange" />
+                    <MultiSelect id="department" v-model="departmentOptionsSearch" :maxSelectedLabels="3"
+                        :options="departments" class="w-full" filter optionLabel="departmentName"
+                        placeholder="Filter Region" @change="handleDepartmentChange" />
                 </div>
                 <div class="flex flex-wrap w-60 gap-2">
                     <label for="search">Search</label>
@@ -251,11 +251,10 @@ onMounted(() => {
                 </div>
             </div>
 
-            <DataTable :rows="6" :rowsPerPageOptions="[8, 12, 20, 50]" :value="trainingPrograms" currentPageReportTemplate="{first} to {last} of {totalRecords}"
-                       paginator
-                       paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                       scrollHeight="400px"
-                       scrollable tableStyle="min-width: 50rem">
+            <DataTable :rows="6" :rowsPerPageOptions="[8, 12, 20, 50]" :value="trainingPrograms"
+                currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
+                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                scrollHeight="400px" scrollable tableStyle="min-width: 50rem">
 
                 <Column header="No." style="min-width: 70px">
                     <template #body="slotProps">
@@ -264,15 +263,15 @@ onMounted(() => {
                 </Column>
                 <Column field="code" header="Course Code" style="min-width: 130px">
                     <template #body="slotProps">
-                        <router-link :to="{ name: 'training-program-detail', params: { id: slotProps.data.id}}"
-                                     class="router-link-active hover:underline">{{ slotProps.data.code }}
+                        <router-link :to="{ name: 'training-program-detail', params: { id: slotProps.data.id } }"
+                            class="router-link-active hover:underline">{{ slotProps.data.code }}
                         </router-link>
                     </template>
                 </Column>
                 <Column field="trainingProgramName" header="Training Name" style="min-width: 140px">
                     <template #body="slotProps">
-                        <router-link :to="{ name: 'training-program-detail', params: { id: slotProps.data.id}}"
-                                     class="router-link-active hover:underline">{{ slotProps.data.trainingProgramName }}
+                        <router-link :to="{ name: 'training-program-detail', params: { id: slotProps.data.id } }"
+                            class="router-link-active hover:underline">{{ slotProps.data.trainingProgramName }}
                         </router-link>
                     </template>
                 </Column>
@@ -297,15 +296,14 @@ onMounted(() => {
                 <Column :exportable="false" alignFrozen="right" frozen header="Action" style="min-width: 80px">
                     <template #body="slotProps">
                         <Button class="mr-2" icon="pi pi-ellipsis-v" outlined rounded
-                                @click="showOptions($event, slotProps.data)" />
+                            @click="showOptions($event, slotProps.data)" />
 
                         <Popover ref="overlay">
                             <div class="flex flex-col gap-4 w-[8rem]">
                                 <ul>
                                     <li class="flex items-center gap-2 px-2 py-3  cursor-pointer rounded-border
                                     text-zinc-500 hover:bg-zinc-100 active:bg-zinc-100 focus:outline-none focus:ring focus:ring-zinc-100"
-                                        severity="secondary"
-                                        @click="handleEdit(slotProps.data)">
+                                        severity="secondary" @click="handleEdit(slotProps.data)">
                                         <i class="pi pi-pencil"></i>
                                         Edit
                                     </li>
@@ -321,8 +319,7 @@ onMounted(() => {
                                     <li v-if="selectedItem.status === 'Active'"
                                         class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border
                                     text-orange-500 hover:bg-orange-100 active:bg-orange-100 focus:outline-none focus:ring focus:ring-orange-100"
-                                        severity="danger"
-                                        @click="handleDeactive(slotProps.data)">
+                                        severity="danger" @click="handleDeactive(slotProps.data)">
 
                                         <i class="pi pi-times"></i>
                                         Deactive
@@ -365,4 +362,3 @@ onMounted(() => {
     color: #2196F3;
 }
 </style>
-

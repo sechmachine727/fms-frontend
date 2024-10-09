@@ -22,7 +22,7 @@ export const useTrainingProgramStore = defineStore('trainingProgramStore', {
 
          async fetchTrainingProgramsByTechnicalGroup(id) {
             try {
-                this.trainees = await trainingProgramApi.getAllByTechnicalGroupId(id);
+                this.trainingProgramsByTecnicalGroups = await trainingProgramApi.getAllByTechnicalGroupId(id);
             } catch (error) {
                 console.error("Failed to fetch trainees", error);
             }

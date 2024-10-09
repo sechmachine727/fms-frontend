@@ -183,7 +183,7 @@ const generalInfo = ref([])
                                 Key Program</div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
                                 classe?.keyProgramName
-                            }}</div>
+                                }}</div>
                         </div>
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
@@ -191,7 +191,7 @@ const generalInfo = ref([])
                                 Expected Start Date</div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
                                 classe?.expectedStartDate
-                            }}</div>
+                                }}</div>
                         </div>
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
@@ -199,7 +199,7 @@ const generalInfo = ref([])
                                 Expected End Date</div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
                                 classe?.expectedEndDate
-                            }}</div>
+                                }}</div>
                         </div>
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
