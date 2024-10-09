@@ -63,6 +63,17 @@ export const useTrainingProgramStore = defineStore('trainingProgramStore', {
                 throw error
             }
         },
+
+        async fetchUpdateStatus(id) {
+            try {
+                const result = await trainingProgramApi.putUpdateStatus(id)
+                return result.data
+            } catch (error) {
+                console.error('Error fetching status:', error)
+                throw error
+            }
+        },
+
         fetchFilterTrainingPrograms(criteria) {
             const departmentNames = criteria.departmentOptionsSearch.map(department => department.departmentName.toLowerCase())
             const searchQuery = criteria.searchQuery.toLowerCase() === '' ? null : criteria.searchQuery.trim().toLowerCase()
@@ -76,8 +87,7 @@ export const useTrainingProgramStore = defineStore('trainingProgramStore', {
 
                 const matchesSearchQuery = searchQuery
                     ? trainingProgram.trainingProgramName.toLowerCase().includes(searchQuery) ||
-                    trainingProgram.code.toLowerCase().includes(searchQuery) ||
-                    trainingProgram.technicalGroupCode.toLowerCase().includes(searchQuery)
+                    trainingProgram.code.toLowerCase().includes(searchQuery)
                     : true
 
                 const matchStatusSearch = statusSearchQuery

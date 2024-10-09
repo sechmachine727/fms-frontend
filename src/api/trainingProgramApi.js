@@ -25,6 +25,11 @@ class TrainingProgramApi {
         return put(newUrl, data)
     }
 
+    putUpdateStatus = (id) => {
+        const newUrl = url + `/change-status` + `/${id}`
+        return put(newUrl)
+    }
+
     delete = (id) => {
         const newUrl = url + `/${id}`
         return del(newUrl)
