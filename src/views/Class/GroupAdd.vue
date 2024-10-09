@@ -1,24 +1,24 @@
 <script setup>
-import router from "@/router";
-import { useDeliveryTypeStore } from "@/stores/deliveryTypeStore";
-import { useFormatTypeStore } from "@/stores/formatTypeStore";
-import { useClassStore } from "@/stores/groupStore";
-import { useKeyProgramStore } from "@/stores/keyProgramStore";
-import { useLocationStore } from "@/stores/locationStore";
-import { useScopeStore } from "@/stores/scopeStore";
-import { useSiteStore } from "@/stores/siteStore";
-import { useTechnicalGroupStore } from "@/stores/technicalGroupStore";
-import { useTraineeTypeStore } from "@/stores/traineeTypeStore";
-import { useTrainingProgramStore } from "@/stores/trainingProgramStore";
-import { useUserStore } from "@/stores/userStore";
-import { convertToVietnamTime } from "@/utils/date";
-import { generateClassCode } from "@/utils/generate";
-import { toTypedSchema } from "@vee-validate/zod";
-import Toast from "primevue/toast";
-import { useToast } from "primevue/usetoast";
-import { useField, useForm } from "vee-validate";
-import { onMounted, ref } from "vue";
-import { z } from "zod";
+import router from '@/router'
+import { useDeliveryTypeStore } from '@/stores/deliveryTypeStore'
+import { useFormatTypeStore } from '@/stores/formatTypeStore'
+import { useClassStore } from '@/stores/groupStore'
+import { useKeyProgramStore } from '@/stores/keyProgramStore'
+import { useLocationStore } from '@/stores/locationStore'
+import { useScopeStore } from '@/stores/scopeStore'
+import { useSiteStore } from '@/stores/siteStore'
+import { useTechnicalGroupStore } from '@/stores/technicalGroupStore'
+import { useTraineeTypeStore } from '@/stores/traineeTypeStore'
+import { useTrainingProgramStore } from '@/stores/trainingProgramStore'
+import { useUserStore } from '@/stores/userStore'
+import { convertToVietnamTime } from '@/utils/date'
+import { generateClassCode } from '@/utils/generate'
+import { toTypedSchema } from '@vee-validate/zod'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
+import { useField, useForm } from 'vee-validate'
+import { onMounted, ref } from 'vue'
+import { z } from 'zod'
 
 const deliveryTypeOptions = ref([]);
 const traineeTypeOptions = ref([]);
@@ -75,8 +75,8 @@ onMounted(() => {
 
 const handleTechnicalGroupChange = () => {
     let technicalId = technicalGroup.value.id;
-    trainingProgramStore.fetchTrainingPrograms(technicalId).then(() => {
-        trainingProgramOptions.value = trainingProgramStore.trainingPrograms
+    trainingProgramStore.fetchTrainingProgramsByTechnicalGroup(technicalId).then(() => {
+        trainingProgramOptions.value = trainingProgramStore.trainingProgramsByTecnicalGroups
     })
 }
 
@@ -220,25 +220,28 @@ const validationSchemaCode = toTypedSchema(
             .min(1, { message: "Class Name is required" }),
     })
 );
-const { handleSubmit: handleSubmitcode, errors: finalError } = useForm({ validationSchema: validationSchemaCode });
+const { handleSubmit: handleSubmitcode, errors: finalError, setFieldError } = useForm({ validationSchema: validationSchemaCode });
 const { value: classCode } = useField("classCode")
 const toast = useToast();
 const onSubmits = handleSubmitcode((values) => {
     data.value.groupCode = values.classCode
-    visible.value = false;
     assignedVisible.value = false;
-    console.log(data.value);
-
     classStore.fetchAddGroup(data.value).then(() => {
         sessionStorage.setItem('toastMessage', JSON.stringify({
             severity: 'success',
             summary: 'Data saved successfully with class code ' + values.classCode,
             life: 4000
         }));
+        visible.value = false;
         router.push("/group-management/list")
     }).catch((errors) => {
-        console.log(errors.response.data);
-        toast.add({ severity: 'error', summary: errors.response.data, life: 4000 });
+        if (errors.status === 400) {
+            if (errors.response.data.groupCode) {
+                setFieldError('classCode', errors.response.data.groupCode);
+            }
+        } else {
+            toast.add({ severity: 'error', summary: errors.response.data.error, life: 4000 });
+        }
     })
 });
 
@@ -249,15 +252,16 @@ const onSubmits = handleSubmitcode((values) => {
 function convertToSchema(data) {
     return {
         groupName: data.className || "",
-        traineeNumber: data.plannedTrainee || 0,
         groupCode: "",
+        traineeNumber: data.plannedTrainee || 0,
         trainingProgramId: data.trainingProgram?.id || 0,
+        technicalGroupId: data.technicalGroup?.id || 0,
         siteId: data.site?.id || 0,
+        locationId: data.location?.id || 0,
         expectedStartDate: "",
         expectedEndDate: "",
         planRevenue: data.planRevenue || 0,
         deliveryTypeId: data.deliveryType?.id || 0,
-        locationId: data.location?.id || 0,
         traineeTypeId: data.traineeType?.id || 0,
         scopeId: data.scope?.id || 0,
         formatTypeId: data.formatType?.id || 0,
@@ -267,7 +271,9 @@ function convertToSchema(data) {
         assignedUserIds: data.classAdminOptions.map(option => option.id) || [0]
     };
 }
-
+const navigateToBack = () => {
+    router.push('/group-management/list')
+}
 </script>
 
 <template>
@@ -320,7 +326,7 @@ function convertToSchema(data) {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.deliveryType"> {{
                                             errors.deliveryType
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-3" v-if="errors.traineeType"> {{
@@ -361,12 +367,12 @@ function convertToSchema(data) {
                                     <div class="flex flex-wrap gap-2 w-full ">
                                         <small class="text-red-600 ml-2" v-if="errors.technicalGroup"> {{
                                             errors.technicalGroup
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.trainingProgram"> {{
                                             errors.trainingProgram
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                 </div>
                                 <div class="flex flex-col md:flex-row gap-4 ">
@@ -435,7 +441,7 @@ function convertToSchema(data) {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 " v-if="errors.plannedTrainee"> {{
                                             errors.plannedTrainee
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.planRevenue"> {{
@@ -468,7 +474,7 @@ function convertToSchema(data) {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 " v-if="errors.expectedStart"> {{
                                             errors.expectedStart
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.expectedEnd"> {{
@@ -498,20 +504,29 @@ function convertToSchema(data) {
                                 class="w-full md:w-80" />
                             <small class="text-red-600 " v-if="errors.classAdminOptions"> {{
                                 errors.classAdminOptions
-                            }}</small>
+                                }}</small>
                         </AccordionContent>
                     </AccordionPanel>
                 </Accordion>
 
-                <div class="mt-4">
-                    <button type="submit" @click="handleFormtTypeandStatus(true, 'Planning')"
-                        class="mr-2 bg-gray-200 hover:bg-gray-400 active:bg-gray-200 text-black font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
-                        Plan Group
+
+
+                <div class="mt-4 flex justify-between">
+                    <button
+                        class="mr-2 bg-gray-200 hover:bg-gray-400 active:bg-gray-200 text-black font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
+                        @click="navigateToBack">
+                        Back to Training Program List
                     </button>
-                    <button type="submit" @click="handleFormtTypeandStatus(true, 'Assigned')"
-                        class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
-                        Assign to Group Admin
-                    </button>
+                    <div class="flex gap-2">
+                        <button type="submit" @click="handleFormtTypeandStatus(true, 'Planning')"
+                            class="mr-2 bg-white hover:bg-gray-100 active:bg-gray-200 text-green-500 font-semibold py-2 px-4 rounded-lg border border-green-500 transition duration-300 ease-in-out">
+                            Plan Group
+                        </button>
+                        <button type="submit" @click="handleFormtTypeandStatus(true, 'Assigned')"
+                            class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
+                            Assign to Group Admin
+                        </button>
+                    </div>
                 </div>
             </form>
         </Fluid>

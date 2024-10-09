@@ -82,7 +82,7 @@ onMounted(() => {
             tableStyle="min-width: 50rem">
             <div class="flex items-center justify-between">
                 <h1 class="text-2xl">Topic Configuration</h1>
-                <Button icon="pi pi-plus" label="Import Topic" @click="showDialog = true" />
+                <Button label="Import Topic" @click="showDialog = true" />
 
                 <!-- Toast for success message -->
                 <Toast ref="toast" />

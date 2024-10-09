@@ -126,7 +126,7 @@ const navigateToAdd = () => {
         <Toast />
         <div class="text-xl mb-4 flex justify-between items-center">
             <span class="font-semibold text-xl">Group List</span>
-            <Button label="Add" @click="navigateToAdd" />
+            <Button label="Add Group" @click="navigateToAdd" />
         </div>
         <Divider />
         <div class="flex flex-col md:flex-row gap-4">
@@ -154,7 +154,7 @@ const navigateToAdd = () => {
             <Column header="Class Code" style="min-width: 100px">
                 <template #body="slotProps">
                     <router-link :to="{ name: 'group-detail', params: { id: slotProps.data.id } }"
-                        class="router-link-active">{{ slotProps.data.groupCode }}
+                        class="router-link-active hover:underline text-blue-400">{{ slotProps.data.groupCode }}
                     </router-link>
                 </template>
             </Column>
@@ -170,8 +170,14 @@ const navigateToAdd = () => {
                 </template>
             </Column>
             <Column field="technicalGroupCode" header="Technical Group" style="min-width: 150px"></Column>
-            <Column field="trainingProgramName" header="Training Program" style="min-width: 150px">
-
+            <Column header="Training Program" style="min-width: 150px">
+                <template #body="slotProps">
+                    <router-link
+                        :to="{ name: 'training-program-detail', params: { id: slotProps.data.trainingProgramId } }"
+                        class="router-link-active hover:underline text-blue-400">{{ slotProps.data.trainingProgramName
+                        }}
+                    </router-link>
+                </template>
             </Column>
             <Column field="siteName" header="Site" style="min-width: 100px"></Column>
             <Column field="traineeNumber" header="Trainee number" style="min-width: 150px"></Column>

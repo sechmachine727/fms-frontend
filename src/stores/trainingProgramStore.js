@@ -7,13 +7,14 @@ export const useTrainingProgramStore = defineStore('trainingProgramStore', {
         trainingPrograms: [],
         trainingProgram: null,
         trainingProgramsByTecnicalGroups: [],
-        result: null
+        result: null,
+        filterTrainingPrograms: []
     }),
 
     actions: {
-        async fetchTrainingPrograms(id) {
+        async fetchTrainingPrograms() {
             try {
-                this.trainingPrograms = await trainingProgramApi.getAllByTechnicalGroupId(id)
+                this.trainingPrograms = await trainingProgramApi.get()
             } catch (error) {
                 console.error('Failed to fetch trainees', error)
             }
@@ -21,7 +22,7 @@ export const useTrainingProgramStore = defineStore('trainingProgramStore', {
 
          async fetchTrainingProgramsByTechnicalGroup(id) {
             try {
-                this.trainees = await trainingProgramApi.getAllByTechnicalGroupId(id);
+                this.trainingProgramsByTecnicalGroups = await trainingProgramApi.getAllByTechnicalGroupId(id);
             } catch (error) {
                 console.error("Failed to fetch trainees", error);
             }
@@ -45,18 +46,46 @@ export const useTrainingProgramStore = defineStore('trainingProgramStore', {
 
         async fetchAddTrainingProgram(data) {
             try {
-                this.result = await trainingProgramApi.post(data)
+                const result = await trainingProgramApi.post(data)
+                return result.data
             } catch (error) {
                 console.error('Failed to fetch trainee detail', error)
+                throw error
             }
         },
 
         async fetchUpdateTrainingProgram(id, data) {
             try {
-                this.result = await trainingProgramApi.put(id, data)
+                const result = await trainingProgramApi.put(id, data)
+                return result.data
             } catch (error) {
                 console.error('Failed to fetch trainee detail', error)
+                throw error
             }
+        },
+        fetchFilterTrainingPrograms(criteria) {
+            const departmentNames = criteria.departmentOptionsSearch.map(department => department.departmentName.toLowerCase())
+            const searchQuery = criteria.searchQuery.toLowerCase() === '' ? null : criteria.searchQuery.trim().toLowerCase()
+            const statusSearchQuery = criteria.statusOptions.id === 'All' ? null : criteria.statusOptions
+            console.log(statusSearchQuery)
+            this.filterTrainingPrograms = this.trainingPrograms.filter((trainingProgram) => {
+                // Kiểm tra điều kiện lọc theo phòng ban
+                const matchesDepartment = departmentNames.length
+                    ? departmentNames.includes(trainingProgram.department.departmentName.toLowerCase())
+                    : true
+
+                const matchesSearchQuery = searchQuery
+                    ? trainingProgram.trainingProgramName.toLowerCase().includes(searchQuery) ||
+                    trainingProgram.code.toLowerCase().includes(searchQuery) ||
+                    trainingProgram.technicalGroupCode.toLowerCase().includes(searchQuery)
+                    : true
+
+                const matchStatusSearch = statusSearchQuery
+                    ? trainingProgram.status.toLowerCase() === statusSearchQuery.id.toLowerCase()
+                    : true
+
+                return matchesDepartment && matchesSearchQuery && matchStatusSearch
+            })
         }
     },
 

@@ -41,7 +41,6 @@ onMounted(() => {
             <!-- Topic Detail Header -->
             <div class="flex justify-between items-center mb-4">
                 <h1 class="text-2xl font-bold">Topic Detail</h1>
-                <Button label="Download" icon="pi pi-download" class="p-button-primary" />
             </div>
 
             <!-- TabView for Syllabus and Schedule Details -->
@@ -52,6 +51,7 @@ onMounted(() => {
                         <!-- General Info Table -->
                         <div class="general-info mb-8">
                             <h2 class="text-xl font-semibold mb-2">1. General Info</h2>
+                            <div></div>
                             <DataTable :value="generalInfo" class="general-info-table" responsiveLayout="scroll">
                                 <Column field="label" class="highlight-label-column"></Column>
                                 <Column field="value"></Column>
