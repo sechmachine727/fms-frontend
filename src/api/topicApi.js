@@ -1,4 +1,5 @@
-import { del, get, post, put } from "../axios";
+import { del, get, post, put } from '../axios'
+
 const url = "/topics";
 class TopicApi {
     get = (params) => {
@@ -23,6 +24,11 @@ class TopicApi {
         const newUrl = url + `/${id}`;
         return del(newUrl);
     };
+
+    putUpdateStatus = (id) => {
+        const newUrl = url + `/change-status` + `/${id}`
+        return put(newUrl)
+    }
 }
 
 const topicApi = new TopicApi();
