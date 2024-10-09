@@ -179,7 +179,6 @@ const confirmDeactive = (value) => {
             })
         }
     })
-
 }
 
 const handleEdit = () => {
