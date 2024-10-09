@@ -4,8 +4,11 @@ import { useTrainingProgramStore } from '@/stores/trainingProgramStore'
 import { useDepartmentStore } from '@/stores/departmentStore'
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import { useToast } from 'primevue/usetoast'
+import Toast from 'primevue/toast'
+import { useConfirm } from 'primevue/useconfirm'
 
-
+const confirm = useConfirm()
 const trainingPrograms = ref()
 const trainingProgramStore = useTrainingProgramStore()
 const departmentStore = useDepartmentStore()
@@ -14,15 +17,13 @@ const getStatusLabel = (status) => {
     switch (status) {
         case 'Active':
             return 'success' // Change color to green for active status
-
         case 'Inactive':
             return 'warn' // Change color to red for inactive status
-
         default:
             return null
     }
 }
-
+const toast = useToast()
 const route = useRoute()
 const overlay = ref(null)
 const selectedItem = ref(null)
@@ -52,8 +53,7 @@ const querySearchFromUrl = () => {
 
         if (getQueryDepartmentFromUrl.value !== '') {
             const values = getQueryDepartmentFromUrl.value.split(',').map(department => ({ departmentName: department }))
-            const filteredDepartment = departments.value.filter(item1 => values.some(item2 => item1.departmentName === item2.departmentName))
-            departmentOptionsSearch.value = filteredDepartment
+            departmentOptionsSearch.value = departments.value.filter(item1 => values.some(item2 => item1.departmentName === item2.departmentName))
         }
         applyFilters()
     }
@@ -113,22 +113,78 @@ const showOptions = (event, item) => {
 
 const handleActive = () => {
     if (selectedItem.value) {
-        // Kích hoạt đối tượng
-        console.log('Activating:', selectedItem.value)
+        confirmActive(selectedItem.value)
     }
-}
+};
 
 const handleDeactive = () => {
     if (selectedItem.value) {
-        selectedItem.value.isActive = false // Hủy kích hoạt đối tượng
-        console.log('Deactivating:', selectedItem.value)
+        confirmDeactive(selectedItem.value)
     }
+};
+
+const confirmActive = (value) => {
+    confirm.require({
+        group: 'templating',
+        message: 'Are you sure you want to activate this Training Program.' + value.code,
+        header: 'Activate Training Program',
+        acceptProps: {
+            label: 'Save',
+            outlined: true
+        },
+        rejectProps: {
+            label: 'Cancel',
+            severity: 'secondary',
+            outlined: true
+        },
+        accept: () => {
+            trainingProgramStore.fetchUpdateStatus(selectedItem.value.id).then(() => {
+                toast.add({ severity: 'success', summary: 'Training Program successfully activated', life: 3000 })
+                trainingProgramStore.fetchTrainingPrograms().then(() => {
+                    trainingPrograms.value = trainingProgramStore.trainingPrograms
+                })
+            }).catch((errors) => {
+                if (errors.status === 400) {
+                    toast.add({ severity: 'error', summary: errors.response.data, life: 3000 })
+                }
+            })
+        }
+    })
+}
+
+const confirmDeactive = (value) => {
+    confirm.require({
+        group: 'templating',
+        message: 'Are you sure you want to deactivate this Training Program.' + value.code,
+        header: 'Deactivate Training Program',
+        acceptProps: {
+            label: 'Save',
+            outlined: true
+        },
+        rejectProps: {
+            label: 'Cancel',
+            severity: 'secondary',
+            outlined: true
+        },
+        accept: () => {
+            trainingProgramStore.fetchUpdateStatus(selectedItem.value.id).then(() => {
+                trainingProgramStore.fetchTrainingPrograms().then(() => {
+                    trainingPrograms.value = trainingProgramStore.trainingPrograms
+                })
+                toast.add({ severity: 'success', summary: 'Training Program successfully deactivated', life: 3000 })
+            }).catch((errors) => {
+                if (errors.status === 400) {
+                    toast.add({ severity: 'error', summary: errors.response.data, life: 3000 })
+                }
+            })
+        }
+    })
+
 }
 
 const handleEdit = () => {
     if (selectedItem.value) {
         router.push('/topic-management/training-program/edit/' + selectedItem.value.id)
-        console.log('Editing:', selectedItem.value)
     }
 }
 
@@ -147,7 +203,6 @@ const topicInfoList = ref()
 onMounted(() => {
     trainingProgramStore.fetchTrainingPrograms().then(() => {
         trainingPrograms.value = trainingProgramStore.trainingPrograms
-        console.log(trainingProgramStore.trainingPrograms)
         topicInfoList.value = trainingProgramStore.trainingPrograms.map(program => {
             return program.topicInfoList.map(topic => {
                 return {
@@ -172,6 +227,9 @@ onMounted(() => {
             <Button label="Add Training Program" @click="navigateToAdd" />
         </div>
         <Divider />
+
+        <Toast />
+
         <div>
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="flex flex-col w-60 mt-1 gap-2">
@@ -187,8 +245,9 @@ onMounted(() => {
                 </div>
                 <div class="flex flex-wrap w-60 gap-2">
                     <label for="search">Search</label>
-                    <InputText id="search" v-model="searchQuery" class="h-11 w-full" placeholder="Enter to Search ..."
-                        type="text" @keyup.enter="handleSearch" />
+                    <InputText id="search" v-model="searchQuery" class="h-11 w-full"
+                               placeholder="Enter to Code, Name ..."
+                               type="text" @keyup.enter="handleSearch" />
                 </div>
             </div>
 
@@ -209,15 +268,15 @@ onMounted(() => {
                         </router-link>
                     </template>
                 </Column>
-                <Column field="version" header="Version" style="min-width: 10px"></Column>
-                <Column field="trainingProgramName" header="Training Name" style="min-width: 190px">
+                <Column field="trainingProgramName" header="Training Name" style="min-width: 140px">
                     <template #body="slotProps">
                         <router-link :to="{ name: 'training-program-detail', params: { id: slotProps.data.id } }"
                             class="router-link-active hover:underline">{{ slotProps.data.trainingProgramName }}
                         </router-link>
                     </template>
                 </Column>
-                <Column field="departmentName" header="Region" style="min-width: 100px"></Column>
+                <Column field="version" header="Version" style="min-width: 10px"></Column>
+                <Column field="department.departmentName" header="Region" style="min-width: 100px"></Column>
                 <Column field="technicalGroup.code" header="Technical Group" style="min-width: 150px"></Column>
                 <Column field="topicInfoList" header="Topic" style="min-width: 150px">
                     <template #body="slotProps">
@@ -279,6 +338,17 @@ onMounted(() => {
             </DataTable>
         </div>
 
+        <ConfirmDialog group="templating">
+            <template #message="slotProps">
+                <div
+                    class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700">
+                    <i v-for="(line, index) in slotProps.message.message.split('.')" :key="index"
+                       :class="{ 'text-red-500 font-bold': index === 1 }">
+                        {{ line }}
+                    </i>
+                </div>
+            </template>
+        </ConfirmDialog>
     </div>
 </template>
 <style>

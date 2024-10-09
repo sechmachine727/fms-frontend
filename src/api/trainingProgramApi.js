@@ -1,4 +1,4 @@
-import { del, get, post, put } from '../axios'
+import { del, get, post, put } from '@/axios'
 
 const url = '/training-programs'
 
@@ -23,6 +23,11 @@ class TrainingProgramApi {
     put = (id, data) => {
         const newUrl = url + `/${id}`
         return put(newUrl, data)
+    }
+
+    putUpdateStatus = (id) => {
+        const newUrl = url + `/change-status` + `/${id}`
+        return put(newUrl)
     }
 
     delete = (id) => {
