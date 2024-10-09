@@ -519,8 +519,18 @@ const handleUserUpdated = () => {
                             <small class="text-red-600 " v-if="errors.department">{{ errors.department }}</small>
                         </div>
                         <div class="flex  gap-2">
-                            <label for="status">Status:</label>
-                            <ToggleSwitch id="status" v-model="status" />
+                            <label for="status">Status</label>
+
+                            <!-- Toggle Switch for changing status -->
+                            <ToggleSwitch id="status" v-model="status" offIcon="pi pi-times" offLabel="Inactive"
+                                onIcon="pi pi-check" onLabel="Active" />
+
+                            <!-- Dynamic Status Text with oval border and lighter background -->
+                            <span :class="status
+                                ? 'text-green-600 bg-green-100 '
+                                : 'text-yellow-600 bg-yellow-100'" class="ml-2 font-semibold px-3 py-1 rounded-full">{{
+                                    status ? 'Active' : 'Inactive'
+                                }}</span>
                         </div>
                         <div class="flex justify-end mt-4">
                             <button @click.prevent="visible = false"

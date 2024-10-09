@@ -185,9 +185,8 @@ onMounted(async () => {
                                     Code
                                     <i class="text-red-600">*</i>
                                 </label>
-                                <InputText id="Code" v-model="code"
-                                           :class="`{ 'p-invalid': errors.code }`" placeholder="Code"
-                                           type="text">{{ trainingProgram.code }}
+                                <InputText id="Code" v-model="code" :class="`{ 'p-invalid': errors.code }`"
+                                    placeholder="Code" type="text">{{ trainingProgram.code }}
                                 </InputText>
                             </div>
                         </div>
@@ -201,9 +200,8 @@ onMounted(async () => {
                                     Version
                                     <i class="text-red-600">*</i>
                                 </label>
-                                <InputText id="Version" v-model="version"
-                                           :class="`{ 'p-invalid': errors.version }`" placeholder="Version"
-                                           type="text" />
+                                <InputText id="Version" v-model="version" :class="`{ 'p-invalid': errors.version }`"
+                                    placeholder="Version" type="text" />
                             </div>
                         </div>
                         <div class="flex flex-wrap gap-2 w-full">
@@ -217,8 +215,7 @@ onMounted(async () => {
                                     <i class="text-red-600">*</i>
                                 </label>
                                 <InputText id="Name" v-model="trainingProgramName"
-                                           :class="`{ 'p-invalid': errors.name }`" placeholder="Name"
-                                           type="text" />
+                                    :class="`{ 'p-invalid': errors.name }`" placeholder="Name" type="text" />
                             </div>
                         </div>
                         <div class="flex flex-wrap gap-2 w-full">
@@ -232,8 +229,8 @@ onMounted(async () => {
                                     <i class="text-red-600">*</i>
                                 </label>
                                 <Select id="technicalGroupCode" v-model="technicalGroupCode"
-                                        :options="technicalGroupCodeOptions" class="w-full " filter
-                                        optionLabel="code" placeholder="Select Technical Group"></Select>
+                                    :options="technicalGroupCodeOptions" class="w-full " filter optionLabel="code"
+                                    placeholder="Select Technical Group"></Select>
                                 <small v-if="errors.technicalGroupCode" class="text-red-600 ml-2">
                                     {{ errors.technicalGroupCode }}</small>
                             </div>
@@ -244,12 +241,14 @@ onMounted(async () => {
 
                             <!-- Toggle Switch for changing status -->
                             <ToggleSwitch id="status" v-model="status" offIcon="pi pi-times" offLabel="Inactive"
-                                          onIcon="pi pi-check" onLabel="Active" />
+                                onIcon="pi pi-check" onLabel="Active" />
 
                             <!-- Dynamic Status Text with oval border and lighter background -->
                             <span :class="status
-                                    ? 'text-green-600 bg-green-100 '
-                                    : 'text-yellow-600 bg-yellow-100'" class="ml-2 font-semibold px-3 py-1 rounded-full">{{ status ? 'Active' : 'Inactive' }}</span>
+                                ? 'text-green-600 bg-green-100 '
+                                : 'text-yellow-600 bg-yellow-100'" class="ml-2 font-semibold px-3 py-1 rounded-full">{{
+                                    status ? 'Active' : 'Inactive'
+                                }}</span>
                         </div>
 
                         <div class="flex flex-wrap gap-2 w-full mt-3">
@@ -257,7 +256,7 @@ onMounted(async () => {
                                 Region
                             </label>
                             <Select id="department" v-model="department" :options="departments" class="w-full"
-                                    optionLabel="departmentName" placeholder="Select One"></Select>
+                                optionLabel="departmentName" placeholder="Select One"></Select>
                         </div>
 
                         <div class="flex flex-wrap mt-3">
@@ -279,7 +278,7 @@ onMounted(async () => {
                                 <i class="text-red-600">*</i>
                             </label>
                             <PickList v-model="topicData" breakpoint="1400px" dataKey="value"
-                                      @update:modelValue="onChange">
+                                @update:modelValue="onChange">
                                 <template #option="{ option }">
                                     {{ option.label }}
                                 </template>
@@ -292,17 +291,19 @@ onMounted(async () => {
                 </div>
 
                 <div class="mt-4 flex justify-between">
-                    <button class="mr-2 bg-gray-200 hover:bg-gray-400 active:bg-gray-200 text-black font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-                            @click="navigateToBack">
+                    <button
+                        class="mr-2 bg-gray-200 hover:bg-gray-400 active:bg-gray-200 text-black font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
+                        @click="navigateToBack">
                         Back to Training Program List
                     </button>
                     <div class="flex gap-2">
-                        <button
-                            class="bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
+                        <button @click="navigateToBack"
+                            class="mr-2 bg-white hover:bg-gray-100 active:bg-gray-200 text-green-500 font-semibold py-2 px-4 rounded-lg border border-green-500 transition duration-300 ease-in-out">
                             Cancel
                         </button>
-                        <button class="bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-                                type="submit">
+                        <button
+                            class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
+                            type="submit">
                             Save
                         </button>
                     </div>

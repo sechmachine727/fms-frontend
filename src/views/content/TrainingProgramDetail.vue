@@ -44,33 +44,32 @@ onMounted(() => {
             <div class="flex justify-between items-center mb-4">
                 <h1 class="text-2xl font-bold">Training Program Detail</h1>
             </div>
-                    <div class="grid">
-                        <div class="general-info mb-8">
-                            <h2 class="text-xl font-semibold mb-2">1. Training Program Info</h2>
-                            <DataTable :value="generalInfo" class="training-program-info-table"
-                                       responsiveLayout="scroll">
-                                <Column class="highlight-label-column" field="label"></Column>
-                                <Column field="value" ></Column>
-                            </DataTable>
-                        </div>
-                    </div>
+            <div class="grid">
+                <div class="general-info mb-8">
+                    <h2 class="text-xl font-semibold mb-2">1. Training Program Info</h2>
+                    <DataTable :value="generalInfo" class="training-program-info-table" responsiveLayout="scroll">
+                        <Column class="highlight-label-column" field="label"></Column>
+                        <Column field="value"></Column>
+                    </DataTable>
+                </div>
+            </div>
 
-                    <!-- Assessment Scheme Table -->
-                    <div class="assessment-scheme mb-8">
-                        <h2 class="text-xl font-semibold mb-2">2. Topic Info</h2>
-                        <DataTable :value="topicInfo" class="assessment-scheme-table" responsiveLayout="scroll">
-                            <!-- Highlighting Label Column -->
-                            <Column header="No." style="width: 5%">
-                                <template #body="slotProps">
-                                    {{ slotProps.index + 1 }}
-                                </template>
-                            </Column>
-                            <Column field="topicCode" header="Topic Code " style="width: 15%"></Column>
-                            <Column field="version" header="Version" style="width: 10%"></Column>
-                            <Column field="topicName" header="Total Section/Day" style="width: 10%"></Column>
-                            <Column field="note" header="Training Time" style="width: 5%"></Column>
-                        </DataTable>
-                    </div>
+            <!-- Assessment Scheme Table -->
+            <div class="assessment-scheme mb-8">
+                <h2 class="text-xl font-semibold mb-2">2. Topic Info</h2>
+                <div></div>
+                <DataTable :value="topicInfo" class="assessment-scheme-table" responsiveLayout="scroll">
+                    <Column header="No." style="width: 5%">
+                        <template #body="slotProps">
+                            {{ slotProps.index + 1 }}
+                        </template>
+                    </Column>
+                    <Column field="topicCode" header="Topic Code " style="width: 15%"></Column>
+                    <Column field="version" header="Version" style="width: 10%"></Column>
+                    <Column field="topicName" header="Total Section/Day" style="width: 10%"></Column>
+                    <Column field="note" header="Training Time" style="width: 5%"></Column>
+                </DataTable>
+            </div>
         </div>
     </div>
 
@@ -82,11 +81,12 @@ onMounted(() => {
     color: #2c3e50;
     width: 20%;
 }
-.assessment-scheme-table .p-datatable-tbody > tr > td {
+
+.assessment-scheme-table .p-datatable-tbody>tr>td {
     padding: 0.5rem 1rem;
 }
 
-.assessment-scheme-table .p-datatable-thead > tr > th {
+.assessment-scheme-table .p-datatable-thead>tr>th {
     padding: 0.75rem 1rem;
 }
 </style>
