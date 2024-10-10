@@ -187,13 +187,6 @@ const handleEdit = () => {
     }
 }
 
-const handleDelete = () => {
-    if (selectedItem.value) {
-        console.log('Delete training program', selectedItem.value)
-        // Thực hiện các hành động với selectedItem
-    }
-}
-
 const navigateToAdd = () => {
     router.push('/topic-management/training-program/add')
 }
@@ -322,12 +315,6 @@ onMounted(() => {
 
                                         <i class="pi pi-times"></i>
                                         Deactive
-                                    </li>
-                                    <li class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border
-                                    text-red-600 hover:bg-red-100 active:bg-red-100 focus:outline-none focus:ring focus:ring-red-100"
-                                        @click="handleDelete(slotProps.data)">
-                                        <i class="pi pi-trash"></i>
-                                        Delete
                                     </li>
                                 </ul>
                             </div>

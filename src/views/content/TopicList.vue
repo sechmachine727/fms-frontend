@@ -62,7 +62,7 @@ const updateQueryParams = () => {
     // Push the constructed query object to the router
     const query = buildQueryObject()
     router.push({
-        path: '/topic-management/training-program',
+        path: '/topic-management/topic',
         query: query
     })
     applyFilters()
