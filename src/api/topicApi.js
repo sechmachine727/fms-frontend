@@ -6,6 +6,11 @@ class TopicApi {
         return get(url, { params });
     };
 
+    getActiveTopics = () => {
+        const newUrl = url + '/active'
+        return get(newUrl)
+    }
+
     getDetail = (id) => {
         const newUrl = url + `/${id}`;
         return get(newUrl);

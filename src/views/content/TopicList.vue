@@ -290,7 +290,7 @@ onMounted(() => {
                         </router-link>
                     </template>
                 </Column>
-                <Column field="technicalGroupCode" header="Technical Group" style="width: 25%"></Column>
+                <Column field="technicalGroup.code" header="Technical Group" style="width: 25%"></Column>
                 <Column field="status" header="Status" style="width: 15%">
                     <template #body="slotProps">
                         <Tag :severity="getStatusLabel(slotProps.data.status)" :value="slotProps.data.status" />

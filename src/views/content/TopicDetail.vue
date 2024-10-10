@@ -1,7 +1,7 @@
 <script setup>
-import { useTopicStore } from '@/stores/topicStore';
-import { computed, onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useTopicStore } from '@/stores/topicStore'
+import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 
 const topicStore = useTopicStore()
@@ -15,7 +15,7 @@ const generalInfo = computed(() => {
         return [
             { label: 'Code', value: topicStore.topic.code },
             { label: 'Name', value: topicStore.topic.name },
-            { label: 'Technical Group', value: topicStore.topic.technicalGroupCode },
+            { label: 'Technical Group', value: topicStore.topic.technicalGroup.code },
             { label: 'Pass Criteria', value: topicStore.topic.passCriteria },
         ]
     } else {
