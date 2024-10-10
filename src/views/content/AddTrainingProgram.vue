@@ -106,7 +106,7 @@ const navigateToBack = () => {
 }
 
 onMounted(() => {
-    topicStore.fetchTopics().then(() => {
+    topicStore.fetchActiveTopics().then(() => {
         const data = topicStore.topics.map(topic => ({
             label: `${topic.code} - ${topic.name} - ${topic.version}`,
             value: topic.code,

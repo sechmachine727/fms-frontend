@@ -139,7 +139,7 @@ onMounted(async () => {
             id: topic.id
         }))
         // Lấy tất cả các topic từ store
-        await topicStore.fetchTopics()
+        await topicStore.fetchActiveTopics()
         const allTopics = topicStore.topics.map(topic => ({
             label: `${topic.code} - ${topic.name} - ${topic.version}`,
             value: topic.code,

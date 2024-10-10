@@ -18,6 +18,14 @@ export const useTopicStore = defineStore('topicStore', {
             }
         },
 
+        async fetchActiveTopics() {
+            try {
+                this.topics = await topicApi.getActiveTopics()
+            } catch (error) {
+                console.error('Failed to fetch active topics', error)
+            }
+        },
+
         async fetchTopicDetail(params) {
             try {
                 this.topic = await topicApi.getDetail(params)
