@@ -103,7 +103,8 @@ const validationSchema = toTypedSchema(
     z.object({
         className: z
             .string({ required_error: 'Class Name is required' })
-            .min(1, { message: "Class Name is required" }),
+            .min(1, { message: 'Class Name is required' })
+            .max(20, { message: 'Class Name must not exceed 20 characters' }),
         deliveryType: z
             .object({
                 id: z.number({ required_error: "Delivery Type is required" }).min(1, { message: "Delivery Type is required" }),

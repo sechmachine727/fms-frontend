@@ -55,16 +55,19 @@ const validationSchema = toTypedSchema(
     z.object({
         account: z
             .string({ required_error: 'Account is required' })
-            .min(1, { message: "Account is required" }),
+            .min(1, { message: 'Account is required' })
+            .max(10, { message: 'Account must not exceed 10 characters' }),
         email: z
             .string({ required_error: 'Email is required' })
             .min(1, { message: "Email is required" })
             .regex(/^[\w-_.+]*[\w-_.]@(\w+\.)+\w+\w$/, { message: 'Invalid email address format' }),
         name: z
             .string({ required_error: 'Display Name is required' })
-            .min(1, { message: "Class Name is required" }),
+            .min(1, { message: 'User Name is required' })
+            .max(30, { message: 'User Name must not exceed 30 characters' }),
         employeeId: z
-            .string({ required_error: 'Class Name is required' }),
+            .string({ required_error: 'Employee ID is required' })
+            .max(10, { message: 'Employee ID must not exceed 10 characters' }),
         contractType: z
             .object({
                 code: z.string({ required_error: "Contract Type is required" }).min(1, { message: "Delivery Type is required" }),

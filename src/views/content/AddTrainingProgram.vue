@@ -1,14 +1,14 @@
 <script setup>
-import router from '@/router';
-import { useDepartmentStore } from '@/stores/departmentStore';
-import { useTechnicalGroupStore } from '@/stores/technicalGroupStore';
-import { useTopicStore } from '@/stores/topicStore';
-import { useTrainingProgramStore } from '@/stores/trainingProgramStore'; // Import the store handling the training programs
-import { toTypedSchema } from '@vee-validate/zod';
-import { useToast } from 'primevue/usetoast';
-import { useField, useForm } from 'vee-validate';
-import { onMounted, ref } from 'vue';
-import { z } from 'zod';
+import router from '@/router'
+import { useDepartmentStore } from '@/stores/departmentStore'
+import { useTechnicalGroupStore } from '@/stores/technicalGroupStore'
+import { useTopicStore } from '@/stores/topicStore'
+import { useTrainingProgramStore } from '@/stores/trainingProgramStore' // Import the store handling the training programs
+import { toTypedSchema } from '@vee-validate/zod'
+import { useToast } from 'primevue/usetoast'
+import { useField, useForm } from 'vee-validate'
+import { onMounted, ref } from 'vue'
+import { z } from 'zod'
 
 const topicStore = useTopicStore()
 const technicalGroupStore = useTechnicalGroupStore()
@@ -23,13 +23,15 @@ const validationSchema = toTypedSchema(
     z.object({
         code: z
             .string({ required_error: 'Code is required' })
-            .min(1, { message: 'Code is required' }),
+            .min(1, { message: 'Code is required' })
+            .max(20, { message: 'Code must not exceed 20 characters' }),
         version: z
             .string({ required_error: 'Version is required' })
             .min(1, { message: 'Version is required' }),
         name: z
             .string({ required_error: 'Name is required' })
-            .min(1, { message: 'Name is required' }),
+            .min(1, { message: 'Name is required' })
+            .max(30, { message: 'Name must not exceed 30 characters' }),
         technicalGroupType: z
             .object({
                 id: z.number({ required_error: 'Technical Group code is required' }).min(1, { message: 'Technical Group code is required' })

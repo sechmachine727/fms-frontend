@@ -1,11 +1,11 @@
 <script setup>
-import router from '@/router';
-import { useUserStore } from '@/stores/userStore';
-import { toTypedSchema } from '@vee-validate/zod';
-import { useToast } from 'primevue/usetoast';
-import { useField, useForm } from 'vee-validate';
-import { ref, watch } from 'vue';
-import { z } from 'zod';
+import router from '@/router'
+import { useUserStore } from '@/stores/userStore'
+import { toTypedSchema } from '@vee-validate/zod'
+import { useToast } from 'primevue/usetoast'
+import { useField, useForm } from 'vee-validate'
+import { ref, watch } from 'vue'
+import { z } from 'zod'
 
 // Các ref và biến để quản lý giao diện
 const contractTypes = ref([
@@ -35,16 +35,19 @@ const validationSchema = toTypedSchema(
     z.object({
         account: z
             .string({ required_error: 'Account is required' })
-            .min(1, { message: "Account is required" }),
+            .min(1, { message: 'Account is required' })
+            .max(10, { message: 'Account must not exceed 10 characters' }),
         email: z
             .string({ required_error: 'FPT Mail is required' })
             .min(1, { message: "FPT mail is required" })
             .regex(/^[\w-_.+]*[\w-_.]@(\w+\.)+\w+\w$/, { message: 'Invalid email address format' }),
         name: z
             .string({ required_error: 'Display Name is required' })
-            .min(1, { message: "Display Name is required" }),
+            .min(1, { message: 'Display Name is required' })
+            .max(30, { message: 'Class Name must not exceed 30 characters' }),
         employeeId: z
-            .string({ required_error: 'Employee ID is required' }),
+            .string({ required_error: 'Employee ID is required' })
+            .max(10, { message: 'Employee ID must not exceed 10 characters' }),
         contractType: z
             .object({
                 code: z.string({ required_error: "Contract Type is required" }).min(1, { message: "Contract Type is required" }),
