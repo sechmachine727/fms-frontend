@@ -341,6 +341,6 @@ onMounted(() => {
 }
 
 .router-link-active {
-    color: #2196F3;
+    color: #2196F3; 
 }
 </style>
