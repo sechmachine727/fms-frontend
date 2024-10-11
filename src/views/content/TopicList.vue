@@ -1,11 +1,15 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useTopicStore } from '@/stores/topicStore'
+import { useImportFileStore } from '@/stores/importFileStore'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
 import Toast from 'primevue/toast'
 import { useConfirm } from 'primevue/useconfirm'
+
+const topicStore = useTopicStore()
+const importFileStore = useImportFileStore()
 
 const confirm = useConfirm()
 const topics = ref()
@@ -62,7 +66,7 @@ const updateQueryParams = () => {
     // Push the constructed query object to the router
     const query = buildQueryObject()
     router.push({
-        path: '/topic-management/topic',
+        path: '/content-management/topic',
         query: query
     })
     applyFilters()
@@ -76,7 +80,7 @@ const handleStatusChange = () => {
     updateQueryParams()
 }
 
-const topicStore = useTopicStore()
+
 
 const showOptions = (event, item) => {
     selectedItem.value = item // Lưu đối tượng hiện tại khi mở Popover
@@ -169,36 +173,67 @@ const confirmDeactive = (value) => {
 const showDialog = ref(false)
 const selectedFile = ref(null)
 
+const MAX_FILENAME_LENGTH = 28 // Độ dài tối đa của tên file trước khi thêm dấu "..."
+
 const onFileSelect = (event) => {
     const file = event.files[0] // Capture the selected file
-    console.log('File selected:', selectedFile.value)
-    selectedFile.value = file
-}
+    if (file) {
+        let fileName = file.name
 
-const importFile = () => {
+        if (fileName.length > MAX_FILENAME_LENGTH) {
+            fileName = fileName.substring(0, MAX_FILENAME_LENGTH) + '...'
+        }
+        selectedFile.value = fileName
+    }
+};
+
+const importFile = async () => {
     if (selectedFile.value) {
-        // Simulate a successful file upload
-        setTimeout(() => {
-            // Simulate storing the file (you can replace this with actual upload logic)
-            console.log('Storing file:', selectedFile.value)
+        const formData = new FormData()
+        formData.append('file', selectedFile.value)
 
-            // Display success message using Toast
-            toast.value.add({
+        try {
+            // Use the fetchImportFile method to handle the API request
+            await importFileStore.fetchImportFile(formData)
+
+            // Success toast notification
+            toast.add({
                 severity: 'success',
-                summary: 'Success',
-                detail: 'File uploaded successfully!',
+                summary: 'Import Successful',
+                detail: 'Topics imported successfully!',
                 life: 3000
             })
 
-            // After success, you can either reset the file or keep it
-            selectedFile.value = null
+            // Fetch the updated topics
+            await topicStore.fetchTopics()
+            topics.value = topicStore.topics
 
-            // Close the dialog after showing success message
+            // Reset the file and close the dialog
+            selectedFile.value = null
             showDialog.value = false
-        }, 1000) // Simulate 1-second upload delay
+        } catch (error) {
+            // Error toast notification
+            toast.add({
+                severity: 'error',
+                summary: 'Import Failed',
+                detail: error.response?.data?.message || 'Failed to import topics.',
+                life: 3000
+            })
+        }
     } else {
-        alert('Please choose a valid file before importing.')
+        // Notify user to select a file
+        toast.add({
+            severity: 'warn',
+            summary: 'No File Selected',
+            detail: 'Please choose a valid file before importing.',
+            life: 3000
+        })
     }
+}
+
+const cancelUpload = () => {
+    selectedFile.value = null // Xóa file đã chọn
+    showDialog.value = false // Đóng dialog
 }
 
 onMounted(() => {
@@ -241,10 +276,8 @@ onMounted(() => {
                        tableStyle="min-width: 50rem">
                 <div class="flex items-center justify-between">
                     <!-- Dialog -->
-                    <Dialog :style="{ top: '100px' }" :visible="showDialog" class="w-1/3" header="Import Topic" modal
-                            @visible="showDialog = false">
+                    <Dialog :visible="showDialog" class="w-1/3" header="Import Topic" modal>
                         <div class="p-4">
-                            <!-- File type and size rules -->
                             <ul class="list-disc ml-4">
                                 <li><strong>Allowed file types: xls, xlsx</strong></li>
                                 <li><strong>File size must be less than or equal to 5MB.</strong></li>
@@ -257,20 +290,20 @@ onMounted(() => {
                             </ul>
 
                             <!-- File upload component -->
-                            <div class="flex items-center mt-4">
-                                <!-- Text and FileUpload aligned horizontally using Flexbox -->
+                            <div class="flex flex-wrap gap-2 w-full">
                                 <p class="mr-4">Select a file to upload:</p>
-                                <FileUpload :auto="false" :maxFileSize="5000000" accept=".xls,.xlsx"
-                                            chooseLabel="Choose file..." customUpload mode="basic" name="file"
+                                <FileUpload :auto="true" :maxFileSize="5000000" accept=".xls,.xlsx"
+                                            chooseLabel="Choose file..." mode="basic"
                                             @select="onFileSelect" />
-                            </div>
 
+                                <span v-if="selectedFile"
+                                      class="text-gray-700 truncate flex flex-wrap gap-2 w-full"><strong>Current file:</strong> {{ selectedFile
+                                    }}</span>
+                            </div>
                         </div>
 
-                        <!-- Dialog footer buttons -->
                         <template #footer>
-                            <Button class="p-button-text" icon="pi pi-times" label="Cancel"
-                                    @click="showDialog = false" />
+                            <Button class="p-button-text" icon="pi pi-times" label="Cancel" @click="cancelUpload" />
                             <Button class="p-button-primary" icon="pi pi-check" label="Import" @click="importFile" />
                         </template>
                     </Dialog>
@@ -342,6 +375,8 @@ onMounted(() => {
                 </div>
             </template>
         </ConfirmDialog>
+
+
     </div>
 </template>
 <style>
@@ -353,5 +388,12 @@ onMounted(() => {
 
 .router-link-active {
     color: #2196F3;
+}
+
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
 }
 </style>

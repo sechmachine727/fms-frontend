@@ -92,7 +92,7 @@ const onSubmit = handleSubmit((values) => {
             detail: 'Training Program added successfully',
             life: 3000
         })
-        router.push('/topic-management/training-program')
+        router.push('/content-management/training-program')
 
     }).catch((error) => {
         console.error('Error updating training program:', error.response.data.error)
@@ -102,7 +102,7 @@ const onSubmit = handleSubmit((values) => {
 });
 
 const navigateToBack = () => {
-    router.push('/topic-management/training-program')
+    router.push('/content-management/training-program')
 }
 
 onMounted(() => {

@@ -1,5 +1,5 @@
-import AppLayout from '@/layout/AppLayout.vue';
-import { createRouter, createWebHistory } from 'vue-router';
+import AppLayout from '@/layout/AppLayout.vue'
+import { createRouter, createWebHistory } from 'vue-router'
 
 function isLoggedIn() {
     return !!localStorage.getItem('token');
@@ -22,36 +22,36 @@ const router = createRouter({
                     component: () => import('@/views/Class/GroupList.vue')
                 },
                 {
-                    path: '/topic-management/topic',
+                    path: '/content-management/topic',
                     name: 'topic-management',
                     component: () => import('@/views/content/TopicList.vue')
                 },
                 {
-                    path: '/topic-management/topic/:id',
+                    path: '/content-management/topic/:id',
                     name: 'topic-detail',
                     component: () => import('@/views/content/TopicDetail.vue'),
                     props: true, // Pass route params as props to the component
                 },
                 {
-                    path: '/topic-management/training-program',
+                    path: '/content-management/training-program',
                     name: 'training-program',
                     component: () => import('@/views/content/TrainingProgramList.vue'),
                     props: true, // Pass route params as props to the component
                 },
                 {
-                    path: '/topic-management/training-program/:id',
+                    path: '/content-management/training-program/:id',
                     name: 'training-program-detail',
                     component: () => import('@/views/content/TrainingProgramDetail.vue'),
                     props: true, // Pass route params as props to the component
                 },
                 {
-                    path: '/topic-management/training-program/add',
+                    path: '/content-management/training-program/add',
                     name: 'training-program-add',
                     component: () => import('@/views/content/AddTrainingProgram.vue')
                 },
                 {
 
-                    path: '/topic-management/training-program/edit/:id',
+                    path: '/content-management/training-program/edit/:id',
                     name: 'training-program-edit',
                     component: () => import('@/views/content/EditTrainingProgram.vue')
                 },

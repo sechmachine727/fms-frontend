@@ -1,7 +1,7 @@
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
-import AppMenuItem from './AppMenuItem.vue';
+import AppMenuItem from './AppMenuItem.vue'
 
 const model = ref([
     {
@@ -28,11 +28,11 @@ const model = ref([
                 items: [
                     {
                         label: 'Training Program',
-                        to: '/topic-management/training-program'
+                        to: '/content-management/training-program'
                     },
                     {
                         label: 'Topic',
-                        to: '/topic-management/topic'
+                        to: '/content-management/topic'
                     },
                 ]
             },

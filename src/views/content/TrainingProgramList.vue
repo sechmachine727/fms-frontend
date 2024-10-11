@@ -88,7 +88,7 @@ const updateQueryParams = () => {
     // Push the constructed query object to the router
     const query = buildQueryObject()
     router.push({
-        path: '/topic-management/training-program',
+        path: '/content-management/training-program',
         query: query
     });
     applyFilters()
@@ -183,12 +183,12 @@ const confirmDeactive = (value) => {
 
 const handleEdit = () => {
     if (selectedItem.value) {
-        router.push('/topic-management/training-program/edit/' + selectedItem.value.id)
+        router.push('/content-management/training-program/edit/' + selectedItem.value.id)
     }
 }
 
 const navigateToAdd = () => {
-    router.push('/topic-management/training-program/add')
+    router.push('/content-management/training-program/add')
 }
 
 const topicInfoList = ref()
