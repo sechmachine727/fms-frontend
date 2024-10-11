@@ -88,7 +88,7 @@ const updateQueryParams = () => {
     // Push the constructed query object to the router
     const query = buildQueryObject()
     router.push({
-        path: '/topic-management/training-program',
+        path: '/content-management/training-program',
         query: query
     });
     applyFilters()
@@ -180,12 +180,12 @@ const confirmDeactive = (value) => {
 
 const handleEdit = () => {
     if (selectedItem.value) {
-        router.push('/topic-management/training-program/edit/' + selectedItem.value.id)
+        router.push('/content-management/training-program/edit/' + selectedItem.value.id)
     }
 }
 
 const navigateToAdd = () => {
-    router.push('/topic-management/training-program/add')
+    router.push('/content-management/training-program/add')
 }
 
 const topicInfoList = ref()
@@ -242,7 +242,7 @@ onMounted(() => {
             <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="trainingPrograms"
                 currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                 paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                scrollHeight="400px" scrollable tableStyle="min-width: 50rem">
+                       class="mt-6" scrollHeight="400px" scrollable tableStyle="min-width: 50rem">
 
                 <Column header="No." style="min-width: 70px">
                     <template #body="slotProps">
@@ -334,20 +334,6 @@ onMounted(() => {
     </div>
 </template>
 <style>
-.button-custom {
-    background-color: white;
-    color: red;
-    border: 1px solid rgb(209, 213, 219);
-    border-radius: 7px;
-    transition: background-color 0.3s, color 0.3s;
-    width: 56.36px;
-    height: 38.6px;
-}
-
-.button-custom:hover {
-    background-color: rgb(209, 213, 219);
-}
-
 .text-2xl {
     font-size: 1.5rem;
     line-height: 2rem;
@@ -355,6 +341,6 @@ onMounted(() => {
 }
 
 .router-link-active {
-    color: #2196F3;
+    color: #2196F3; 
 }
 </style>

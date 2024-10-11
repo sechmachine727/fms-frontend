@@ -1,11 +1,15 @@
 <script setup>
-import router from '@/router'
+import { onMounted, ref } from 'vue'
 import { useTopicStore } from '@/stores/topicStore'
+import { useImportFileStore } from '@/stores/importFileStore'
+import router from '@/router'
+import { useRoute } from 'vue-router'
+import { useToast } from 'primevue/usetoast'
 import Toast from 'primevue/toast'
 import { useConfirm } from 'primevue/useconfirm'
-import { useToast } from 'primevue/usetoast'
-import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+
+const topicStore = useTopicStore()
+const importFileStore = useImportFileStore()
 
 const confirm = useConfirm()
 const topics = ref()
@@ -62,7 +66,7 @@ const updateQueryParams = () => {
     // Push the constructed query object to the router
     const query = buildQueryObject()
     router.push({
-        path: '/topic-management/topic',
+        path: '/content-management/topic',
         query: query
     })
     applyFilters()
@@ -76,7 +80,7 @@ const handleStatusChange = () => {
     updateQueryParams()
 }
 
-const topicStore = useTopicStore()
+
 
 const showOptions = (event, item) => {
     selectedItem.value = item // Lưu đối tượng hiện tại khi mở Popover
@@ -114,11 +118,12 @@ const confirmActive = (value) => {
         header: 'Activate Topic',
         acceptProps: {
             label: 'Save',
+            outlined: true
         },
         rejectProps: {
             label: 'Cancel',
-            severity: 'error',
-            className: 'button-custom'
+            severity: 'secondary',
+            outlined: true
         },
         accept: () => {
             topicStore.fetchUpdateStatus(selectedItem.value.id).then(() => {
@@ -142,11 +147,12 @@ const confirmDeactive = (value) => {
         header: 'Deactivate Topic',
         acceptProps: {
             label: 'Save',
+            outlined: true
         },
         rejectProps: {
             label: 'Cancel',
-            severity: 'error',
-            className: 'button-custom',
+            severity: 'secondary',
+            outlined: true
         },
         accept: () => {
             topicStore.fetchUpdateStatus(selectedItem.value.id).then(() => {
@@ -167,36 +173,67 @@ const confirmDeactive = (value) => {
 const showDialog = ref(false)
 const selectedFile = ref(null)
 
+const MAX_FILENAME_LENGTH = 28 // Độ dài tối đa của tên file trước khi thêm dấu "..."
+
 const onFileSelect = (event) => {
     const file = event.files[0] // Capture the selected file
-    console.log('File selected:', selectedFile.value)
-    selectedFile.value = file
-}
+    if (file) {
+        let fileName = file.name
 
-const importFile = () => {
+        if (fileName.length > MAX_FILENAME_LENGTH) {
+            fileName = fileName.substring(0, MAX_FILENAME_LENGTH) + '...'
+        }
+        selectedFile.value = fileName
+    }
+};
+
+const importFile = async () => {
     if (selectedFile.value) {
-        // Simulate a successful file upload
-        setTimeout(() => {
-            // Simulate storing the file (you can replace this with actual upload logic)
-            console.log('Storing file:', selectedFile.value)
+        const formData = new FormData()
+        formData.append('file', selectedFile.value)
 
-            // Display success message using Toast
-            toast.value.add({
+        try {
+            // Use the fetchImportFile method to handle the API request
+            await importFileStore.fetchImportFile(formData)
+
+            // Success toast notification
+            toast.add({
                 severity: 'success',
-                summary: 'Success',
-                detail: 'File uploaded successfully!',
+                summary: 'Import Successful',
+                detail: 'Topics imported successfully!',
                 life: 3000
             })
 
-            // After success, you can either reset the file or keep it
-            selectedFile.value = null
+            // Fetch the updated topics
+            await topicStore.fetchTopics()
+            topics.value = topicStore.topics
 
-            // Close the dialog after showing success message
+            // Reset the file and close the dialog
+            selectedFile.value = null
             showDialog.value = false
-        }, 1000) // Simulate 1-second upload delay
+        } catch (error) {
+            // Error toast notification
+            toast.add({
+                severity: 'error',
+                summary: 'Import Failed',
+                detail: error.response?.data?.message || 'Failed to import topics.',
+                life: 3000
+            })
+        }
     } else {
-        alert('Please choose a valid file before importing.')
+        // Notify user to select a file
+        toast.add({
+            severity: 'warn',
+            summary: 'No File Selected',
+            detail: 'Please choose a valid file before importing.',
+            life: 3000
+        })
     }
+}
+
+const cancelUpload = () => {
+    selectedFile.value = null // Xóa file đã chọn
+    showDialog.value = false // Đóng dialog
 }
 
 onMounted(() => {
@@ -223,25 +260,24 @@ onMounted(() => {
                 <div class="flex flex-col w-60 mt-1 gap-2">
                     <label class="w-60" for="contractType">Active</label>
                     <Select id="contractType" v-model="statusOptions" :options="statuses" class="w-full"
-                        optionLabel="name" placeholder="Filter status" @change="handleStatusChange"></Select>
+                            optionLabel="name" placeholder="Filter status" @change="handleStatusChange"></Select>
                 </div>
                 <div class="flex flex-wrap w-60 gap-2">
                     <label for="search">Search</label>
                     <InputText id="search" v-model="searchQuery" class="h-11 w-full"
-                        placeholder="Enter to Code, Name ..." type="text" @keyup.enter="handleSearch" />
+                               placeholder="Enter to Code, Name ..."
+                               type="text" @keyup.enter="handleSearch" />
                 </div>
             </div>
 
-            <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="topics"
-                currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
-                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                tableStyle="min-width: 50rem">
+            <DataTable :rows="6" :rowsPerPageOptions="[6, 12, 20, 50]" :value="topics"
+                       currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
+                       paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                       class="mt-1" tableStyle="min-width: 50rem">
                 <div class="flex items-center justify-between">
                     <!-- Dialog -->
-                    <Dialog :style="{ top: '100px' }" :visible="showDialog" class="w-1/3" header="Import Topic" modal
-                        @visible="showDialog = false">
+                    <Dialog v-model:visible="showDialog" class="w-1/3" header="Import Topic" modal>
                         <div class="p-4">
-                            <!-- File type and size rules -->
                             <ul class="list-disc ml-4">
                                 <li><strong>Allowed file types: xls, xlsx</strong></li>
                                 <li><strong>File size must be less than or equal to 5MB.</strong></li>
@@ -254,20 +290,20 @@ onMounted(() => {
                             </ul>
 
                             <!-- File upload component -->
-                            <div class="flex items-center mt-4">
-                                <!-- Text and FileUpload aligned horizontally using Flexbox -->
+                            <div class="flex flex-wrap gap-2 w-full">
                                 <p class="mr-4">Select a file to upload:</p>
-                                <FileUpload :auto="false" :maxFileSize="5000000" accept=".xls,.xlsx"
-                                    chooseLabel="Choose file..." customUpload mode="basic" name="file"
-                                    @select="onFileSelect" />
-                            </div>
+                                <FileUpload :auto="true" :maxFileSize="5000000" accept=".xls,.xlsx"
+                                            chooseLabel="Choose file..." mode="basic"
+                                            @select="onFileSelect" />
 
+                                <span v-if="selectedFile"
+                                      class="text-gray-700 truncate flex flex-wrap gap-2 w-full"><strong>Current file:</strong> {{ selectedFile
+                                    }}</span>
+                            </div>
                         </div>
 
-                        <!-- Dialog footer buttons -->
                         <template #footer>
-                            <Button class="p-button-text" icon="pi pi-times" label="Cancel"
-                                @click="showDialog = false" />
+                            <Button class="p-button-text" icon="pi pi-times" label="Cancel" @click="cancelUpload" />
                             <Button class="p-button-primary" icon="pi pi-check" label="Import" @click="importFile" />
                         </template>
                     </Dialog>
@@ -275,7 +311,7 @@ onMounted(() => {
                 <Column field="code" header="Topic Code" style="width: 20%">
                     <template #body="slotProps">
                         <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }"
-                            class="router-link-active">{{ slotProps.data.name }}
+                                     class="router-link-active">{{ slotProps.data.name }}
                         </router-link>
                     </template>
                 </Column>
@@ -283,7 +319,7 @@ onMounted(() => {
                 <Column field="name" header="Topic Name" style="width: 25%">
                     <template #body="slotProps">
                         <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }"
-                            class="router-link-active">{{ slotProps.data.name }}
+                                     class="router-link-active">{{ slotProps.data.name }}
                         </router-link>
                     </template>
                 </Column>
@@ -299,7 +335,7 @@ onMounted(() => {
                 <Column :exportable="false" alignFrozen="right" frozen header="Action" style="min-width: 80px">
                     <template #body="slotProps">
                         <Button class="mr-2" icon="pi pi-ellipsis-v" outlined rounded
-                            @click="showOptions($event, slotProps.data)" />
+                                @click="showOptions($event, slotProps.data)" />
 
                         <Popover ref="overlay">
                             <div class="flex flex-col gap-4 w-[8rem]">
@@ -333,29 +369,17 @@ onMounted(() => {
                 <div
                     class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700">
                     <i v-for="(line, index) in slotProps.message.message.split('.')" :key="index"
-                        :class="{ 'text-red-500 font-bold': index === 1 }">
+                       :class="{ 'text-red-500 font-bold': index === 1 }">
                         {{ line }}
                     </i>
                 </div>
             </template>
         </ConfirmDialog>
+
+
     </div>
 </template>
 <style>
-.button-custom {
-    background-color: white;
-    color: red;
-    border: 1px solid rgb(209, 213, 219);
-    border-radius: 7px;
-    transition: background-color 0.3s, color 0.3s;
-    width: 56.36px;
-    height: 38.6px;
-}
-
-.button-custom:hover {
-    background-color: rgb(209, 213, 219);
-}
-
 .text-2xl {
     font-size: 1.5rem;
     line-height: 2rem;
@@ -364,5 +388,12 @@ onMounted(() => {
 
 .router-link-active {
     color: #2196F3;
+}
+
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
 }
 </style>
