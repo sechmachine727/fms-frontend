@@ -276,7 +276,7 @@ onMounted(() => {
                        tableStyle="min-width: 50rem">
                 <div class="flex items-center justify-between">
                     <!-- Dialog -->
-                    <Dialog :visible="showDialog" class="w-1/3" header="Import Topic" modal>
+                    <Dialog v-model:visible="showDialog" class="w-1/3" header="Import Topic" modal>
                         <div class="p-4">
                             <ul class="list-disc ml-4">
                                 <li><strong>Allowed file types: xls, xlsx</strong></li>
