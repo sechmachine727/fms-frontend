@@ -29,13 +29,15 @@ const validationSchema = toTypedSchema(
     z.object({
         code: z
             .string({ required_error: 'Code is required' })
-            .min(1, { message: 'Code is required' }),
+            .min(1, { message: 'Code is required' })
+            .max(20, { message: 'Code must not exceed 20 characters' }),
         version: z
             .string({ required_error: 'Version is required' })
             .min(1, { message: 'Version is required' }),
         trainingProgramName: z
             .string({ required_error: 'Name is required' })
-            .min(1, { message: 'Name is required' }),
+            .min(1, { message: 'Name is required' })
+            .max(30, { message: 'Name must not exceed 30 characters' }),
         technicalGroupCode: z
             .object({
                 id: z.number({ required_error: 'Technical Group code is required' }).min(1, { message: 'Technical Group code is required' })

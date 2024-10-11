@@ -80,8 +80,6 @@ const handleStatusChange = () => {
     updateQueryParams()
 }
 
-
-
 const showOptions = (event, item) => {
     selectedItem.value = item // Lưu đối tượng hiện tại khi mở Popover
     overlay.value.toggle(event) // Mở Popover
