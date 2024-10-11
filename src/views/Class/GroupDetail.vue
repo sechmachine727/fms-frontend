@@ -1,5 +1,8 @@
 <script setup>
+import ButtonComponent from "@/components/ButtonComponent.vue";
+import router from "@/router";
 import { useClassStore } from "@/stores/groupStore"; // Correct the import to use `useTraineeStore`
+import { getStatusLabel } from "@/utils/status";
 import { onMounted, ref } from 'vue';
 import { useRoute } from "vue-router";
 
@@ -12,58 +15,20 @@ onMounted(() => {
     const groupId = route.params.id
     classStore.fetchClassDetail(groupId).then(() => {
         classe.value = classStore.classDetail
-        generalInfo.value = [
-            {
-                label1: 'Group Name', value1: classe.value?.groupName || 'N/A',
-                label2: 'Delivery Type', value2: classe.value?.deliveryTypeName || 'N/A',
-                label3: 'Trainee Type', value3: classe.value?.traineeTypeName || 'N/A'
-            },
-            {
-                label1: 'Format Type', value1: classe.value?.formatTypeName || 'N/A',
-                label2: 'Technical Group', value2: classe.value?.technicalGroupCode || 'N/A',
-                label3: 'Training Program', value3: classe.value?.trainingProgramName || 'N/A'
-            },
-            {
-                label1: 'Site', value1: classe.value?.siteName || 'N/A',
-                label2: 'Location', value2: classe.value?.locationName || 'N/A',
-                label3: 'Scope', value3: classe.value?.scopeName || 'N/A'
-            },
-
-            {
-                label1: 'Planned Trainee No.', value1: classe.value?.traineeNumber || 'N/A',
-                label2: 'Planned Revenue', value2: classe.value?.planRevenue || 'N/A',
-                label3: 'Key Program ', value3: classe.value?.keyProgramName || 'N/A'
-            },
-
-
-        ]
     })
 })
-const getStatusLabel = (status) => {
-    switch (status) {
-        case 'Active':
-            return '!bg-green-500 !text-white'; // Success color
-        case 'Planning':
-            return '!bg-gray-500 !text-white'; // Secondary color
-        case 'Assigned':
-        case 'Pending':
-        case 'Reviewing':
-            return '!bg-yellow-500 !text-white'; // Warn color
-        case 'Close':
-            return '!bg-red-500 !text-white'; // Danger color
-        case 'In Progress':
-            return '!bg-blue-500 !text-white'; // Info color
-        case 'Closed':
-            return '!bg-black !text-white'; // Contrast color
-        default:
-            return '!bg-gray-200 !text-black'; // Default color
-    }
+
+
+const navigateToBack = () => {
+    router.push('/group-management/list');
 };
 
-const generalInfo = ref([])
-// const navigateToAdd = () => {
-//     router.push('/group-management/add');
-// };
+const handleCancel = () => {
+    console.log("object");
+};
+const navigateToEdit = (id) => {
+    console.log(id);
+};
 </script>
 
 <template>
@@ -79,7 +44,7 @@ const generalInfo = ref([])
             <Divider />
             <TabView>
                 <TabPanel header="Group Info">
-                    <div class="grid grid-cols-1 md:grid-cols-3  p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3  pt-2">
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
                                 class="font-semibold border-r border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
@@ -183,7 +148,7 @@ const generalInfo = ref([])
                                 Key Program</div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
                                 classe?.keyProgramName
-                                }}</div>
+                            }}</div>
                         </div>
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
@@ -191,7 +156,7 @@ const generalInfo = ref([])
                                 Expected Start Date</div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
                                 classe?.expectedStartDate
-                                }}</div>
+                            }}</div>
                         </div>
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
@@ -199,7 +164,7 @@ const generalInfo = ref([])
                                 Expected End Date</div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
                                 classe?.expectedEndDate
-                                }}</div>
+                            }}</div>
                         </div>
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
@@ -212,6 +177,22 @@ const generalInfo = ref([])
                                     <span v-if="index < classe.assignedUserAccounts.length - 1">, </span>
                                 </span>
                             </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-between">
+                        <div>
+                            <ButtonComponent text="Back to Training Program List" bgColor="bg-white"
+                                hoverColor="hover:bg-gray-200" activeColor="active:bg-gray-300" màu đen
+                                :onClick="navigateToBack" />
+                            <ButtonComponent text="Cancel Group" bgColor="bg-white text-red-500"
+                                hoverColor="hover:bg-gray-200" activeColor="active:bg-gray-300"
+                                :onClick="handleCancel" />
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="submit" @click="navigateToEdit(classe.id)"
+                                class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
+                                Edit Group
+                            </button>
                         </div>
                     </div>
                 </TabPanel>

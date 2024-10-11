@@ -1,6 +1,6 @@
 <script setup>
 import { useClassStore } from "@/stores/groupStore"; // Correct the import to use `useTraineeStore`
-import { getStatusArray } from "@/utils/status";
+import { getStatusArray, getStatusLabel } from "@/utils/status";
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
 import { onMounted, ref } from 'vue';
@@ -44,26 +44,7 @@ const querySearchFromUrl = () => {
         applyFilters()
     }
 }
-const getStatusLabel = (status) => {
-    switch (status) {
-        case 'Active':
-            return '!bg-green-500 !text-white'; // Success color
-        case 'Planning':
-            return '!bg-gray-500 !text-white'; // Secondary color
-        case 'Assigned':
-        case 'Pending':
-        case 'Reviewing':
-            return '!bg-yellow-500 !text-white'; // Warn color
-        case 'Close':
-            return '!bg-red-500 !text-white'; // Danger color
-        case 'In Progress':
-            return '!bg-blue-500 !text-white'; // Info color
-        case 'Closed':
-            return '!bg-black !text-white'; // Contrast color
-        default:
-            return '!bg-gray-200 !text-black'; // Default color
-    }
-};
+
 const statusValues = getStatusArray();
 const searchQuery = ref("")
 const statusOptions = ref([]);
@@ -124,9 +105,10 @@ const navigateToAdd = () => {
 <template>
     <div class="card">
         <Toast />
-        <div class="text-xl mb-4 flex justify-between items-center">
+        <div class=" mb-4 flex justify-between items-center">
             <span class="font-semibold text-xl">Group List</span>
-            <Button label="Add Group" @click="navigateToAdd" />
+            <ButtonComponent text="Add Group" bgColor="bg-emerald-500 text-white" hoverColor="hover:bg-emerald-600"
+                activeColor="active:bg-emerald-700" :onClick="navigateToAdd" />
         </div>
         <Divider />
         <div class="flex flex-col md:flex-row gap-4">
@@ -142,7 +124,7 @@ const navigateToAdd = () => {
                     placeholder="Enter name, account ..." @keyup.enter="handleSearch" />
             </div>
         </div>
-        <DataTable :value="classes" :rows="4" scrollable scrollHeight="300px" :rowsPerPageOptions="[4, 6, 12, 20, 50]"
+        <DataTable :value="classes" :rows="10" scrollable scrollHeight="300px" :rowsPerPageOptions="[10, 20, 30, 50]"
             currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
             tableStyle="min-width: 50rem" class="mt-6">
@@ -187,9 +169,16 @@ const navigateToAdd = () => {
             <Column field="actualEndDate" header="Actual End Date" style="min-width: 150px"></Column>
             <Column field="status" frozen alignFrozen="right" header="Status" style="min-width: 130px">
                 <template #body="slotProps">
-                    <Tag :value="slotProps.data.status" :class="getStatusLabel(slotProps.data.status)" />
+                    <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
                 </template>
             </Column>
+            <template #empty>
+                <tr>
+                    <td colspan="12" class="text-center py-4">
+                        <span class="text-gray-500">No content available</span>
+                    </td>
+                </tr>
+            </template>
         </DataTable>
     </div>
 </template>

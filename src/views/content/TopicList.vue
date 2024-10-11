@@ -1,11 +1,11 @@
 <script setup>
-import { onMounted, ref } from 'vue'
-import { useTopicStore } from '@/stores/topicStore'
 import router from '@/router'
-import { useRoute } from 'vue-router'
-import { useToast } from 'primevue/usetoast'
+import { useTopicStore } from '@/stores/topicStore'
 import Toast from 'primevue/toast'
 import { useConfirm } from 'primevue/useconfirm'
+import { useToast } from 'primevue/usetoast'
+import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 const confirm = useConfirm()
 const topics = ref()
@@ -114,12 +114,11 @@ const confirmActive = (value) => {
         header: 'Activate Topic',
         acceptProps: {
             label: 'Save',
-            outlined: true
         },
         rejectProps: {
             label: 'Cancel',
-            severity: 'secondary',
-            outlined: true
+            severity: 'error',
+            className: 'button-custom'
         },
         accept: () => {
             topicStore.fetchUpdateStatus(selectedItem.value.id).then(() => {
@@ -143,12 +142,11 @@ const confirmDeactive = (value) => {
         header: 'Deactivate Topic',
         acceptProps: {
             label: 'Save',
-            outlined: true
         },
         rejectProps: {
             label: 'Cancel',
-            severity: 'secondary',
-            outlined: true
+            severity: 'error',
+            className: 'button-custom',
         },
         accept: () => {
             topicStore.fetchUpdateStatus(selectedItem.value.id).then(() => {
@@ -225,24 +223,23 @@ onMounted(() => {
                 <div class="flex flex-col w-60 mt-1 gap-2">
                     <label class="w-60" for="contractType">Active</label>
                     <Select id="contractType" v-model="statusOptions" :options="statuses" class="w-full"
-                            optionLabel="name" placeholder="Filter status" @change="handleStatusChange"></Select>
+                        optionLabel="name" placeholder="Filter status" @change="handleStatusChange"></Select>
                 </div>
                 <div class="flex flex-wrap w-60 gap-2">
                     <label for="search">Search</label>
                     <InputText id="search" v-model="searchQuery" class="h-11 w-full"
-                               placeholder="Enter to Code, Name ..."
-                               type="text" @keyup.enter="handleSearch" />
+                        placeholder="Enter to Code, Name ..." type="text" @keyup.enter="handleSearch" />
                 </div>
             </div>
 
-            <DataTable :rows="6" :rowsPerPageOptions="[6, 12, 20, 50]" :value="topics"
-                       currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
-                       paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                       tableStyle="min-width: 50rem">
+            <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="topics"
+                currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
+                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                tableStyle="min-width: 50rem">
                 <div class="flex items-center justify-between">
                     <!-- Dialog -->
                     <Dialog :style="{ top: '100px' }" :visible="showDialog" class="w-1/3" header="Import Topic" modal
-                            @visible="showDialog = false">
+                        @visible="showDialog = false">
                         <div class="p-4">
                             <!-- File type and size rules -->
                             <ul class="list-disc ml-4">
@@ -261,8 +258,8 @@ onMounted(() => {
                                 <!-- Text and FileUpload aligned horizontally using Flexbox -->
                                 <p class="mr-4">Select a file to upload:</p>
                                 <FileUpload :auto="false" :maxFileSize="5000000" accept=".xls,.xlsx"
-                                            chooseLabel="Choose file..." customUpload mode="basic" name="file"
-                                            @select="onFileSelect" />
+                                    chooseLabel="Choose file..." customUpload mode="basic" name="file"
+                                    @select="onFileSelect" />
                             </div>
 
                         </div>
@@ -270,7 +267,7 @@ onMounted(() => {
                         <!-- Dialog footer buttons -->
                         <template #footer>
                             <Button class="p-button-text" icon="pi pi-times" label="Cancel"
-                                    @click="showDialog = false" />
+                                @click="showDialog = false" />
                             <Button class="p-button-primary" icon="pi pi-check" label="Import" @click="importFile" />
                         </template>
                     </Dialog>
@@ -278,7 +275,7 @@ onMounted(() => {
                 <Column field="code" header="Topic Code" style="width: 20%">
                     <template #body="slotProps">
                         <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }"
-                                     class="router-link-active">{{ slotProps.data.name }}
+                            class="router-link-active">{{ slotProps.data.name }}
                         </router-link>
                     </template>
                 </Column>
@@ -286,7 +283,7 @@ onMounted(() => {
                 <Column field="name" header="Topic Name" style="width: 25%">
                     <template #body="slotProps">
                         <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }"
-                                     class="router-link-active">{{ slotProps.data.name }}
+                            class="router-link-active">{{ slotProps.data.name }}
                         </router-link>
                     </template>
                 </Column>
@@ -302,7 +299,7 @@ onMounted(() => {
                 <Column :exportable="false" alignFrozen="right" frozen header="Action" style="min-width: 80px">
                     <template #body="slotProps">
                         <Button class="mr-2" icon="pi pi-ellipsis-v" outlined rounded
-                                @click="showOptions($event, slotProps.data)" />
+                            @click="showOptions($event, slotProps.data)" />
 
                         <Popover ref="overlay">
                             <div class="flex flex-col gap-4 w-[8rem]">
@@ -336,7 +333,7 @@ onMounted(() => {
                 <div
                     class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700">
                     <i v-for="(line, index) in slotProps.message.message.split('.')" :key="index"
-                       :class="{ 'text-red-500 font-bold': index === 1 }">
+                        :class="{ 'text-red-500 font-bold': index === 1 }">
                         {{ line }}
                     </i>
                 </div>
@@ -345,6 +342,20 @@ onMounted(() => {
     </div>
 </template>
 <style>
+.button-custom {
+    background-color: white;
+    color: red;
+    border: 1px solid rgb(209, 213, 219);
+    border-radius: 7px;
+    transition: background-color 0.3s, color 0.3s;
+    width: 56.36px;
+    height: 38.6px;
+}
+
+.button-custom:hover {
+    background-color: rgb(209, 213, 219);
+}
+
 .text-2xl {
     font-size: 1.5rem;
     line-height: 2rem;
