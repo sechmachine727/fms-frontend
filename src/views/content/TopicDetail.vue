@@ -47,22 +47,16 @@ onMounted(() => {
             <TabView>
                 <TabPanel header="Syllabus Detail">
                     <!-- General Info and Time Allocation Section -->
-                    <div class="grid">
-                        <!-- General Info Table -->
-                        <div class="general-info mb-8">
-                            <h2 class="text-xl font-semibold mb-2">1. General Info</h2>
-                            <div></div>
-                            <DataTable :value="generalInfo" class="general-info-table" responsiveLayout="scroll">
-                                <Column field="label" class="highlight-label-column"></Column>
-                                <Column field="value"></Column>
-                            </DataTable>
-                        </div>
-
-                        <!-- Time Allocation Pie Chart -->
-                        <!--                    <div class="col-6">-->
-                        <!--                        <h2 class="text-lg font-bold mb-4">2. Time Allocation</h2>-->
-                        <!--                        <Chart type="pie" :data="chartData" :options="chartOptions"></Chart>-->
-                        <!--                    </div>-->
+                    <div class="general-info mb-8">
+                        <h2 class="text-xl font-semibold mb-2">1. Training Program Info</h2>
+                        <table class="w-full border-collapse">
+                            <tbody>
+                            <tr v-for="info in generalInfo" :key="info.label">
+                                <td class="highlight-label-column">{{ info.label }}</td>
+                                <td>{{ info.value }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
 
                     <!-- Assessment Scheme Table -->
@@ -114,5 +108,23 @@ onMounted(() => {
 
 .assessment-scheme-table .p-datatable-thead>tr>th {
     padding: 0.75rem 1rem;
+}
+
+.highlight-label-column {
+    background-color: #f0f4ff;
+    font-weight: bold;
+    color: #2c3e50;
+    padding: 0.5rem;
+}
+
+table {
+    width: 100%;
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
 }
 </style>

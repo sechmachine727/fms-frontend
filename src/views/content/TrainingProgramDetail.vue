@@ -13,9 +13,9 @@ const generalInfo = computed(() => {
         return [
             { label: 'Course Code', value: trainingProgramStore.trainingProgram.code },
             { label: 'Name', value: trainingProgramStore.trainingProgram.trainingProgramName },
-            { label: 'Region', value: trainingProgramStore.trainingProgram.region },
+            { label: 'Region', value: trainingProgramStore.trainingProgram.department.departmentName },
             { label: 'Version', value: trainingProgramStore.trainingProgram.version },
-            { label: 'Technical Group', value: trainingProgramStore.trainingProgram.technicalGroupCode },
+            { label: 'Technical Group', value: trainingProgramStore.trainingProgram.technicalGroup.code },
             { label: 'Description', value: trainingProgramStore.trainingProgram.description }
         ]
     } else {
@@ -44,20 +44,22 @@ onMounted(() => {
             <div class="flex justify-between items-center mb-4">
                 <h1 class="text-2xl font-bold">Training Program Detail</h1>
             </div>
-            <div class="grid">
-                <div class="general-info mb-8">
-                    <h2 class="text-xl font-semibold mb-2">1. Training Program Info</h2>
-                    <DataTable :value="generalInfo" class="training-program-info-table" responsiveLayout="scroll">
-                        <Column class="highlight-label-column" field="label"></Column>
-                        <Column field="value"></Column>
-                    </DataTable>
-                </div>
+            <!-- Training Program Info -->
+            <div class="general-info mb-8">
+                <h2 class="text-xl font-semibold mb-2">1. Training Program Info</h2>
+                <table class="w-full border-collapse">
+                    <tbody>
+                    <tr v-for="info in generalInfo" :key="info.label">
+                        <td class="highlight-label-column">{{ info.label }}</td>
+                        <td>{{ info.value }}</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
 
             <!-- Assessment Scheme Table -->
             <div class="assessment-scheme mb-8">
                 <h2 class="text-xl font-semibold mb-2">2. Topic Info</h2>
-                <div></div>
                 <DataTable :value="topicInfo" class="assessment-scheme-table" responsiveLayout="scroll">
                     <Column header="No." style="width: 5%">
                         <template #body="slotProps">
@@ -65,15 +67,15 @@ onMounted(() => {
                         </template>
                     </Column>
                     <Column field="topicCode" header="Topic Code " style="width: 15%"></Column>
+                    <Column field="topicName" header="Topic Name" style="width: 10%"></Column>
                     <Column field="version" header="Version" style="width: 10%"></Column>
-                    <Column field="topicName" header="Total Section/Day" style="width: 10%"></Column>
-                    <Column field="note" header="Training Time" style="width: 5%"></Column>
                 </DataTable>
             </div>
         </div>
     </div>
 
 </template>
+
 <style>
 .highlight-label-column {
     background-color: #f0f4ff;
@@ -88,5 +90,24 @@ onMounted(() => {
 
 .assessment-scheme-table .p-datatable-thead>tr>th {
     padding: 0.75rem 1rem;
+}
+
+
+.highlight-label-column {
+    background-color: #f0f4ff;
+    font-weight: bold;
+    color: #2c3e50;
+    padding: 0.5rem;
+}
+
+table {
+    width: 100%;
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
 }
 </style>
