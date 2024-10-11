@@ -334,20 +334,6 @@ onMounted(() => {
     </div>
 </template>
 <style>
-.button-custom {
-    background-color: white;
-    color: red;
-    border: 1px solid rgb(209, 213, 219);
-    border-radius: 7px;
-    transition: background-color 0.3s, color 0.3s;
-    width: 56.36px;
-    height: 38.6px;
-}
-
-.button-custom:hover {
-    background-color: rgb(209, 213, 219);
-}
-
 .text-2xl {
     font-size: 1.5rem;
     line-height: 2rem;
