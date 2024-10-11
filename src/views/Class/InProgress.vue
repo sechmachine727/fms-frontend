@@ -41,10 +41,10 @@ const navigateToAdd = () => {
 
 <template>
     <div class="card">
-        <div class="text-xl mb-4 flex justify-between items-center">
+        <div class="mb-4 flex justify-between items-center">
             <span class="!font-semibold text-lg">Group List</span>
-            <Button label="Add" class="bg-slate-500 text-white" icon="pi pi-plus" iconPos="right"
-                @click="navigateToAdd" />
+            <ButtonComponent text="Add Group" bgColor="bg-emerald-500 text-white" hoverColor="hover:bg-emerald-600"
+                activeColor="active:bg-emerald-700" :onClick="navigateToAdd" />
         </div>
         <Divider />
         <DataTable :value="classes" :rows="4" :rowsPerPageOptions="[4, 6, 12, 20, 50]"
@@ -68,6 +68,11 @@ const navigateToAdd = () => {
                     <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
                 </template>
             </Column>
+            <template #empty>
+                <div class="flex justify-center items-center h-full">
+                    <span class="text-gray-500">No content available</span>
+                </div>
+            </template>
         </DataTable>
     </div>
 </template>

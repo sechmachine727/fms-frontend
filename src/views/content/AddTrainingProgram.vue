@@ -1,14 +1,14 @@
 <script setup>
-import router from '@/router'
-import { useTopicStore } from '@/stores/topicStore'
-import { useTechnicalGroupStore } from '@/stores/technicalGroupStore'
-import { useTrainingProgramStore } from '@/stores/trainingProgramStore' // Import the store handling the training programs
-import { useDepartmentStore } from '@/stores/departmentStore'
-import { toTypedSchema } from '@vee-validate/zod'
-import { useField, useForm } from 'vee-validate'
-import { onMounted, ref } from 'vue'
-import { z } from 'zod'
-import { useToast } from 'primevue/usetoast'
+import router from '@/router';
+import { useDepartmentStore } from '@/stores/departmentStore';
+import { useTechnicalGroupStore } from '@/stores/technicalGroupStore';
+import { useTopicStore } from '@/stores/topicStore';
+import { useTrainingProgramStore } from '@/stores/trainingProgramStore'; // Import the store handling the training programs
+import { toTypedSchema } from '@vee-validate/zod';
+import { useToast } from 'primevue/usetoast';
+import { useField, useForm } from 'vee-validate';
+import { onMounted, ref } from 'vue';
+import { z } from 'zod';
 
 const topicStore = useTopicStore()
 const technicalGroupStore = useTechnicalGroupStore()
@@ -254,20 +254,14 @@ const onChange = (value) => {
                 </div>
 
                 <div class="mt-4 flex justify-between">
-                    <button
-                        class="mr-2 bg-gray-200 hover:bg-gray-400 active:bg-gray-200 text-black font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-                        @click="navigateToBack">
-                        Back to Training Program List
-                    </button>
+                    <ButtonComponent text="Back to Training Program List" bgColor="bg-white"
+                        hoverColor="hover:bg-gray-200" activeColor="active:bg-gray-300" màu đen
+                        :onClick="navigateToBack" />
                     <div class="flex gap-2">
-                        <button @click="navigateToBack"
-                            class="mr-2 bg-white hover:bg-gray-100 active:bg-gray-200 text-green-500 font-semibold py-2 px-4 rounded-lg border border-green-500 transition duration-300 ease-in-out">
-                            Cancel
-                        </button>
                         <button
                             class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
                             type="submit">
-                            Save
+                            Submit
                         </button>
                     </div>
                 </div>

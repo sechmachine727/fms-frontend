@@ -1,12 +1,12 @@
 <script setup>
-import { onMounted, ref } from 'vue'
-import { useTrainingProgramStore } from '@/stores/trainingProgramStore'
-import { useDepartmentStore } from '@/stores/departmentStore'
 import router from '@/router'
-import { useRoute } from 'vue-router'
-import { useToast } from 'primevue/usetoast'
+import { useDepartmentStore } from '@/stores/departmentStore'
+import { useTrainingProgramStore } from '@/stores/trainingProgramStore'
 import Toast from 'primevue/toast'
 import { useConfirm } from 'primevue/useconfirm'
+import { useToast } from 'primevue/usetoast'
+import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 const confirm = useConfirm()
 const trainingPrograms = ref()
@@ -130,12 +130,11 @@ const confirmActive = (value) => {
         header: 'Activate Training Program',
         acceptProps: {
             label: 'Save',
-            outlined: true
         },
         rejectProps: {
             label: 'Cancel',
-            severity: 'secondary',
-            outlined: true
+            severity: 'error',
+            className: 'button-custom'
         },
         accept: () => {
             trainingProgramStore.fetchUpdateStatus(selectedItem.value.id).then(() => {
@@ -159,12 +158,10 @@ const confirmDeactive = (value) => {
         header: 'Deactivate Training Program',
         acceptProps: {
             label: 'Save',
-            outlined: true
         },
         rejectProps: {
             label: 'Cancel',
-            severity: 'secondary',
-            outlined: true
+            className: 'button-custom'
         },
         accept: () => {
             trainingProgramStore.fetchUpdateStatus(selectedItem.value.id).then(() => {
@@ -238,12 +235,11 @@ onMounted(() => {
                 <div class="flex flex-wrap w-60 gap-2">
                     <label for="search">Search</label>
                     <InputText id="search" v-model="searchQuery" class="h-11 w-full"
-                               placeholder="Enter to Code, Name ..."
-                               type="text" @keyup.enter="handleSearch" />
+                        placeholder="Enter to Code, Name ..." type="text" @keyup.enter="handleSearch" />
                 </div>
             </div>
 
-            <DataTable :rows="6" :rowsPerPageOptions="[8, 12, 20, 50]" :value="trainingPrograms"
+            <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="trainingPrograms"
                 currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                 paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                 scrollHeight="400px" scrollable tableStyle="min-width: 50rem">
@@ -329,7 +325,7 @@ onMounted(() => {
                 <div
                     class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700">
                     <i v-for="(line, index) in slotProps.message.message.split('.')" :key="index"
-                       :class="{ 'text-red-500 font-bold': index === 1 }">
+                        :class="{ 'text-red-500 font-bold': index === 1 }">
                         {{ line }}
                     </i>
                 </div>
@@ -338,6 +334,20 @@ onMounted(() => {
     </div>
 </template>
 <style>
+.button-custom {
+    background-color: white;
+    color: red;
+    border: 1px solid rgb(209, 213, 219);
+    border-radius: 7px;
+    transition: background-color 0.3s, color 0.3s;
+    width: 56.36px;
+    height: 38.6px;
+}
+
+.button-custom:hover {
+    background-color: rgb(209, 213, 219);
+}
+
 .text-2xl {
     font-size: 1.5rem;
     line-height: 2rem;
