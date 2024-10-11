@@ -170,18 +170,22 @@ const confirmDeactive = (value) => {
 
 const showDialog = ref(false)
 const selectedFile = ref(null)
-
+const selectedFileName = ref('')
 const MAX_FILENAME_LENGTH = 28 // Độ dài tối đa của tên file trước khi thêm dấu "..."
 
 const onFileSelect = (event) => {
     const file = event.files[0] // Capture the selected file
     if (file) {
+        selectedFile.value = file // Store the actual file object
+
+        // Get the file name for display
         let fileName = file.name
 
+        // Truncate the file name if it's too long
         if (fileName.length > MAX_FILENAME_LENGTH) {
             fileName = fileName.substring(0, MAX_FILENAME_LENGTH) + '...'
         }
-        selectedFile.value = fileName
+        selectedFileName.value = fileName // Store the display name
     }
 };
 
@@ -191,7 +195,6 @@ const importFile = async () => {
         formData.append('file', selectedFile.value)
 
         try {
-            // Use the fetchImportFile method to handle the API request
             await importFileStore.fetchImportFile(formData)
 
             // Success toast notification
@@ -274,28 +277,21 @@ onMounted(() => {
                        class="mt-1" tableStyle="min-width: 50rem">
                 <div class="flex items-center justify-between">
                     <!-- Dialog -->
-                    <Dialog v-model:visible="showDialog" class="w-1/3" header="Import Topic" modal>
+                    <Dialog :visible="showDialog" class="w-1/3" header="Import Topic" modal @hide="showDialog = false">
                         <div class="p-4">
                             <ul class="list-disc ml-4">
                                 <li><strong>Allowed file types: xls, xlsx</strong></li>
                                 <li><strong>File size must be less than or equal to 5MB.</strong></li>
                             </ul>
 
-                            <!-- Download Template Links -->
-                            <ul class="mt-4">
-                                Download template:
-                                <li><a class="ml-4 text-blue-500" href="#">Topic</a></li>
-                            </ul>
-
                             <!-- File upload component -->
-                            <div class="flex flex-wrap gap-2 w-full">
+                            <div class="flex flex-wrap gap-2 w-full mt-2">
                                 <p class="mr-4">Select a file to upload:</p>
                                 <FileUpload :auto="true" :maxFileSize="5000000" accept=".xls,.xlsx"
-                                            chooseLabel="Choose file..." mode="basic"
+                                            chooseLabel="Choose file..." customUpload mode="basic"
                                             @select="onFileSelect" />
-
                                 <span v-if="selectedFile"
-                                      class="text-gray-700 truncate flex flex-wrap gap-2 w-full"><strong>Current file:</strong> {{ selectedFile
+                                      class="text-gray-700 truncate flex flex-wrap gap-2 w-full"><strong>Current file: </strong>{{ selectedFileName
                                     }}</span>
                             </div>
                         </div>
