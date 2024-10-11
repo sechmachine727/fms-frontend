@@ -242,7 +242,7 @@ onMounted(() => {
             <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="trainingPrograms"
                 currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                 paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                scrollHeight="400px" scrollable tableStyle="min-width: 50rem">
+                       class="mt-6" scrollHeight="400px" scrollable tableStyle="min-width: 50rem">
 
                 <Column header="No." style="min-width: 70px">
                     <template #body="slotProps">

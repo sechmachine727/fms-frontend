@@ -273,7 +273,7 @@ onMounted(() => {
             <DataTable :rows="6" :rowsPerPageOptions="[6, 12, 20, 50]" :value="topics"
                        currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                        paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                       tableStyle="min-width: 50rem">
+                       class="mt-1" tableStyle="min-width: 50rem">
                 <div class="flex items-center justify-between">
                     <!-- Dialog -->
                     <Dialog v-model:visible="showDialog" class="w-1/3" header="Import Topic" modal>
