@@ -326,7 +326,7 @@ const navigateToBack = () => {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.deliveryType"> {{
                                             errors.deliveryType
-                                            }}</small>
+                                        }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-3" v-if="errors.traineeType"> {{
@@ -367,12 +367,12 @@ const navigateToBack = () => {
                                     <div class="flex flex-wrap gap-2 w-full ">
                                         <small class="text-red-600 ml-2" v-if="errors.technicalGroup"> {{
                                             errors.technicalGroup
-                                            }}</small>
+                                        }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.trainingProgram"> {{
                                             errors.trainingProgram
-                                            }}</small>
+                                        }}</small>
                                     </div>
                                 </div>
                                 <div class="flex flex-col md:flex-row gap-4 ">
@@ -441,7 +441,7 @@ const navigateToBack = () => {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 " v-if="errors.plannedTrainee"> {{
                                             errors.plannedTrainee
-                                            }}</small>
+                                        }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.planRevenue"> {{
@@ -474,7 +474,7 @@ const navigateToBack = () => {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 " v-if="errors.expectedStart"> {{
                                             errors.expectedStart
-                                            }}</small>
+                                        }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.expectedEnd"> {{
@@ -504,7 +504,7 @@ const navigateToBack = () => {
                                 class="w-full md:w-80" />
                             <small class="text-red-600 " v-if="errors.classAdminOptions"> {{
                                 errors.classAdminOptions
-                                }}</small>
+                            }}</small>
                         </AccordionContent>
                     </AccordionPanel>
                 </Accordion>
@@ -512,16 +512,13 @@ const navigateToBack = () => {
 
 
                 <div class="mt-4 flex justify-between">
-                    <button
-                        class="mr-2 bg-gray-200 hover:bg-gray-400 active:bg-gray-200 text-black font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-                        @click="navigateToBack">
-                        Back to Training Program List
-                    </button>
+                    <ButtonComponent text="Back to Training Program List" bgColor="bg-white"
+                        hoverColor="hover:bg-gray-200" activeColor="active:bg-gray-300" màu đen
+                        :onClick="navigateToBack" />
                     <div class="flex gap-2">
-                        <button type="submit" @click="handleFormtTypeandStatus(true, 'Planning')"
-                            class="mr-2 bg-white hover:bg-gray-100 active:bg-gray-200 text-green-500 font-semibold py-2 px-4 rounded-lg border border-green-500 transition duration-300 ease-in-out">
-                            Plan Group
-                        </button>
+                        <ButtonComponent text="Plan Group" bgColor="bg-white text-green-500"
+                            hoverColor="hover:bg-gray-200" activeColor="active:bg-gray-300"
+                            :onClick="handleFormtTypeandStatus(true, 'Planning')" />
                         <button type="submit" @click="handleFormtTypeandStatus(true, 'Assigned')"
                             class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
                             Assign to Group Admin

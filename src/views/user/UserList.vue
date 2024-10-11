@@ -4,6 +4,7 @@ import { useDepartmentStore } from '@/stores/departmentStore'
 import { useRoleStore } from '@/stores/roleStore'
 import { useUserStore } from '@/stores/userStore'
 import { toTypedSchema } from '@vee-validate/zod'
+import Button from 'primevue/button'
 import Toast from 'primevue/toast'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
@@ -56,8 +57,8 @@ const validationSchema = toTypedSchema(
             .string({ required_error: 'Account is required' })
             .min(1, { message: "Account is required" }),
         email: z
-            .string({ required_error: 'FPT Mail is required' })
-            .min(1, { message: "FPT mail is required" })
+            .string({ required_error: 'Email is required' })
+            .min(1, { message: "Email is required" })
             .regex(/^[\w-_.+]*[\w-_.]@(\w+\.)+\w+\w$/, { message: 'Invalid email address format' }),
         name: z
             .string({ required_error: 'Display Name is required' })
@@ -135,12 +136,11 @@ const confirmActive = (value) => {
         header: 'Activate User',
         acceptProps: {
             label: 'Save',
-            outlined: true
         },
         rejectProps: {
             label: 'Cancel',
-            severity: 'secondary',
-            outlined: true
+            severity: 'error',
+            className: 'button-custom'
         },
         accept: () => {
             userStore.fetchUpdateStatus(selectedItem.value.id).then(() => {
@@ -164,12 +164,11 @@ const confirmDeactive = (value) => {
         header: 'Deactivate User',
         acceptProps: {
             label: 'Save',
-            outlined: true
         },
         rejectProps: {
             label: 'Cancel',
-            severity: 'secondary',
-            outlined: true
+            severity: 'error',
+            className: 'button-custom'
         },
         accept: () => {
             userStore.fetchUpdateStatus(selectedItem.value.id).then(() => {
@@ -348,6 +347,13 @@ const handleReset = () => {
 const handleUserUpdated = () => {
     fetchData();
 };
+const openPopup = () => {
+    visible.value = true;
+}
+
+const closePopup = () => {
+    visible.value = false;
+}
 
 </script>
 
@@ -357,9 +363,10 @@ const handleUserUpdated = () => {
             @userUpdated="handleUserUpdated" :roles="roles" />
         <Toast />
         <div class="card">
-            <div class="text-xl mb-4 flex justify-between items-center">
+            <div class="mb-4 flex justify-between items-center">
                 <span class="!font-semibold text-xl">User List</span>
-                <Button label="Add" @click="visible = true" />
+                <ButtonComponent text="Add User" bgColor="bg-emerald-500 text-white" hoverColor="hover:bg-emerald-600"
+                    activeColor="active:bg-emerald-700" :onClick="openPopup" />
             </div>
             <Divider />
             <div>
@@ -483,7 +490,7 @@ const handleUserUpdated = () => {
                             <small class="text-red-600" v-if="errors.account">{{ errors.account }}</small>
                         </div>
                         <div class="flex flex-col gap-2">
-                            <label for="email">FPT Email<i class="text-red-600">*</i></label>
+                            <label for="email">Email<i class="text-red-600">*</i></label>
                             <InputText id="email" :class="`{ 'p-invalid': errors.email }`" v-model="email"
                                 type="text" />
                             <small class="text-red-600 " v-if="errors.email">{{ errors.email }}</small>
@@ -533,10 +540,8 @@ const handleUserUpdated = () => {
                                 }}</span>
                         </div>
                         <div class="flex justify-end mt-4">
-                            <button @click.prevent="visible = false"
-                                class="mr-2 bg-gray-200 hover:bg-gray-400 active:bg-gray-200 text-black font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
-                                Cancel
-                            </button>
+                            <ButtonComponent text="Cancel" bgColor="bg-white text-red-500"
+                                hoverColor="hover:bg-gray-200" activeColor="active:bg-gray-300" :onClick="closePopup" />
                             <button type="submit"
                                 class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
                                 Save
@@ -544,6 +549,7 @@ const handleUserUpdated = () => {
                         </div>
                     </div>
                 </form>
+
             </Fluid>
         </Dialog>
         <ConfirmDialog group="templating">
@@ -560,6 +566,20 @@ const handleUserUpdated = () => {
     </div>
 </template>
 <style>
+.button-custom {
+    background-color: white;
+    color: red;
+    border: 1px solid rgb(209, 213, 219);
+    border-radius: 7px;
+    transition: background-color 0.3s, color 0.3s;
+    width: 56.36px;
+    height: 38.6px;
+}
+
+.button-custom:hover {
+    background-color: rgb(209, 213, 219);
+}
+
 .no-triangle::before,
 .no-triangle::after {
     display: none !important;
