@@ -1,7 +1,7 @@
 <script setup>
-import { useTopicStore } from '@/stores/topicStore'
-import { computed, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useTopicStore } from '@/stores/topicStore';
+import { computed, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 
 
 const topicStore = useTopicStore()
@@ -51,10 +51,10 @@ onMounted(() => {
                         <h2 class="text-xl font-semibold mb-2">1. Training Program Info</h2>
                         <table class="w-full border-collapse">
                             <tbody>
-                            <tr v-for="info in generalInfo" :key="info.label">
-                                <td class="highlight-label-column">{{ info.label }}</td>
-                                <td>{{ info.value }}</td>
-                            </tr>
+                                <tr v-for="info in generalInfo" :key="info.label">
+                                    <td class="highlight-label-column">{{ info.label }}</td>
+                                    <td>{{ info.value }}</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -73,7 +73,7 @@ onMounted(() => {
                 </TabPanel>
 
                 <TabPanel header="Schedule Detail">
-                    <Accordion value="0" v-for="unit in units" :key="unit.unitName">
+                    <Accordion value={null} v-for="unit in units" :key="unit.unitName">
                         <AccordionPanel value="0">
                             <AccordionHeader>{{ unit.unitName }}</AccordionHeader>
                             <AccordionContent>
@@ -122,7 +122,8 @@ table {
     border: 1px solid #ccc;
 }
 
-th, td {
+th,
+td {
     padding: 0.75rem;
     text-align: left;
     border-bottom: 1px solid #ccc;

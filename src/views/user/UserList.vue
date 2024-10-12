@@ -1,4 +1,5 @@
 <script setup>
+import ButtonComponent from '@/components/ButtonComponent.vue'
 import router from '@/router'
 import { useDepartmentStore } from '@/stores/departmentStore'
 import { useRoleStore } from '@/stores/roleStore'
@@ -56,18 +57,19 @@ const validationSchema = toTypedSchema(
         account: z
             .string({ required_error: 'Account is required' })
             .min(1, { message: 'Account is required' })
-            .max(10, { message: 'Account must not exceed 10 characters' }),
+            .max(20, { message: 'Account must not exceed 20 characters' }),
         email: z
             .string({ required_error: 'Email is required' })
             .min(1, { message: "Email is required" })
-            .regex(/^[\w-_.+]*[\w-_.]@(\w+\.)+\w+\w$/, { message: 'Invalid email address format' }),
+            .regex(/^[\w-_.+]*[\w-_.]@(\w+\.)+\w+\w$/, { message: 'Invalid email address format' })
+            .max(320, { message: 'Email must not exceed 320 characters' }),
         name: z
             .string({ required_error: 'Display Name is required' })
             .min(1, { message: 'User Name is required' })
-            .max(30, { message: 'User Name must not exceed 30 characters' }),
+            .max(150, { message: 'User Name must not exceed 150 characters' }),
         employeeId: z
             .string({ required_error: 'Employee ID is required' })
-            .max(10, { message: 'Employee ID must not exceed 10 characters' }),
+            .max(20, { message: 'Employee ID must not exceed 20 characters' }),
         contractType: z
             .object({
                 code: z.string({ required_error: "Contract Type is required" }).min(1, { message: "Delivery Type is required" }),
@@ -367,17 +369,17 @@ const closePopup = () => {
         <Toast />
         <div class="card">
             <div class="mb-4 flex justify-between items-center">
-                <span class="!font-semibold text-xl">User List</span>
-                <ButtonComponent text="Add User" bgColor="bg-emerald-500 text-white" hoverColor="hover:bg-emerald-600"
-                    activeColor="active:bg-emerald-700" :onClick="openPopup" />
+                <span class="!font-semibold text-2xl">User List ({{ users?.length }})</span>
+                <Button label="Add User" @click="openPopup" />
             </div>
             <Divider />
             <div>
                 <div class="flex flex-col md:flex-row gap-4">
-                    <div class="flex flex-col w-60 mt-1 gap-2">
-                        <label for="contractType" class="w-60">Active</label>
-                        <Select id="contractType" v-model="statusOptions" :options="statuses" optionLabel="name"
-                            placeholder="Filter status" @change="handleStatusChange" class="w-full"></Select>
+                    <div class="flex flex-wrap w-60 gap-2">
+                        <label for="statusId" class="w-32">Status</label>
+                        <MultiSelect @change="handleStatusChange" v-model="statusOptions" :options="statuses"
+                            optionLabel="name" filter placeholder="Filter Status" id="statusId" :maxSelectedLabels="3"
+                            class="w-full" />
                     </div>
                     <div class="flex flex-wrap w-60 gap-2">
                         <label for="role" class="w-32">Role</label>
@@ -393,24 +395,24 @@ const closePopup = () => {
                     </div>
                     <div class="flex flex-wrap w-60 gap-2">
                         <label for="search">Search</label>
-                        <InputText class="h-11 w-full" v-model="searchQuery" type="text" id="search"
+                        <InputText class="h-10 w-full" v-model="searchQuery" type="text" id="search"
                             placeholder="Enter name, account ..." @keyup.enter="handleSearch" />
                     </div>
                 </div>
                 <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="users"
                     currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                    tableStyle="min-width: 50rem" scrollable scrollHeight="500px" class="mt-6">
+                    tableStyle="min-width: 50rem" scrollable scrollHeight="500px" class="mt-4">
                     <Column header="No" style="width: 10%">
                         <template #body="slotProps">
                             {{ users.indexOf(slotProps.data) + 1 }}
                         </template>
                     </Column>
-                    <Column field="employeeId" header="Employee ID" style="width: 5%"></Column>
+                    <Column field="employeeId" header="Employee ID" style="width: 17%"></Column>
                     <Column field="account" header="Account" style="width: 10%"></Column>
                     <Column field="name" header="Name" style="width: 20%"></Column>
                     <Column field="email" header="Email" style="width: 10%"></Column>
-                    <Column field="department.departmentName" header="Department" style="width: 5%"></Column>
+                    <Column field="department.departmentName" header="Department" style="width: 3%"></Column>
                     <Column header="Roles" style="width: 10%">
                         <template #body="slotProps">
                             <!-- slotProps.data đại diện cho dữ liệu của một user (một hàng trong bảng) -->

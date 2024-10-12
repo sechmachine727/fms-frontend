@@ -33,7 +33,7 @@ const props = defineProps({
 });
 
 const buttonClasses = computed(() => {
-    return `${props.bgColor} ${props.hoverColor} ${props.activeColor} ${props.textColor} ${props.borderColor} font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out mr-2`;
+    return `${props.bgColor} ${props.hoverColor} ${props.activeColor} ${props.textColor} ${props.borderColor}  py-2 px-4 rounded-lg transition duration-300 ease-in-out mr-2`;
 });
 
 const handleClick = () => {
@@ -43,7 +43,7 @@ const handleClick = () => {
 };
 </script>
 <template>
-    <button :class="buttonClasses" @click="handleClick">
+    <button :class="buttonClasses" type="button" @click="handleClick">
         {{ text }}
     </button>
 </template>

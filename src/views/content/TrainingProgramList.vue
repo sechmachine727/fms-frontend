@@ -2,6 +2,7 @@
 import router from '@/router'
 import { useDepartmentStore } from '@/stores/departmentStore'
 import { useTrainingProgramStore } from '@/stores/trainingProgramStore'
+import { getStatusLabel } from '@/utils/status'
 import Toast from 'primevue/toast'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
@@ -13,16 +14,6 @@ const trainingPrograms = ref()
 const trainingProgramStore = useTrainingProgramStore()
 const departmentStore = useDepartmentStore()
 
-const getStatusLabel = (status) => {
-    switch (status) {
-        case 'Active':
-            return 'success' // Change color to green for active status
-        case 'Inactive':
-            return 'warn' // Change color to red for inactive status
-        default:
-            return null
-    }
-}
 const toast = useToast()
 const route = useRoute()
 const overlay = ref(null)
@@ -212,13 +203,12 @@ onMounted(() => {
 <template>
     <div class="card">
         <div class="flex items-center justify-between mb-2">
-            <h1 class="text-2xl">Training Program List</h1>
+            <h1 class="text-2xl">Training Program List ({{ trainingPrograms?.length }})</h1>
             <Button label="Add Training Program" @click="navigateToAdd" />
         </div>
         <Divider />
 
         <Toast />
-
         <div>
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="flex flex-col w-60 mt-1 gap-2">
@@ -234,7 +224,7 @@ onMounted(() => {
                 </div>
                 <div class="flex flex-wrap w-60 gap-2">
                     <label for="search">Search</label>
-                    <InputText id="search" v-model="searchQuery" class="h-11 w-full"
+                    <InputText id="search" v-model="searchQuery" class="h-10.5 w-full"
                         placeholder="Enter to Code, Name ..." type="text" @keyup.enter="handleSearch" />
                 </div>
             </div>
@@ -242,7 +232,7 @@ onMounted(() => {
             <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="trainingPrograms"
                 currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                 paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                       class="mt-6" scrollHeight="400px" scrollable tableStyle="min-width: 50rem">
+                class="mt-4" scrollHeight="400px" scrollable tableStyle="min-width: 50rem">
 
                 <Column header="No." style="min-width: 70px">
                     <template #body="slotProps">
@@ -256,7 +246,7 @@ onMounted(() => {
                         </router-link>
                     </template>
                 </Column>
-                <Column field="trainingProgramName" header="Training Name" style="min-width: 140px">
+                <Column field="trainingProgramName" header="Training Name" style="min-width: 250px">
                     <template #body="slotProps">
                         <router-link :to="{ name: 'training-program-detail', params: { id: slotProps.data.id } }"
                             class="router-link-active hover:underline">{{ slotProps.data.trainingProgramName }}
@@ -266,11 +256,12 @@ onMounted(() => {
                 <Column field="version" header="Version" style="min-width: 10px"></Column>
                 <Column field="department.departmentName" header="Region" style="min-width: 100px"></Column>
                 <Column field="technicalGroup.code" header="Technical Group" style="min-width: 150px"></Column>
-                <Column field="topicInfoList" header="Topic" style="min-width: 150px">
+                <Column field="topicInfoList" header="Topic" style="min-width: 400px">
                     <template #body="slotProps">
-                        <div v-for="topic in slotProps.data.topicInfoList" :key="topic.topicCode">
-                            {{ topic.topicName }}
-                        </div>
+                        <span class="w-full" v-for="(topic, index) in slotProps.data.topicInfoList"
+                            :key="topic.topicCode">
+                            {{ topic.topicCode }}<span v-if="index < slotProps.data.topicInfoList.length - 1">, </span>
+                        </span>
                     </template>
                 </Column>
 
@@ -341,6 +332,6 @@ onMounted(() => {
 }
 
 .router-link-active {
-    color: #2196F3; 
+    color: #2196F3;
 }
 </style>
