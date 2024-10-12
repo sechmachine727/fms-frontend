@@ -1,4 +1,5 @@
 <script setup>
+import ButtonComponent from '@/components/ButtonComponent.vue'
 import router from '@/router'
 import { useDeliveryTypeStore } from '@/stores/deliveryTypeStore'
 import { useFormatTypeStore } from '@/stores/formatTypeStore'
@@ -33,7 +34,7 @@ const classAdminOptions = ref([]);
 const visible = ref(false);
 const assignedVisible = ref(false);
 const statusClass = ref(null)
-
+const classes = ref([]);
 
 const locationStore = useLocationStore();
 const siteStore = useSiteStore();
@@ -47,6 +48,9 @@ const keyProgramStore = useKeyProgramStore();
 const userStore = useUserStore();
 const classStore = useClassStore();
 onMounted(() => {
+    classStore.fetchClassList().then(() => {
+        classes.value = classStore.classes;
+    })
     keyProgramStore.fetchPrograms().then(() => {
         keyProgramOptions.value = keyProgramStore.keyPrograms;
     })
@@ -96,6 +100,13 @@ const handleFormtTypeandStatus = (status, formtType) => {
 }
 
 
+const closePopup = () => {
+    assignedVisible.value = false;
+}
+
+const closePopupForPlaining = () => {
+    visible.value = false;
+}
 
 
 // Validation schema using Zod
@@ -103,6 +114,7 @@ const validationSchema = toTypedSchema(
     z.object({
         className: z
             .string({ required_error: 'Class Name is required' })
+            .trim()
             .min(1, { message: 'Class Name is required' })
             .max(20, { message: 'Class Name must not exceed 20 characters' }),
         deliveryType: z
@@ -168,6 +180,7 @@ const validationSchema = toTypedSchema(
             .refine((date) => date instanceof Date, { message: "Expected End Date is required" }),
         note: z
             .string()
+            .max(5000, { message: 'Note must not exceed 5000 characters' })
             .optional(),
         classAdminOptions: z.preprocess(
             (val) => (val === undefined || val === null ? [] : val),
@@ -202,9 +215,11 @@ const { value: note } = useField("note");
 const data = ref(null);
 const onSubmit = handleSubmit((values) => {
     data.value = convertToSchema(values);
-    data.value.expectedStartDate = convertToVietnamTime(values.expectedStart).toString(),
-        data.value.expectedEndDate = convertToVietnamTime(values.expectedEnd).toString(),
-        classCode.value = generateClassCode(deliveryType.value.deliveryTypeName, formatType.value.formatTypeName, technicalGroup.value.code)
+    data.value.expectedStartDate = convertToVietnamTime(values.expectedStart).toString();
+    data.value.expectedEndDate = convertToVietnamTime(values.expectedEnd).toString();
+    let generateCode = generateClassCode(deliveryType.value.deliveryTypeName, formatType.value.formatTypeName, technicalGroup.value.code, classes.value)
+    classCode.value = generateCode
+
     if (handleForm.value.formatType === "Planning") {
         data.value.status = "Planning";
         visible.value = true;
@@ -218,7 +233,9 @@ const validationSchemaCode = toTypedSchema(
     z.object({
         classCode: z
             .string({ required_error: 'Class Name is required' })
-            .min(1, { message: "Class Name is required" }),
+            .trim()
+            .min(1, { message: "Group Code is required" })
+            .max(50, { message: 'Group Code must not exceed 50 characters' }),
     })
 );
 const { handleSubmit: handleSubmitcode, errors: finalError, setFieldError } = useForm({ validationSchema: validationSchemaCode });
@@ -282,7 +299,7 @@ const navigateToBack = () => {
         <Toast />
         <Fluid>
             <div class="font-bold mb-2 block">
-                <span class="font-semibold text-xl">Add Group</span>
+                <span class="font-semibold text-2xl">Add Group</span>
             </div>
             <Divider />
             <form @submit.prevent="onSubmit">
@@ -327,7 +344,7 @@ const navigateToBack = () => {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.deliveryType"> {{
                                             errors.deliveryType
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-3" v-if="errors.traineeType"> {{
@@ -368,12 +385,12 @@ const navigateToBack = () => {
                                     <div class="flex flex-wrap gap-2 w-full ">
                                         <small class="text-red-600 ml-2" v-if="errors.technicalGroup"> {{
                                             errors.technicalGroup
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.trainingProgram"> {{
                                             errors.trainingProgram
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                 </div>
                                 <div class="flex flex-col md:flex-row gap-4 ">
@@ -442,7 +459,7 @@ const navigateToBack = () => {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 " v-if="errors.plannedTrainee"> {{
                                             errors.plannedTrainee
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.planRevenue"> {{
@@ -475,7 +492,7 @@ const navigateToBack = () => {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 " v-if="errors.expectedStart"> {{
                                             errors.expectedStart
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.expectedEnd"> {{
@@ -494,7 +511,7 @@ const navigateToBack = () => {
                             </div>
                         </AccordionContent>
                     </AccordionPanel>
-                    <AccordionPanel value="1">
+                    <AccordionPanel value="0">
                         <AccordionHeader class="!font-bold">Resource Plaining</AccordionHeader>
                         <AccordionContent>
                             <label for="classAdmin"> Class Admin
@@ -505,7 +522,7 @@ const navigateToBack = () => {
                                 class="w-full md:w-80" />
                             <small class="text-red-600 " v-if="errors.classAdminOptions"> {{
                                 errors.classAdminOptions
-                            }}</small>
+                                }}</small>
                         </AccordionContent>
                     </AccordionPanel>
                 </Accordion>
@@ -517,9 +534,11 @@ const navigateToBack = () => {
                         hoverColor="hover:bg-gray-200" activeColor="active:bg-gray-300" màu đen
                         :onClick="navigateToBack" />
                     <div class="flex gap-2">
-                        <ButtonComponent text="Plan Group" bgColor="bg-white text-green-500"
-                            hoverColor="hover:bg-gray-200" activeColor="active:bg-gray-300"
-                            :onClick="handleFormtTypeandStatus(true, 'Planning')" />
+
+                        <button type="submit" @click="handleFormtTypeandStatus(true, 'Planning')"
+                            class="bg-white text-green-500 hover:bg-gray-200 border border-gray-300 active:bg-gray-300   py-2 px-4 rounded-lg transition duration-300 ease-in-out mr-2">
+                            Plan Group
+                        </button>
                         <button type="submit" @click="handleFormtTypeandStatus(true, 'Assigned')"
                             class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
                             Assign to Group Admin
@@ -541,10 +560,8 @@ const navigateToBack = () => {
                     </div>
                 </div>
                 <div class="flex justify-end mt-4">
-                    <button @click.prevent="visible = false"
-                        class="mr-2 bg-gray-200 hover:bg-gray-400 active:bg-gray-200 text-black font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
-                        Cancel
-                    </button>
+                    <ButtonComponent text="Cancel" bgColor="bg-white text-red-500" hoverColor="hover:bg-gray-200"
+                        activeColor="active:bg-gray-300" :onClick="closePopupForPlaining" />
                     <button type="submit"
                         class=" bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
                         Save
@@ -565,10 +582,8 @@ const navigateToBack = () => {
                     </div>
                 </div>
                 <div class="flex justify-end mt-4">
-                    <button @click.prevent="assignedVisible = false"
-                        class="mr-2 bg-gray-200 hover:bg-gray-400 active:bg-gray-200 text-black font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
-                        Cancel
-                    </button>
+                    <ButtonComponent text="Cancel" bgColor="bg-white text-red-500" hoverColor="hover:bg-gray-200"
+                        activeColor="active:bg-gray-300" :onClick="closePopup" />
                     <button type="submit"
                         class=" bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
                         Save

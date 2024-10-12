@@ -106,28 +106,27 @@ const navigateToAdd = () => {
     <div class="card">
         <Toast />
         <div class=" mb-4 flex justify-between items-center">
-            <span class="font-semibold text-xl">Group List</span>
-            <ButtonComponent text="Add Group" bgColor="bg-emerald-500 text-white" hoverColor="hover:bg-emerald-600"
-                activeColor="active:bg-emerald-700" :onClick="navigateToAdd" />
+            <span class="font-semibold text-2xl">Group List ({{ classes?.length }})</span>
+            <Button label="Add Group" @click="navigateToAdd" />
         </div>
         <Divider />
         <div class="flex flex-col md:flex-row gap-4">
             <div class="flex flex-wrap w-60 gap-2">
                 <label for="department">Status</label>
                 <MultiSelect v-model="statusOptions" @change="handleStatusChange" :options="statusValues"
-                    optionLabel="name" filter placeholder="Filter Department" id="department" :maxSelectedLabels="3"
+                    optionLabel="name" filter placeholder="Filter Status" id="department" :maxSelectedLabels="3"
                     class="w-full" />
             </div>
             <div class="flex flex-wrap w-60 gap-2">
                 <label for="search">Search</label>
-                <InputText class="h-11 w-full" v-model="searchQuery" type="text" id="search"
+                <InputText class="h-10 w-full" v-model="searchQuery" type="text" id="search"
                     placeholder="Enter name, account ..." @keyup.enter="handleSearch" />
             </div>
         </div>
         <DataTable :value="classes" :rows="10" scrollable scrollHeight="300px" :rowsPerPageOptions="[10, 20, 30, 50]"
             currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-            tableStyle="min-width: 50rem" class="mt-6">
+            tableStyle="min-width: 50rem" class="mt-4">
             <Column field="no" header="No" style="min-width: 50px">
                 <template #body="slotProps">
                     {{ classes.indexOf(slotProps.data) + 1 }}

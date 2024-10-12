@@ -1,5 +1,4 @@
 <script setup>
-import router from '@/router';
 import { useAuthStore } from "@/stores/authStore";
 import { toTypedSchema } from "@vee-validate/zod";
 import Toast from 'primevue/toast';
@@ -24,7 +23,7 @@ const { value: password } = useField("password");
 const onSubmit = handleSubmit((values) => {
     authStore.fetchLogin(values).then((reponse) => {
         localStorage.setItem("token", reponse.token);
-        router.push('/group-management/list')
+        window.location.href = '/group-management/list';
     }).catch((error) => {
         if (error.status === 401 && error.response.data.message === 'User is inactive') {
             toast.add({ severity: 'error', summary: 'Your account is inactive.', life: 3000 });
