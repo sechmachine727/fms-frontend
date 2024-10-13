@@ -64,12 +64,45 @@ export const useTrainingProgramStore = defineStore('trainingProgramStore', {
             }
         },
 
-        async fetchUpdateStatus(id) {
+        // async fetchUpdateStatus(id) {
+        //     try {
+        //         const result = await trainingProgramApi.putUpdateStatus(id)
+        //         return result.data
+        //     } catch (error) {
+        //         console.error('Error fetching status:', error)
+        //         throw error
+        //     }
+        // },
+
+        // Toggle to Active (FA Manager)
+        async fetchToggleToActive(id) {
             try {
                 const result = await trainingProgramApi.putUpdateStatus(id)
                 return result.data
             } catch (error) {
-                console.error('Error fetching status:', error)
+                console.error('Error toggling to active:', error)
+                throw error
+            }
+        },
+
+        // Toggle to Declined from Reviewing (FA Manager)
+        async fetchToggleReviewingToDeclined(id) {
+            try {
+                const result = await trainingProgramApi.putToggleReviewingToDeclined(id)
+                return result.data
+            } catch (error) {
+                console.error('Error toggling to declined:', error)
+                throw error
+            }
+        },
+
+        // Toggle between Active/Inactive
+        async fetchToggleActivate(id) {
+            try {
+                const result = await trainingProgramApi.putToggleActivate(id)
+                return result.data
+            } catch (error) {
+                console.error('Error toggling active/inactive status:', error)
                 throw error
             }
         },

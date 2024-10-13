@@ -26,7 +26,17 @@ class TrainingProgramApi {
     }
 
     putUpdateStatus = (id) => {
-        const newUrl = url + `/change-status` + `/${id}`
+        const newUrl = url + `/toggle-to-active` + `/${id}`
+        return put(newUrl)
+    }
+
+    putToggleReviewingToDeclined = (id) => {
+        const newUrl = url + `/toggle-reviewing-to-declined/${id}`
+        return put(newUrl)
+    }
+
+    putToggleActivate = (id) => {
+        const newUrl = url + `/toggle-activate/${id}`
         return put(newUrl)
     }
 
