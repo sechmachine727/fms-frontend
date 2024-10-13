@@ -4,13 +4,13 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 function isLoggedIn() {
     const userInfo = getUserInfo();
-    
+
     if (userInfo && userInfo.expiration) {
         const currentTime = Date.now();
         const expirationTime = new Date(userInfo.expiration).getTime();
         return currentTime < expirationTime;
     }
-    
+
     return false;
 }
 
