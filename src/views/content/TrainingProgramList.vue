@@ -3,6 +3,7 @@ import router from '@/router'
 import { useDepartmentStore } from '@/stores/departmentStore'
 import { useTrainingProgramStore } from '@/stores/trainingProgramStore'
 import { getStatusLabel } from '@/utils/status'
+import { getUserInfo } from '@/utils/token'
 import Toast from 'primevue/toast'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
@@ -121,7 +122,8 @@ const handleDecline = () => {
         confirmReject(selectedItem.value)
     }
 }
-
+const userRoles = getUserInfo();
+const rolesForAccess = ['ROLE_CONTENT_MANAGER', 'ROLE_FA_MANAGER'];
 const confirmActive = (value) => {
     confirm.require({
         group: 'templating',
@@ -239,7 +241,8 @@ onMounted(() => {
     <div class="card">
         <div class="flex items-center justify-between mb-2">
             <h1 class="text-2xl">Training Program List ({{ trainingPrograms?.length }})</h1>
-            <Button label="Add Training Program" @click="navigateToAdd" />
+            <Button label="Add Training Program" v-if="userRoles.roles.includes('ROLE_CONTENT_MANAGER')"
+                @click="navigateToAdd" />
         </div>
         <Divider />
 
@@ -307,7 +310,8 @@ onMounted(() => {
                         <Tag :severity="getStatusLabel(slotProps.data.status)" :value="slotProps.data.status" />
                     </template>
                 </Column>
-                <Column :exportable="false" alignFrozen="right" frozen header="Action" style="min-width: 80px">
+                <Column v-if="userRoles?.roles.some(role => rolesForAccess.includes(role))" :exportable="false"
+                    alignFrozen="right" frozen header="Action" style="min-width: 80px">
                     <template #body="slotProps">
                         <Button class="mr-2" icon="pi pi-ellipsis-v" outlined rounded
                             @click="showOptions($event, slotProps.data)" />
@@ -315,22 +319,31 @@ onMounted(() => {
                         <Popover ref="overlay">
                             <div class="flex flex-col gap-4 w-[8rem]">
                                 <ul>
-                                    <li class="flex items-center gap-2 px-2 py-3  cursor-pointer rounded-border
-                                    text-zinc-500 hover:bg-zinc-100 active:bg-zinc-100 focus:outline-none focus:ring focus:ring-zinc-100"
-                                        severity="secondary" @click="handleEdit(slotProps.data)">
+                                    <li v-if="userRoles?.roles.includes('ROLE_CONTENT_MANAGER')"
+                                        class="flex items-center gap-2 px-2 py-3  cursor-pointer rounded-border
+                                    text-zinc-500 hover:bg-zinc-100 active:bg-zinc-100 focus:outline-none focus:ring focus:ring-zinc-100" severity="secondary"
+                                        @click="handleEdit(slotProps.data)">
                                         <i class="pi pi-pencil"></i>
                                         Edit
                                     </li>
-                                    <li v-if="selectedItem.status === 'Inactive' || selectedItem.status === 'Reviewing'"
+                                    <li v-if="selectedItem?.status === 'Inactive'"
+                                        class="flex items-center gap-2 px-2 py-3  cursor-pointer rounded-border
+                                    text-green-500 hover:bg-green-100 active:bg-green-100 focus:outline-none focus:ring focus:ring-green-100"
+                                        severity="slotProps.data.status === 'Active' ? 'warn' : 'success'"
+                                        @click="handleActive(slotProps.data)">
+                                        <i class="pi pi-check"></i>
+                                        Activate
+                                    </li>
+                                    <li v-if="selectedItem?.status === 'Reviewing' && userRoles.roles.includes('ROLE_FA_MANAGER')"
                                         class="flex items-center gap-2 px-2 py-3  cursor-pointer rounded-border
                                     text-green-500 hover:bg-green-100 active:bg-green-100 focus:outline-none focus:ring focus:ring-green-100"
                                         severity="slotProps.data.status === 'Active' ? 'warn' : 'success'"
                                         @click="handleActive(slotProps.data)">
 
                                         <i class="pi pi-check"></i>
-                                        Activate
+                                        Approve
                                     </li>
-                                    <li v-if="selectedItem.status === 'Active'"
+                                    <li v-if="selectedItem?.status === 'Active'"
                                         class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border
                                     text-orange-500 hover:bg-orange-100 active:bg-orange-100 focus:outline-none focus:ring focus:ring-orange-100"
                                         severity="danger" @click="handleDeactive(slotProps.data)">
@@ -338,10 +351,10 @@ onMounted(() => {
                                         <i class="pi pi-times"></i>
                                         Deactive
                                     </li>
-                                    <li v-if="selectedItem.status === 'Reviewing'"
+                                    <li v-if="selectedItem?.status === 'Reviewing' && userRoles.roles.includes('ROLE_FA_MANAGER')"
                                         class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border
-                                    text-red-500 hover:bg-red-100 active:bg-red-100 focus:outline-none focus:ring focus:ring-red-100" severity="danger"
-                                        @click="handleDecline(slotProps.data)">
+                                    text-red-500 hover:bg-red-100 active:bg-red-100 focus:outline-none focus:ring focus:ring-red-100"
+                                        severity="danger" @click="handleDecline(slotProps.data)">
 
                                         <i class="pi pi-times"></i>
                                         Decline

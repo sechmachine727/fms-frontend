@@ -3,6 +3,7 @@ import ButtonComponent from '@/components/ButtonComponent.vue'
 import router from '@/router'
 import { useImportFileStore } from '@/stores/importFileStore'
 import { useTopicStore } from '@/stores/topicStore'
+import { getUserInfo } from '@/utils/token'
 import Toast from 'primevue/toast'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
@@ -243,14 +244,17 @@ onMounted(() => {
     })
 })
 
+const rolesForAccess = ['ROLE_CONTENT_MANAGER', 'ROLE_FA_MANAGER'];
 
+const userRoles = getUserInfo();
 </script>
 
 <template>
     <div class="card">
         <div class="flex items-center justify-between mb-2">
             <h1 class="text-2xl">Topic Configuration ({{ topics?.length }})</h1>
-            <Button label="Import Topic" @click="showDialog = true" />
+            <Button label="Import Topic" v-if="userRoles.roles.includes('ROLE_CONTENT_MANAGER')"
+                @click="showDialog = true" />
         </div>
         <Divider />
         <!-- Toast for success message -->
@@ -330,7 +334,8 @@ onMounted(() => {
                 <Column field="modifiedDate" header="Last Modified Date" style="width: 15%"></Column>
                 <Column field="lastModifiedBy" header="Last Modified By" style="width: 22%"></Column>
 
-                <Column :exportable="false" alignFrozen="right" frozen header="Action" style="width: 5%">
+                <Column v-if="userRoles?.roles.some(role => rolesForAccess.includes(role))" :exportable="false"
+                    alignFrozen="right" frozen header="Action" style="width: 5%">
                     <template #body="slotProps">
                         <Button class="mr-2" icon="pi pi-ellipsis-v" outlined rounded
                             @click="showOptions($event, slotProps.data)" />
@@ -338,7 +343,7 @@ onMounted(() => {
                         <Popover ref="overlay">
                             <div class="flex flex-col gap-4 w-[8rem]">
                                 <ul>
-                                    <li v-if="selectedItem.status === 'Inactive'"
+                                    <li v-if="selectedItem?.status === 'Inactive'"
                                         class="flex items-center gap-2 px-2 py-3  cursor-pointer rounded-border
                                     text-green-500 hover:bg-green-100 active:bg-green-100 focus:outline-none focus:ring focus:ring-green-100"
                                         severity="slotProps.data.status === 'Active' ? 'warn' : 'success'"
@@ -347,7 +352,7 @@ onMounted(() => {
                                         <i class="pi pi-check"></i>
                                         Activate
                                     </li>
-                                    <li v-if="selectedItem.status === 'Active'"
+                                    <li v-if="selectedItem?.status === 'Active'"
                                         class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border
                                     text-orange-500 hover:bg-orange-100 active:bg-orange-100 focus:outline-none focus:ring focus:ring-orange-100"
                                         severity="danger" @click="handleDeactive(slotProps.data)">
