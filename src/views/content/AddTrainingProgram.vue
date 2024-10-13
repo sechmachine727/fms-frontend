@@ -70,7 +70,6 @@ const { value: version } = useField('version')
 const { value: name } = useField('name')
 const { value: technicalGroupType } = useField('technicalGroupType')
 const { value: department } = useField('department')
-const { value: status } = useField('status')
 const { value: description } = useField('description')
 const { value: topicData } = useField('topicData')
 
@@ -83,10 +82,10 @@ const onSubmit = handleSubmit((values) => {
         departmentId: values.department.id,
         version: parseInt(values.version, 10),
         description: values.description || '',
-        status: values.status ? 'Active' : 'Inactive',
         technicalGroupId: values.technicalGroupType.id,
         topicIds: selectedTopics  // Sending only topic IDs as per API requirement
     }
+    console.log(payload)
     trainingProgramStore.fetchAddTrainingProgram(payload).then(() => {
         toast.add({
             severity: 'success',
@@ -198,22 +197,6 @@ const onChange = (value) => {
                                 <small v-if="errors.technicalGroupType" class="text-red-600 ml-2">
                                     {{ errors.technicalGroupType }}</small>
                             </div>
-                        </div>
-
-
-                        <div class="flex flex-wrap gap-2 w-full mt-5">
-                            <label for="status">Status</label>
-
-                            <!-- Toggle Switch for changing status -->
-                            <ToggleSwitch id="status" v-model="status" offIcon="pi pi-times" offLabel="Inactive"
-                                onIcon="pi pi-check" onLabel="Active" />
-
-                            <!-- Dynamic Status Text with oval border and lighter background -->
-                            <span :class="status
-                                ? 'text-green-600 bg-green-100 '
-                                : 'text-yellow-600 bg-yellow-100'" class="ml-2 font-semibold px-3 py-1 rounded-full">{{
-                                    status ? 'Active' : 'Inactive'
-                                }}</span>
                         </div>
 
                         <div class="flex flex-wrap gap-2 w-full mt-3">

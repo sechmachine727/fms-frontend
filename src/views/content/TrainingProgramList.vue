@@ -16,9 +16,13 @@ const departmentStore = useDepartmentStore()
 const getStatusLabel = (status) => {
     switch (status) {
         case 'Active':
-            return 'success' // Change color to green for active status
+            return 'success'
         case 'Inactive':
-            return 'warn' // Change color to red for inactive status
+            return 'warn'
+        case 'Declined':
+            return 'danger'
+        case 'Reviewing':
+            return 'info'
         default:
             return null
     }
@@ -33,6 +37,8 @@ const statusOptions = ref('')
 const departments = ref([])
 const statuses = ref([
     { id: 'All', name: 'All' },
+    { id: 'Reviewing', name: 'Reviewing' },
+    { id: 'Declined', name: 'Declined' },
     { id: 'Active', name: 'Active' },
     { id: 'Inactive', name: 'Inactive' }
 ])
@@ -123,6 +129,12 @@ const handleDeactive = () => {
     }
 };
 
+const handleDecline = () => {
+    if (selectedItem.value) {
+        confirmReject(selectedItem.value)
+    }
+}
+
 const confirmActive = (value) => {
     confirm.require({
         group: 'templating',
@@ -137,7 +149,7 @@ const confirmActive = (value) => {
             className: 'button-custom'
         },
         accept: () => {
-            trainingProgramStore.fetchUpdateStatus(selectedItem.value.id).then(() => {
+            trainingProgramStore.fetchToggleToActive(selectedItem.value.id).then(() => {
                 toast.add({ severity: 'success', summary: 'Training Program successfully activated', life: 3000 })
                 trainingProgramStore.fetchTrainingPrograms().then(() => {
                     trainingPrograms.value = trainingProgramStore.trainingPrograms
@@ -164,11 +176,38 @@ const confirmDeactive = (value) => {
             className: 'button-custom'
         },
         accept: () => {
-            trainingProgramStore.fetchUpdateStatus(selectedItem.value.id).then(() => {
+            trainingProgramStore.fetchToggleActivate(selectedItem.value.id).then(() => {
                 trainingProgramStore.fetchTrainingPrograms().then(() => {
                     trainingPrograms.value = trainingProgramStore.trainingPrograms
                 })
                 toast.add({ severity: 'success', summary: 'Training Program successfully deactivated', life: 3000 })
+            }).catch((errors) => {
+                if (errors.status === 400) {
+                    toast.add({ severity: 'error', summary: errors.response.data, life: 3000 })
+                }
+            })
+        }
+    })
+}
+
+const confirmReject = (value) => {
+    confirm.require({
+        group: 'templating',
+        message: 'Are you sure you want to decline this Training Program.' + value.code,
+        header: 'Decline Training Program',
+        acceptProps: {
+            label: 'Save'
+        },
+        rejectProps: {
+            label: 'Cancel',
+            className: 'button-custom'
+        },
+        accept: () => {
+            trainingProgramStore.fetchToggleReviewingToDeclined(selectedItem.value.id).then(() => {
+                trainingProgramStore.fetchTrainingPrograms().then(() => {
+                    trainingPrograms.value = trainingProgramStore.trainingPrograms
+                })
+                toast.add({ severity: 'success', summary: 'Training Program declined successfully', life: 3000 })
             }).catch((errors) => {
                 if (errors.status === 400) {
                     toast.add({ severity: 'error', summary: errors.response.data, life: 3000 })
@@ -295,7 +334,7 @@ onMounted(() => {
                                         <i class="pi pi-pencil"></i>
                                         Edit
                                     </li>
-                                    <li v-if="selectedItem.status === 'Inactive'"
+                                    <li v-if="selectedItem.status === 'Inactive' || selectedItem.status === 'Reviewing'"
                                         class="flex items-center gap-2 px-2 py-3  cursor-pointer rounded-border
                                     text-green-500 hover:bg-green-100 active:bg-green-100 focus:outline-none focus:ring focus:ring-green-100"
                                         severity="slotProps.data.status === 'Active' ? 'warn' : 'success'"
@@ -304,13 +343,21 @@ onMounted(() => {
                                         <i class="pi pi-check"></i>
                                         Activate
                                     </li>
-                                    <li v-if="selectedItem.status === 'Active'"
+                                    <li v-if="selectedItem.status === 'Active' "
                                         class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border
                                     text-orange-500 hover:bg-orange-100 active:bg-orange-100 focus:outline-none focus:ring focus:ring-orange-100"
                                         severity="danger" @click="handleDeactive(slotProps.data)">
 
                                         <i class="pi pi-times"></i>
                                         Deactive
+                                    </li>
+                                    <li v-if="selectedItem.status === 'Reviewing'"
+                                        class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border
+                                    text-red-500 hover:bg-red-100 active:bg-red-100 focus:outline-none focus:ring focus:ring-red-100"
+                                        severity="danger" @click="handleDecline(slotProps.data)">
+
+                                        <i class="pi pi-times"></i>
+                                        Decline
                                     </li>
                                 </ul>
                             </div>
@@ -341,6 +388,6 @@ onMounted(() => {
 }
 
 .router-link-active {
-    color: #2196F3; 
+    color: #2196F3;
 }
 </style>

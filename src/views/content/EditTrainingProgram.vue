@@ -74,7 +74,6 @@ const { value: version } = useField('version')
 const { value: trainingProgramName } = useField('trainingProgramName')
 const { value: technicalGroupCode } = useField('technicalGroupCode')
 const { value: department } = useField('department')
-const { value: status } = useField('status')
 const { value: description } = useField('description')
 const { value: topicData } = useField('topicData')
 
@@ -87,7 +86,6 @@ const onSubmit = handleSubmit((values) => {
         departmentId: values.department.id,  // Extract department ID
         version: values.version,
         description: values.description || '',  // Ensure description is not undefined
-        status: values.status ? 'Active' : 'Inactive',  // Convert boolean to "Active"/"Inactive"
         technicalGroupId: values.technicalGroupCode.id,  // Extract technical group ID
         topicIds: values.topicData[1].map(topic => topic.id)
     }
@@ -132,7 +130,6 @@ onMounted(async () => {
         version.value = trainingProgram.value.version || ''
         trainingProgramName.value = trainingProgram.value.trainingProgramName || ''
         description.value = trainingProgram.value.description || ''
-        status.value = trainingProgram.value.status === 'Active'
         department.value = trainingProgram.value.department || ''
         technicalGroupCode.value = trainingProgram.value.technicalGroup || {}
         // Lấy danh sách topic đã chọn từ topicInfoList
@@ -237,21 +234,6 @@ onMounted(async () => {
                                 <small v-if="errors.technicalGroupCode" class="text-red-600 ml-2">
                                     {{ errors.technicalGroupCode }}</small>
                             </div>
-                        </div>
-
-                        <div class="flex flex-wrap gap-2 w-full mt-5">
-                            <label for="status">Status</label>
-
-                            <!-- Toggle Switch for changing status -->
-                            <ToggleSwitch id="status" v-model="status" offIcon="pi pi-times" offLabel="Inactive"
-                                onIcon="pi pi-check" onLabel="Active" />
-
-                            <!-- Dynamic Status Text with oval border and lighter background -->
-                            <span :class="status
-                                ? 'text-green-600 bg-green-100 '
-                                : 'text-yellow-600 bg-yellow-100'" class="ml-2 font-semibold px-3 py-1 rounded-full">{{
-                                    status ? 'Active' : 'Inactive'
-                                }}</span>
                         </div>
 
                         <div class="flex flex-wrap gap-2 w-full mt-3">
