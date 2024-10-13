@@ -14,20 +14,6 @@ const trainingPrograms = ref()
 const trainingProgramStore = useTrainingProgramStore()
 const departmentStore = useDepartmentStore()
 
-const getStatusLabel = (status) => {
-    switch (status) {
-        case 'Active':
-            return 'success'
-        case 'Inactive':
-            return 'warn'
-        case 'Declined':
-            return 'danger'
-        case 'Reviewing':
-            return 'info'
-        default:
-            return null
-    }
-}
 const toast = useToast()
 const route = useRoute()
 const overlay = ref(null)
@@ -344,7 +330,7 @@ onMounted(() => {
                                         <i class="pi pi-check"></i>
                                         Activate
                                     </li>
-                                    <li v-if="selectedItem.status === 'Active' "
+                                    <li v-if="selectedItem.status === 'Active'"
                                         class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border
                                     text-orange-500 hover:bg-orange-100 active:bg-orange-100 focus:outline-none focus:ring focus:ring-orange-100"
                                         severity="danger" @click="handleDeactive(slotProps.data)">
@@ -354,8 +340,8 @@ onMounted(() => {
                                     </li>
                                     <li v-if="selectedItem.status === 'Reviewing'"
                                         class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border
-                                    text-red-500 hover:bg-red-100 active:bg-red-100 focus:outline-none focus:ring focus:ring-red-100"
-                                        severity="danger" @click="handleDecline(slotProps.data)">
+                                    text-red-500 hover:bg-red-100 active:bg-red-100 focus:outline-none focus:ring focus:ring-red-100" severity="danger"
+                                        @click="handleDecline(slotProps.data)">
 
                                         <i class="pi pi-times"></i>
                                         Decline

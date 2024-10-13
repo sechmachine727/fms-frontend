@@ -1,4 +1,5 @@
 <script setup>
+import ButtonComponent from '@/components/ButtonComponent.vue'
 import router from '@/router'
 import { useUserStore } from '@/stores/userStore'
 import { toTypedSchema } from '@vee-validate/zod'
@@ -201,10 +202,9 @@ const closeDialog = () => {
                             <ToggleSwitch id="status" v-model="status" />
                         </div>
                         <div class="flex justify-end mt-4">
-                            <button @click="closeDialog"
-                                class="mr-2 bg-gray-200 hover:bg-gray-400 active:bg-gray-200 text-black font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
-                                Cancel
-                            </button>
+                            <ButtonComponent text="Cancel" bgColor="bg-white text-red-500"
+                                hoverColor="hover:bg-gray-200" activeColor="active:bg-gray-300"
+                                :onClick="closeDialog" />
                             <button type="submit"
                                 class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
                                 Save

@@ -22,73 +22,80 @@ const router = createRouter({
             component: AppLayout,
             children: [
                 {
-                    path: '/',
-                    redirect: "/group-management/list"
-                },
-
-                {
                     path: '/group-management/list',
                     name: 'group-management',
+                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER'] },
                     component: () => import('@/views/Class/GroupList.vue')
                 },
                 {
                     path: '/content-management/topic',
                     name: 'topic-management',
+                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN','ROLE_DELIVERABLES_MANAGER'] },
                     component: () => import('@/views/content/TopicList.vue')
                 },
                 {
                     path: '/content-management/topic/:id',
                     name: 'topic-detail',
+                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER'] },
                     component: () => import('@/views/content/TopicDetail.vue'),
                     props: true, // Pass route params as props to the component
                 },
                 {
                     path: '/content-management/training-program',
                     name: 'training-program',
+                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_DELIVERABLES_MANAGER'] },
                     component: () => import('@/views/content/TrainingProgramList.vue'),
                     props: true, // Pass route params as props to the component
                 },
                 {
                     path: '/content-management/training-program/:id',
                     name: 'training-program-detail',
+                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER'] },
                     component: () => import('@/views/content/TrainingProgramDetail.vue'),
                     props: true, // Pass route params as props to the component
                 },
                 {
                     path: '/content-management/training-program/add',
                     name: 'training-program-add',
+                    meta: { roles: ['ROLE_CONTENT_MANAGER'] },
                     component: () => import('@/views/content/AddTrainingProgram.vue')
                 },
                 {
 
                     path: '/content-management/training-program/edit/:id',
                     name: 'training-program-edit',
+                    meta: { roles: ['ROLE_CONTENT_MANAGER'] },
                     component: () => import('@/views/content/EditTrainingProgram.vue')
                 },
                 {
                     path: '/group-management/add',
                     name: 'group-management-add',
+                    meta: { roles: ['ROLE_DELIVERABLES_MANAGER'] },
                     component: () => import('@/views/Class/GroupAdd.vue')
                 },
 
                 {
                     path: '/group-management/detail/:id',
                     name: 'group-detail',
+                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER'] },
                     component: () => import('@/views/Class/GroupDetail.vue')
                 },
                  {
                     path: '/group-management/in-progress-list',
                     name: 'group-management-in-progress-list',
+                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER'] },
                     component: () => import('@/views/Class/InProgress.vue')
                 },
                 {
                     path: '/fms-settings/user-management',
                     name: 'fms-settings-user-management',
+                    meta: { roles: ['ROLE_FMS_ADMIN'] },
                     component: () => import('@/views/user/UserList.vue')
                 },
                  {
                     path: '/fams-settings/email-template',
                     name: 'fms-settings-email-template-management',
+                    meta: { roles: ['ROLE_FMS_ADMIN'] },
                     component: () => import('@/views/templateEmail/TemplateEmailList.vue')
                 },
             ]
@@ -118,18 +125,47 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    // Nếu không phải là trang đăng nhập và người dùng chưa đăng nhập
+    const userInfo = getUserInfo();
+    const userRoles = userInfo && userInfo.roles ? userInfo.roles : [];
+
+    // Nếu người dùng chưa đăng nhập và đang cố truy cập một trang cần đăng nhập
     if (to.name !== 'login' && !isLoggedIn()) {
-        next({ name: 'login' });  // Chuyển hướng tới trang đăng nhập
+        next({ name: 'login' });
     }
-    // Nếu đã đăng nhập và muốn vào trang login, chuyển đến class list
+    // Nếu người dùng đã đăng nhập và đang truy cập trang đăng nhập, điều hướng dựa trên vai trò
     else if (to.name === 'login' && isLoggedIn()) {
-        next({ name: 'class-management' });  // Chuyển hướng đến class list
+        if (userRoles.includes('ROLE_FMS_ADMIN')) {
+            next({ path: '/fms-settings/user-management' });
+        } else if (userRoles.includes('ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER')) {
+            next({ path: '/group-management/list' });
+        } else if (userRoles.includes('ROLE_CONTENT_MANAGER')) {
+            next({ path: '/content-management/training-program' });
+        } else {
+            next({ name: 'accessDenied' });
+        }
     }
-    // Cho phép chuyển tiếp tới trang yêu cầu
+    // Điều hướng tại đường dẫn gốc '/', tự động chuyển hướng dựa trên vai trò
+    else if (to.path === '/') {
+        if (userRoles.includes('ROLE_FMS_ADMIN')) {
+            next({ path: '/fms-settings/user-management' });
+        } else if (userRoles.includes('ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER')) {
+            next({ path: '/group-management/list' });
+        } else if (userRoles.includes('ROLE_CONTENT_MANAGER')) {
+            next({ path: '/content-management/training-program' });
+        } else {
+            next({ name: 'accessDenied' });
+        }
+    }
+    // Kiểm tra quyền truy cập dựa trên vai trò cho các đường dẫn khác
     else {
-        next();
+        const routeRoles = to.meta.roles;
+        if (routeRoles && routeRoles.length > 0 && !routeRoles.some(role => userRoles.includes(role))) {
+            next({ name: 'accessDenied' });
+        } else {
+            next();
+        }
     }
 });
+
 
 export default router;
