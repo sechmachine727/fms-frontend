@@ -42,12 +42,12 @@ const navigateToAdd = () => {
 <template>
     <div class="card">
         <div class="mb-4 flex justify-between items-center">
-            <span class="!font-semibold text-lg">Group List</span>
+            <span class="!font-semibold text-2xl">Group List ({{ classes?.length }})</span>
             <ButtonComponent text="Add Group" bgColor="bg-emerald-500 text-white" hoverColor="hover:bg-emerald-600"
                 activeColor="active:bg-emerald-700" :onClick="navigateToAdd" />
         </div>
         <Divider />
-        <DataTable :value="classes" :rows="4" :rowsPerPageOptions="[4, 6, 12, 20, 50]"
+        <DataTable :value="classes" :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]"
             currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
             tableStyle="min-width: 50rem" scrollable scrollHeight="500px" class="mt-6">

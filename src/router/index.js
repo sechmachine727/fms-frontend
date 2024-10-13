@@ -1,9 +1,19 @@
-import AppLayout from '@/layout/AppLayout.vue'
-import { createRouter, createWebHistory } from 'vue-router'
+import AppLayout from '@/layout/AppLayout.vue';
+import { getUserInfo } from '@/utils/token';
+import { createRouter, createWebHistory } from 'vue-router';
 
 function isLoggedIn() {
-    return !!localStorage.getItem('token');
+    const userInfo = getUserInfo();
+    
+    if (userInfo && userInfo.expiration) {
+        const currentTime = Date.now();
+        const expirationTime = new Date(userInfo.expiration).getTime();
+        return currentTime < expirationTime;
+    }
+    
+    return false;
 }
+
 const router = createRouter({
     history: createWebHistory(),
     routes: [

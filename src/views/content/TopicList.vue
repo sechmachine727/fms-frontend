@@ -1,12 +1,13 @@
 <script setup>
-import { onMounted, ref } from 'vue'
-import { useTopicStore } from '@/stores/topicStore'
-import { useImportFileStore } from '@/stores/importFileStore'
+import ButtonComponent from '@/components/ButtonComponent.vue'
 import router from '@/router'
-import { useRoute } from 'vue-router'
-import { useToast } from 'primevue/usetoast'
+import { useImportFileStore } from '@/stores/importFileStore'
+import { useTopicStore } from '@/stores/topicStore'
 import Toast from 'primevue/toast'
 import { useConfirm } from 'primevue/useconfirm'
+import { useToast } from 'primevue/usetoast'
+import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 const topicStore = useTopicStore()
 const importFileStore = useImportFileStore()
@@ -116,12 +117,11 @@ const confirmActive = (value) => {
         header: 'Activate Topic',
         acceptProps: {
             label: 'Save',
-            outlined: true
         },
         rejectProps: {
             label: 'Cancel',
-            severity: 'secondary',
-            outlined: true
+            severity: 'error',
+            className: 'button-custom'
         },
         accept: () => {
             topicStore.fetchUpdateStatus(selectedItem.value.id).then(() => {
@@ -145,12 +145,11 @@ const confirmDeactive = (value) => {
         header: 'Deactivate Topic',
         acceptProps: {
             label: 'Save',
-            outlined: true
         },
         rejectProps: {
             label: 'Cancel',
-            severity: 'secondary',
-            outlined: true
+            severity: 'error',
+            className: 'button-custom'
         },
         accept: () => {
             topicStore.fetchUpdateStatus(selectedItem.value.id).then(() => {
@@ -213,12 +212,12 @@ const importFile = async () => {
             selectedFile.value = null
             showDialog.value = false
         } catch (error) {
-            // Error toast notification
+            let messageError = error.response.data.split(':')[2];
             toast.add({
                 severity: 'error',
                 summary: 'Import Failed',
-                detail: error.response?.data?.message || 'Failed to import topics.',
-                life: 3000
+                detail: messageError,
+                life: 5000
             })
         }
     } else {
@@ -244,12 +243,13 @@ onMounted(() => {
     })
 })
 
+
 </script>
 
 <template>
     <div class="card">
         <div class="flex items-center justify-between mb-2">
-            <h1 class="text-2xl">Topic Configuration</h1>
+            <h1 class="text-2xl">Topic Configuration ({{ topics?.length }})</h1>
             <Button label="Import Topic" @click="showDialog = true" />
         </div>
         <Divider />
@@ -261,23 +261,23 @@ onMounted(() => {
                 <div class="flex flex-col w-60 mt-1 gap-2">
                     <label class="w-60" for="contractType">Active</label>
                     <Select id="contractType" v-model="statusOptions" :options="statuses" class="w-full"
-                            optionLabel="name" placeholder="Filter status" @change="handleStatusChange"></Select>
+                        optionLabel="name" placeholder="Filter status" @change="handleStatusChange"></Select>
                 </div>
-                <div class="flex flex-wrap w-60 gap-2">
+                <div class="flex flex-wrap w-60 gap-2 mt-1">
                     <label for="search">Search</label>
-                    <InputText id="search" v-model="searchQuery" class="h-11 w-full"
-                               placeholder="Enter to Code, Name ..."
-                               type="text" @keyup.enter="handleSearch" />
+                    <InputText id="search" v-model="searchQuery" class="h-10 w-full"
+                        placeholder="Enter to Code, Name ..." type="text" @keyup.enter="handleSearch" />
                 </div>
             </div>
 
             <DataTable :rows="6" :rowsPerPageOptions="[6, 12, 20, 50]" :value="topics"
-                       currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
-                       paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                       class="mt-1" tableStyle="min-width: 50rem">
+                currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
+                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                class="mt-4" tableStyle="min-width: 50rem">
                 <div class="flex items-center justify-between">
                     <!-- Dialog -->
-                    <Dialog :visible="showDialog" class="w-1/3" header="Import Topic" modal @hide="showDialog = false">
+                    <Dialog v-model:visible="showDialog" class="w-1/3" header="Import Topic" modal
+                        @hide="showDialog = false">
                         <div class="p-4">
                             <ul class="list-disc ml-4">
                                 <li><strong>Allowed file types: xls, xlsx</strong></li>
@@ -288,24 +288,28 @@ onMounted(() => {
                             <div class="flex flex-wrap gap-2 w-full mt-2">
                                 <p class="mr-4">Select a file to upload:</p>
                                 <FileUpload :auto="true" :maxFileSize="5000000" accept=".xls,.xlsx"
-                                            chooseLabel="Choose file..." customUpload mode="basic"
-                                            @select="onFileSelect" />
+                                    chooseLabel="Choose file..." customUpload mode="basic" @select="onFileSelect" />
                                 <span v-if="selectedFile"
-                                      class="text-gray-700 truncate flex flex-wrap gap-2 w-full"><strong>Current file: </strong>{{ selectedFileName
+                                    class="text-gray-700 truncate flex flex-wrap gap-2 w-full"><strong>Current file:
+                                    </strong>{{ selectedFileName
                                     }}</span>
                             </div>
                         </div>
 
                         <template #footer>
-                            <Button class="p-button-text" icon="pi pi-times" label="Cancel" @click="cancelUpload" />
-                            <Button class="p-button-primary" icon="pi pi-check" label="Import" @click="importFile" />
+                            <ButtonComponent text="Cancel" bgColor="bg-white text-red-500"
+                                hoverColor="hover:bg-gray-200" activeColor="active:bg-gray-300"
+                                :onClick="cancelUpload" />
+                            <ButtonComponent text="Import" bgColor="bg-emerald-500 text-white"
+                                hoverColor="hover:bg-emerald-600" activeColor="active:bg-emerald-700"
+                                :onClick="importFile" />
                         </template>
                     </Dialog>
                 </div>
                 <Column field="code" header="Topic Code" style="width: 20%">
                     <template #body="slotProps">
                         <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }"
-                                     class="router-link-active">{{ slotProps.data.name }}
+                            class="router-link-active">{{ slotProps.data.name }}
                         </router-link>
                     </template>
                 </Column>
@@ -313,23 +317,23 @@ onMounted(() => {
                 <Column field="name" header="Topic Name" style="width: 25%">
                     <template #body="slotProps">
                         <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }"
-                                     class="router-link-active">{{ slotProps.data.name }}
+                            class="router-link-active">{{ slotProps.data.name }}
                         </router-link>
                     </template>
                 </Column>
-                <Column field="technicalGroup.code" header="Technical Group" style="width: 25%"></Column>
-                <Column field="status" header="Status" style="width: 15%">
+                <Column field="technicalGroup.code" header="Technical Group" style="width: 15%"></Column>
+                <Column field="status" header="Status" style="width: 10%">
                     <template #body="slotProps">
                         <Tag :severity="getStatusLabel(slotProps.data.status)" :value="slotProps.data.status" />
                     </template>
                 </Column>
-                <Column field="modifiedDate" header="Last Modified Date" style="width: 20%"></Column>
-                <Column field="lastModifiedBy" header="Last Modified By" style="width: 20%"></Column>
+                <Column field="modifiedDate" header="Last Modified Date" style="width: 15%"></Column>
+                <Column field="lastModifiedBy" header="Last Modified By" style="width: 22%"></Column>
 
-                <Column :exportable="false" alignFrozen="right" frozen header="Action" style="min-width: 80px">
+                <Column :exportable="false" alignFrozen="right" frozen header="Action" style="width: 5%">
                     <template #body="slotProps">
                         <Button class="mr-2" icon="pi pi-ellipsis-v" outlined rounded
-                                @click="showOptions($event, slotProps.data)" />
+                            @click="showOptions($event, slotProps.data)" />
 
                         <Popover ref="overlay">
                             <div class="flex flex-col gap-4 w-[8rem]">
@@ -363,7 +367,7 @@ onMounted(() => {
                 <div
                     class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700">
                     <i v-for="(line, index) in slotProps.message.message.split('.')" :key="index"
-                       :class="{ 'text-red-500 font-bold': index === 1 }">
+                        :class="{ 'text-red-500 font-bold': index === 1 }">
                         {{ line }}
                     </i>
                 </div>
@@ -382,6 +386,20 @@ onMounted(() => {
 
 .router-link-active {
     color: #2196F3;
+}
+
+.button-custom {
+    background-color: white;
+    color: red;
+    border: 1px solid rgb(209, 213, 219);
+    border-radius: 7px;
+    transition: background-color 0.3s, color 0.3s;
+    width: 56.36px;
+    height: 38.6px;
+}
+
+.button-custom:hover {
+    background-color: rgb(209, 213, 219);
 }
 
 .truncate {
