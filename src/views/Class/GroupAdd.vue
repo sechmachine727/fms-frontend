@@ -168,14 +168,14 @@ const validationSchema = toTypedSchema(
             }),
         expectedStart: z
             .date({
-                required_error: "Expectedt Start Date is required",
-                invalid_type_error: "Expectedt Start Date is required",
+                required_error: "Expected Start Date is required",
+                invalid_type_error: "Expected Start Date is required",
             })
             .refine((date) => date instanceof Date, { message: "Expected Start Date is required" }),
         expectedEnd: z
             .date({
-                required_error: "Expectedt Start Date is required",
-                invalid_type_error: "Expectedt Start Date is required!",
+                required_error: "Expected Start Date is required",
+                invalid_type_error: "Expected Start Date is required!",
             })
             .refine((date) => date instanceof Date, { message: "Expected End Date is required" }),
         note: z
@@ -514,11 +514,11 @@ const navigateToBack = () => {
                     <AccordionPanel value="0">
                         <AccordionHeader class="!font-bold">Resource Plaining</AccordionHeader>
                         <AccordionContent>
-                            <label for="classAdmin"> Class Admin
+                            <label for="classAdmin"> Group Admin
                                 <i class="text-red-600">*</i>
                             </label>
                             <MultiSelect v-model="classAdmins" :options="classAdminOptions" optionLabel="account" filter
-                                placeholder="Select Class Admins" id="classAdminOptions" :maxSelectedLabels="3"
+                                placeholder="Select Group Admins" id="classAdminOptions" :maxSelectedLabels="3"
                                 class="w-full md:w-80" />
                             <small class="text-red-600 " v-if="errors.classAdminOptions"> {{
                                 errors.classAdminOptions
@@ -530,9 +530,8 @@ const navigateToBack = () => {
 
 
                 <div class="mt-4 flex justify-between">
-                    <ButtonComponent text="Back to Training Program List" bgColor="bg-white"
-                        hoverColor="hover:bg-gray-200" activeColor="active:bg-gray-300" màu đen
-                        :onClick="navigateToBack" />
+                    <ButtonComponent text="Back to Group List" bgColor="bg-white" hoverColor="hover:bg-gray-200"
+                        activeColor="active:bg-gray-300" màu đen :onClick="navigateToBack" />
                     <div class="flex gap-2">
 
                         <button type="submit" @click="handleFormtTypeandStatus(true, 'Planning')"

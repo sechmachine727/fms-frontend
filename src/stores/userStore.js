@@ -67,8 +67,7 @@ export const useUserStore = defineStore("userStore", {
             const departmentNames = criteria.departmentOptionsSearch.map(department => department.departmentName.toLowerCase());
             const searchQuery = criteria.searchQuery.toLowerCase() === "" ? null : criteria.searchQuery.trim().toLowerCase()
             const roleNames = criteria.rolesOptions.map(role => role.name.toLowerCase());
-            const statusSearchQuery = criteria.statusOptions.id === "All" ? null : criteria.statusOptions
-            console.log(statusSearchQuery);
+            const statusSearchQuery = criteria.statusOptions.id === 'All' ? null : criteria.statusOptions
             this.filterUsers = this.users.filter((user) => {
             // Kiểm tra điều kiện lọc theo phòng ban
             const matchesDepartment = departmentNames.length
@@ -84,10 +83,11 @@ export const useUserStore = defineStore("userStore", {
                 user.account.toLowerCase().includes(searchQuery)
                    : true; 
                
-            const matchStatusSearch = statusSearchQuery
-                ? user.status.toLowerCase() === statusSearchQuery.id.toLowerCase()
-                : true; 
-
+               const matchStatusSearch = statusSearchQuery
+                    ? user.status.toLowerCase() === statusSearchQuery.id.toLowerCase()
+                    : true
+                
+                
              return matchesDepartment && matchesSearchQuery && matchsRole && matchStatusSearch;
     });
         }

@@ -4,6 +4,7 @@ import router from '@/router'
 import { useDepartmentStore } from '@/stores/departmentStore'
 import { useRoleStore } from '@/stores/roleStore'
 import { useUserStore } from '@/stores/userStore'
+import { getStatusLabel } from '@/utils/status'
 import { toTypedSchema } from '@vee-validate/zod'
 import Button from 'primevue/button'
 import Toast from 'primevue/toast'
@@ -191,16 +192,6 @@ const confirmDeactive = (value) => {
 
 }
 
-const getStatusLabel = (status) => {
-    switch (status) {
-        case 'Active':
-            return 'success';
-        case 'Inactive':
-            return 'warn';
-        default:
-            return null;
-    }
-};
 
 const route = useRoute(); // Khởi tạo route
 
@@ -376,10 +367,9 @@ const closePopup = () => {
             <div>
                 <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex flex-wrap w-60 gap-2">
-                        <label for="statusId" class="w-32">Status</label>
-                        <MultiSelect @change="handleStatusChange" v-model="statusOptions" :options="statuses"
-                            optionLabel="name" filter placeholder="Filter Status" id="statusId" :maxSelectedLabels="3"
-                            class="w-full" />
+                        <label class="w-60" for="contractType">Active</label>
+                        <Select id="contractType" v-model="statusOptions" :options="statuses" class="w-full"
+                            optionLabel="name" placeholder="Filter status" @change="handleStatusChange"></Select>
                     </div>
                     <div class="flex flex-wrap w-60 gap-2">
                         <label for="role" class="w-32">Role</label>
