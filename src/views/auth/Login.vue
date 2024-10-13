@@ -1,5 +1,6 @@
 <script setup>
 import { useAuthStore } from "@/stores/authStore";
+import { getUserInfo } from "@/utils/token";
 import { toTypedSchema } from "@vee-validate/zod";
 import Toast from 'primevue/toast';
 import { useToast } from "primevue/usetoast";
@@ -23,7 +24,16 @@ const { value: password } = useField("password");
 const onSubmit = handleSubmit((values) => {
     authStore.fetchLogin(values).then((reponse) => {
         localStorage.setItem("token", reponse.token);
-        window.location.href = '/group-management/list';
+        const userRoles = getUserInfo().roles;
+        if (userRoles.includes('ROLE_FMS_ADMIN')) {
+            window.location.href = '/fms-settings/user-management';
+        } else if (userRoles.includes('ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER')) {
+            window.location.href = '/group-management/list';
+        } else if (userRoles.includes('ROLE_CONTENT_MANAGER')) {
+            window.location.href = '/content-management/training-program';
+        } else {
+            window.location.href = '/auth/access';
+        }
     }).catch((error) => {
         if (error.status === 401 && error.response.data.message === 'User is inactive') {
             toast.add({ severity: 'error', summary: 'Your account is inactive.', life: 3000 });

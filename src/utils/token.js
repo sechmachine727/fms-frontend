@@ -2,7 +2,6 @@ export const getUserInfo = () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-        console.log("No token found in localStorage.");
         return null;
     }
 
@@ -33,5 +32,3 @@ export const getUserInfo = () => {
         return null;
     }
 };
-
-// Example usage:

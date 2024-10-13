@@ -14,11 +14,14 @@ export const getStatusArray = () => {
 
 export const getStatusLabel = (status) => {
     switch (status) {
-        case 'Active':
-            return 'success' // Change color to green for active status
-        case 'Assigned':
+       case 'Active':
+            return 'success'
+        case 'Inactive':
+            return 'warn'
+        case 'Declined':
+            return 'danger'
         case 'Reviewing':
-            return 'warn' // Change color to red for inactive status
+            return 'info'
         default:
             return null
     }
