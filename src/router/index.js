@@ -30,27 +30,27 @@ const router = createRouter({
                 {
                     path: '/content-management/topic',
                     name: 'topic-management',
-                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN','ROLE_DELIVERABLES_MANAGER'] },
+                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_CONTENT_MANAGER', 'ROLE_DELIVERABLES_MANAGER'] },
                     component: () => import('@/views/content/TopicList.vue')
                 },
                 {
                     path: '/content-management/topic/:id',
                     name: 'topic-detail',
-                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER'] },
+                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_CONTENT_MANAGER', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER'] },
                     component: () => import('@/views/content/TopicDetail.vue'),
                     props: true, // Pass route params as props to the component
                 },
                 {
                     path: '/content-management/training-program',
                     name: 'training-program',
-                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_DELIVERABLES_MANAGER'] },
+                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_CONTENT_MANAGER', 'ROLE_DELIVERABLES_MANAGER'] },
                     component: () => import('@/views/content/TrainingProgramList.vue'),
                     props: true, // Pass route params as props to the component
                 },
                 {
                     path: '/content-management/training-program/:id',
                     name: 'training-program-detail',
-                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER'] },
+                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_CONTENT_MANAGER', 'ROLE_DELIVERABLES_MANAGER'] },
                     component: () => import('@/views/content/TrainingProgramDetail.vue'),
                     props: true, // Pass route params as props to the component
                 },

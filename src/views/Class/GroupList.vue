@@ -1,6 +1,7 @@
 <script setup>
 import { useClassStore } from "@/stores/groupStore"; // Correct the import to use `useTraineeStore`
 import { getStatusArray, getStatusLabel } from "@/utils/status";
+import { getUserInfo } from "@/utils/token";
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
 import { onMounted, ref } from 'vue';
@@ -78,8 +79,6 @@ const updateQueryParams = () => {
         path: '/group-management/list',
         query: query,
     })
-    console.log("crie");
-    console.log(query);
     applyFilters()
 };
 
@@ -99,7 +98,8 @@ const navigateToAdd = () => {
     router.push('/group-management/add');
 };
 
-
+const userRoles = getUserInfo();
+console.log(userRoles.roles);
 </script>
 
 <template>
@@ -107,7 +107,8 @@ const navigateToAdd = () => {
         <Toast />
         <div class=" mb-4 flex justify-between items-center">
             <span class="font-semibold text-2xl">Group List ({{ classes?.length }})</span>
-            <Button label="Add Group" @click="navigateToAdd" />
+            <Button label="Add Group" @click="navigateToAdd"
+                v-if="userRoles.roles.includes('ROLE_DELIVERABLES_MANAGER')" />
         </div>
         <Divider />
         <div class="flex flex-col md:flex-row gap-4">
