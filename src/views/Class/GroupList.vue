@@ -141,7 +141,7 @@ console.log(userRoles.roles);
                 </template>
             </Column>
             <Column field="traineeTypeName" header="Trainee Type" style="min-width: 150px"></Column>
-            <Column header="Class Admin" style="min-width: 150px">
+            <Column header="Group Admin" style="min-width: 150px">
                 <template #body="slotProps">
                     <span v-if="slotProps.data.classAdminAccount && slotProps.data.classAdminAccount.length">
                         <span v-for="(name, index) in slotProps.data.classAdminAccount" :key="index">
