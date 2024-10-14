@@ -26,10 +26,20 @@ spec:
                           memory: "256Mi"
                 - name: tailscale
                   image: tailscale/tailscale:stable
+                  resources:
+                        limits:
+                            cpu: "100m"
+                            memory: "128Mi"
+                        requests:
+                            cpu: "50m"
+                            memory: "64Mi"
                   securityContext:
                       capabilities:
                           add:
                               - NET_ADMIN
+                              - NET_RAW # add net raw too!
+                      runAsUser: 1000 # Assign a non-root user (optional but recommended for security)
+                      allowPrivilegeEscalation: true # Allow the container to escalate privileges
                   args: ["up", "--authkey=${{ secrets.TAILSCALE_AUTH_KEY }}", "--hostname=frontend-pod-$(POD_NAME)"] # Use GitHub Secret for Auth Key
                   env:
                       - name: POD_NAME

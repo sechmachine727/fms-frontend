@@ -7,8 +7,8 @@ on:
 
 env:
     PROJECT_ID: ${{ secrets.GCLOUD_PROJECT_ID }}
-    GKE_CLUSTER_NAME: fms-frontend-cluster
-    GKE_ZONE: asia-east1
+    GKE_CLUSTER_NAME: cluster-1
+    GKE_ZONE: asia-southeast1-a
 
     DOCKERHUB_USERNAME: sechmachine
     IMAGE_TAG: ${{ github.sha }}
@@ -33,7 +33,7 @@ jobs:
               with:
                   context: .
                   push: true
-                  tags: ${{ env.DOCKERHUB_USERNAME }}/frontend:latest
+                  tags: ${{ env.DOCKERHUB_USERNAME }}/fms-frontend:latest
 
             - id: 'auth'
               uses: 'google-github-actions/auth@v2'
@@ -56,4 +56,4 @@ jobs:
             - name: Deploy to Kubernetes
               run: |
                   kubectl apply -f deployment.yaml
-                  kubectl rollout restart deployment/frontend-deployment
+                  kubectl rollout restart deployment/fms-frontend-deployment
