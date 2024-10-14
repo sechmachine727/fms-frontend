@@ -40,8 +40,11 @@ spec:
                               - NET_RAW # add net raw too!
                       runAsUser: 1000 # Assign a non-root user (optional but recommended for security)
                       allowPrivilegeEscalation: true # Allow the container to escalate privileges
-                  args: ["up", "--authkey=${{ secrets.TAILSCALE_AUTH_KEY }}", "--hostname=frontend-pod-$(POD_NAME)"] # Use GitHub Secret for Auth Key
                   env:
+                      - name: TS_AUTHKEY
+                        value: ${{ secrets.TAILSCALE_AUTH_KEY }}
+                      - name: TS_HOSTNAME
+                        value: fms-frontend-pod-$(POD_NAME)
                       - name: POD_NAME
                         valueFrom:
                             fieldRef:
