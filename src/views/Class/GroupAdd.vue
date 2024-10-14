@@ -113,10 +113,10 @@ const closePopupForPlaining = () => {
 const validationSchema = toTypedSchema(
     z.object({
         className: z
-            .string({ required_error: 'Class Name is required' })
+            .string({ required_error: 'Group Name is required' })
             .trim()
-            .min(1, { message: 'Class Name is required' })
-            .max(20, { message: 'Class Name must not exceed 20 characters' }),
+            .min(1, { message: 'Group Name is required' })
+            .max(20, { message: 'Group Name must not exceed 20 characters' }),
         deliveryType: z
             .object({
                 id: z.number({ required_error: "Delivery Type is required" }).min(1, { message: "Delivery Type is required" }),
@@ -151,17 +151,17 @@ const validationSchema = toTypedSchema(
             }),
         plannedTrainee: z
             .number({
-                required_error: "PlannedTrainee is required",
+                required_error: "Planned Trainee is required",
                 invalid_type_error: "PlannedTrainee is required",
             })
-            .positive({ message: "PlannedTrainee is required" })
+            .positive({ message: "Planned Trainee is required" })
         ,
         planRevenue: z
             .number({
-                required_error: "PlanRevenue is required",
-                invalid_type_error: "PlanRevenue is required",
+                required_error: "Plan Revenue is required",
+                invalid_type_error: "Plan Revenue is required",
             })
-            .positive({ message: "PlanRevenue is required" }),
+            .positive({ message: "Plan Revenue is required" }),
         keyProgram: z
             .object({
                 id: z.number({ required_error: "Key Program is required" }).min(1, { message: "Key Program is required" })
@@ -186,9 +186,9 @@ const validationSchema = toTypedSchema(
             (val) => (val === undefined || val === null ? [] : val),
             z.array(
                 z.object({
-                    id: z.number().min(1, { message: "Class Admin code is required" })
+                    id: z.number().min(1, { message: "Group Admin code is required" })
                 })
-            ).min(1, { message: "Class Admin is required" })
+            ).min(1, { message: "Group Admin is required" })
         ),
     })
 );
@@ -232,7 +232,7 @@ const onSubmit = handleSubmit((values) => {
 const validationSchemaCode = toTypedSchema(
     z.object({
         classCode: z
-            .string({ required_error: 'Class Name is required' })
+            .string({ required_error: 'Group Code is required' })
             .trim()
             .min(1, { message: "Group Code is required" })
             .max(50, { message: 'Group Code must not exceed 50 characters' }),
@@ -314,7 +314,7 @@ const navigateToBack = () => {
                                             Group Name
                                             <i class="text-red-600">*</i>
                                         </label>
-                                        <InputText id="classname" placeholder="Class Name"
+                                        <InputText id="classname" placeholder="Group Name"
                                             :class="`{ 'p-invalid': errors.className }`" v-model="className"
                                             type="text" />
                                     </div>
@@ -344,7 +344,7 @@ const navigateToBack = () => {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.deliveryType"> {{
                                             errors.deliveryType
-                                            }}</small>
+                                        }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-3" v-if="errors.traineeType"> {{
@@ -385,12 +385,12 @@ const navigateToBack = () => {
                                     <div class="flex flex-wrap gap-2 w-full ">
                                         <small class="text-red-600 ml-2" v-if="errors.technicalGroup"> {{
                                             errors.technicalGroup
-                                            }}</small>
+                                        }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.trainingProgram"> {{
                                             errors.trainingProgram
-                                            }}</small>
+                                        }}</small>
                                     </div>
                                 </div>
                                 <div class="flex flex-col md:flex-row gap-4 ">
@@ -459,7 +459,7 @@ const navigateToBack = () => {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 " v-if="errors.plannedTrainee"> {{
                                             errors.plannedTrainee
-                                            }}</small>
+                                        }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.planRevenue"> {{
@@ -492,7 +492,7 @@ const navigateToBack = () => {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 " v-if="errors.expectedStart"> {{
                                             errors.expectedStart
-                                            }}</small>
+                                        }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.expectedEnd"> {{
@@ -522,7 +522,7 @@ const navigateToBack = () => {
                                 class="w-full md:w-80" />
                             <small class="text-red-600 " v-if="errors.classAdminOptions"> {{
                                 errors.classAdminOptions
-                                }}</small>
+                            }}</small>
                         </AccordionContent>
                     </AccordionPanel>
                 </Accordion>

@@ -2,6 +2,7 @@
 import ButtonComponent from '@/components/ButtonComponent.vue'
 import router from '@/router'
 import { useImportFileStore } from '@/stores/importFileStore'
+import { useDownloadFileStore } from '@/stores/downloadFileStore'
 import { useTopicStore } from '@/stores/topicStore'
 import { getUserInfo } from '@/utils/token'
 import Toast from 'primevue/toast'
@@ -12,6 +13,7 @@ import { useRoute } from 'vue-router'
 
 const topicStore = useTopicStore()
 const importFileStore = useImportFileStore()
+const downloadFileStore = useDownloadFileStore()
 
 const confirm = useConfirm()
 const topics = ref()
@@ -237,6 +239,40 @@ const cancelUpload = () => {
     showDialog.value = false // Đóng dialog
 }
 
+const downloadFile = async () => {
+    try {
+        const fileData = { type: 'topic' }
+        const response = await downloadFileStore.fetchDownloadFile(fileData)
+
+        // Check if response.data is a Blob
+        if (response instanceof Blob) {
+            const url = window.URL.createObjectURL(response)
+            const link = document.createElement('a')
+            link.href = url
+            link.setAttribute('download', 'topic_template.xlsx') // File name for download
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+        } else {
+            console.error('Did not receive a valid file.')
+            toast.add({
+                severity: 'error',
+                summary: 'Download Failed',
+                detail: 'Did not receive a valid file.',
+                life: 3000
+            })
+        }
+    } catch (error) {
+        console.error('Download error:', error)
+        toast.add({
+            severity: 'error',
+            summary: 'Download Failed',
+            detail: error.message || 'Could not download the file.',
+            life: 3000
+        })
+    }
+}
+
 onMounted(() => {
     topicStore.fetchTopics().then(() => {
         topics.value = topicStore.topics
@@ -288,6 +324,11 @@ const userRoles = getUserInfo();
                                 <li><strong>File size must be less than or equal to 5MB.</strong></li>
                             </ul>
 
+                            <p class="mt-2">Download template:</p>
+                            <ul>
+                                <li><a href="#" style="color:blue" @click.prevent="downloadFile">Topic</a></li>
+                            </ul>
+
                             <!-- File upload component -->
                             <div class="flex flex-wrap gap-2 w-full mt-2">
                                 <p class="mr-4">Select a file to upload:</p>
@@ -295,8 +336,7 @@ const userRoles = getUserInfo();
                                     chooseLabel="Choose file..." customUpload mode="basic" @select="onFileSelect" />
                                 <span v-if="selectedFile"
                                     class="text-gray-700 truncate flex flex-wrap gap-2 w-full"><strong>Current file:
-                                    </strong>{{ selectedFileName
-                                    }}</span>
+                                    </strong>{{ selectedFileName }}</span>
                             </div>
                         </div>
 

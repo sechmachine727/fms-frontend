@@ -118,10 +118,10 @@ console.log(userRoles.roles);
                     optionLabel="name" filter placeholder="Filter Status" id="department" :maxSelectedLabels="3"
                     class="w-full" />
             </div>
-            <div class="flex flex-wrap w-60 gap-2">
+            <div class="flex flex-wrap w-72 gap-2">
                 <label for="search">Search</label>
                 <InputText class="h-10 w-full" v-model="searchQuery" type="text" id="search"
-                    placeholder="Enter name, account ..." @keyup.enter="handleSearch" />
+                    placeholder="Enter code, name, training program" @keyup.enter="handleSearch" />
             </div>
         </div>
         <DataTable :value="classes" :rows="10" scrollable scrollHeight="300px" :rowsPerPageOptions="[10, 20, 30, 50]"
@@ -133,7 +133,7 @@ console.log(userRoles.roles);
                     {{ classes.indexOf(slotProps.data) + 1 }}
                 </template>
             </Column>
-            <Column header="Class Code" style="min-width: 100px">
+            <Column header="Group Code" style="min-width: 100px">
                 <template #body="slotProps">
                     <router-link :to="{ name: 'group-detail', params: { id: slotProps.data.id } }"
                         class="router-link-active hover:underline text-blue-400">{{ slotProps.data.groupCode }}

@@ -10,7 +10,7 @@ import { z } from "zod";
 const validationSchema = toTypedSchema(
     z.object({
         account: z.string({ required_error: 'Class Name is required' }),
-        password: z.string().min(4, "Must be 4 or more characters long"),
+        password: z.string().min(8, "Must be 8 or more characters long"),
     })
 );
 const toast = useToast();

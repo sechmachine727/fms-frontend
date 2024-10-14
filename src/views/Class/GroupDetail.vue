@@ -47,7 +47,7 @@ const navigateToEdit = (id) => {
                     <div class="grid grid-cols-1 md:grid-cols-3  pt-2">
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
-                                class="font-semibold border-r border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                class="font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
                                 Group Name
                             </div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">
@@ -57,7 +57,7 @@ const navigateToEdit = (id) => {
 
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
-                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
                                 Delivery Type
                             </div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">{{
@@ -65,7 +65,7 @@ const navigateToEdit = (id) => {
                         </div>
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
-                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
                                 Trainee Type</div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
                                 classe?.traineeTypeName }}</div>
@@ -73,7 +73,7 @@ const navigateToEdit = (id) => {
                         <!-- <---!--->
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
-                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
                                 Format Type
                             </div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">
@@ -82,7 +82,7 @@ const navigateToEdit = (id) => {
                         </div>
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
-                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
                                 Technical Group
                             </div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">{{
@@ -91,7 +91,7 @@ const navigateToEdit = (id) => {
                         </div>
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
-                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
                                 Training Program</div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
                                 classe?.trainingProgramName }}</div>
@@ -99,7 +99,7 @@ const navigateToEdit = (id) => {
 
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
-                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
                                 Site
                             </div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">
@@ -110,7 +110,7 @@ const navigateToEdit = (id) => {
 
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
-                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
                                 Location
                             </div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">
@@ -119,7 +119,7 @@ const navigateToEdit = (id) => {
                         </div>
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
-                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
                                 Scope
                             </div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
@@ -128,7 +128,7 @@ const navigateToEdit = (id) => {
                         </div>
                         <div class="flex items-center  h-14 border-t border-b border-l">
                             <div
-                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
                                 Planned Trainee No</div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
                                 classe?.traineeNumber }}</div>
@@ -136,7 +136,7 @@ const navigateToEdit = (id) => {
 
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
-                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
                                 Planned Revenue</div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">{{
                                 classe?.planRevenue }}</div>
@@ -144,7 +144,7 @@ const navigateToEdit = (id) => {
 
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
-                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
                                 Key Program</div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
                                 classe?.keyProgramName
@@ -152,7 +152,7 @@ const navigateToEdit = (id) => {
                         </div>
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
-                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
                                 Expected Start Date</div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
                                 classe?.expectedStartDate
@@ -160,7 +160,7 @@ const navigateToEdit = (id) => {
                         </div>
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
-                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
                                 Expected End Date</div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
                                 classe?.expectedEndDate
@@ -168,7 +168,7 @@ const navigateToEdit = (id) => {
                         </div>
                         <div class="flex items-center h-14 border-t border-b border-l">
                             <div
-                                class="border-r font-semibold border-gray-200 bg-gray-50 h-full w-2/5 flex items-center justify-start pl-1">
+                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
                                 Group Admin</div>
                             <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">
                                 <span v-for="(user, index) in classe?.assignedUserAccounts" :key="index">
@@ -181,9 +181,8 @@ const navigateToEdit = (id) => {
                     </div>
                     <div class="mt-4 flex justify-between">
                         <div>
-                            <ButtonComponent text="Back to Training Program List" bgColor="bg-white"
-                                hoverColor="hover:bg-gray-200" activeColor="active:bg-gray-300" màu đen
-                                :onClick="navigateToBack" />
+                            <ButtonComponent text="Back to Group List" bgColor="bg-white" hoverColor="hover:bg-gray-200"
+                                activeColor="active:bg-gray-300" màu đen :onClick="navigateToBack" />
                             <ButtonComponent text="Cancel Group" bgColor="bg-white text-red-500"
                                 hoverColor="hover:bg-gray-200" activeColor="active:bg-gray-300"
                                 :onClick="handleCancel" />
@@ -213,9 +212,8 @@ const navigateToEdit = (id) => {
 
 <style>
 .highlight-label-column {
-    background-color: #ffffff;
+    background-color: #f0f4ff;
     font-weight: bold;
-    font-size: 13px;
-    width: 15%;
+    color: #2c3e50;
 }
 </style>

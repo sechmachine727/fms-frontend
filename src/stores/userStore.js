@@ -53,6 +53,16 @@ export const useUserStore = defineStore("userStore", {
                 throw error; 
             }
         }, 
+
+         async fetchChangePassword(account, data) {
+            try {
+                const result = await userApi.putChangePassword(account, data); 
+                return result.data; 
+            } catch (error) {
+                console.error("Error fetching trainees:", error);
+                throw error; 
+            }
+        }, 
          
          async fetchUserDetail(id) {
             try {
@@ -80,6 +90,7 @@ export const useUserStore = defineStore("userStore", {
             const matchesSearchQuery = searchQuery
                 ? user.email.toLowerCase().includes(searchQuery) ||
                 user.employeeId.toLowerCase().includes(searchQuery) ||
+                user.name.toLowerCase().includes(searchQuery) ||
                 user.account.toLowerCase().includes(searchQuery)
                    : true; 
                
@@ -87,6 +98,7 @@ export const useUserStore = defineStore("userStore", {
                     ? user.status.toLowerCase() === statusSearchQuery.id.toLowerCase()
                     : true
                 
+               
                 
              return matchesDepartment && matchesSearchQuery && matchsRole && matchStatusSearch;
     });
