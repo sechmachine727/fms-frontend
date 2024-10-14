@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: frontend-deployment
+    name: fms-frontend-deployment
 spec:
     replicas: 2 # Adjust as needed
     selector:
