@@ -93,7 +93,7 @@ metadata:
 spec:
     tls:
         - hosts:
-              -  # Replace with your domain
+              - fms-fa.org # Your domain
           secretName: gke-managed-ssl-certificate  # For Google-managed certificates
 
     rules:
