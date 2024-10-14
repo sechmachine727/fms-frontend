@@ -19,7 +19,3 @@ RUN mkdir -p /var/run/tailscale /var/cache/tailscale /var/lib/tailscale
 
 # Run on container startup.
 CMD ["/app/start.sh"]
-
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 80
