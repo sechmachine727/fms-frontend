@@ -21,14 +21,10 @@ COPY --from=docker.io/tailscale/tailscale:stable /usr/local/bin/tailscale /app/t
 # Create necessary directories
 RUN mkdir -p /var/run/tailscale /var/cache/tailscale /var/lib/tailscale
 
-# Copy the start script
-COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
-
 # Expose port 80 (for Nginx)
 EXPOSE 80
 
 # Use the correct user for Tailscale related processes
 USER tailscale
 
-CMD ["/app/start.sh"]
+CMD ["/bin/sh", "-c", "tailscaled --tun=userspace-networking & tailscale up --authkey=${TAILSCALE_AUTH_KEY} --hostname=cloudrun-app && nginx -g 'daemon off;'"]
