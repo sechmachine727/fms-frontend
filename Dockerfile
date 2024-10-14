@@ -9,7 +9,7 @@ FROM alpine:latest
 RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 
 # Copy binary to production image.
-COPY --from=builder /app/start.sh /app/start.sh
+COPY /app/start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
 # Copy Tailscale binaries from the tailscale image on Docker Hub.
