@@ -46,7 +46,7 @@ const validationSchema = toTypedSchema(
         name: z
             .string({ required_error: 'Display Name is required' })
             .min(1, { message: 'Display Name is required' })
-            .max(150, { message: 'User Name must not exceed 150 characters' }),
+            .max(50, { message: 'User Name must not exceed 150 characters' }),
         employeeId: z
             .string({ required_error: 'Employee ID is required' })
             .max(20, { message: 'Employee ID must not exceed 20 characters' }),
@@ -89,7 +89,7 @@ watch(
             email.value = newValue.email;
             name.value = newValue.name;
             employeeId.value = newValue.employeeId;
-            contractType.value = newValue.contractType;
+            contractType.value = contractTypes.value.find(contractType => contractType.code === newValue.contractType);
             rolesOptions.value = newValue.roles;
             department.value = newValue.department
             status.value = newValue.status === "Active";
