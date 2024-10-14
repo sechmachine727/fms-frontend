@@ -22,10 +22,9 @@ const generalInfo = computed(() => {
         return []
     }
 })
-
+const route = useRoute()
+const trainingProgramId = route.params.id
 onMounted(() => {
-    const route = useRoute()
-    const trainingProgramId = route.params.id
     trainingProgramStore.fetchTrainingProgramDetail(trainingProgramId).then(() => {
         trainingProgram.value = trainingProgramStore.trainingProgram
         console.log(trainingProgram.value)
@@ -66,8 +65,22 @@ onMounted(() => {
                             {{ slotProps.index + 1 }}
                         </template>
                     </Column>
-                    <Column field="topicCode" header="Topic Code " style="width: 15%"></Column>
-                    <Column field="topicName" header="Topic Name" style="width: 10%"></Column>
+                    <Column field="topicCode" header="Topic Code " style="width: 15%">
+                        <template #body="slotProps">
+                            <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }"
+                                         class="router-link-active">
+                                {{ slotProps.data.topicCode }}
+                            </router-link>
+                        </template>
+                    </Column>
+                    <Column field="topicName" header="Topic Name" style="width: 20%">
+                        <template #body="slotProps">
+                            <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }"
+                                         class="router-link-active">
+                                {{ slotProps.data.topicName }}
+                            </router-link>
+                        </template>
+                    </Column>
                     <Column field="version" header="Version" style="width: 10%"></Column>
                 </DataTable>
             </div>
@@ -109,5 +122,9 @@ th, td {
     padding: 0.75rem;
     text-align: left;
     border-bottom: 1px solid #ccc;
+}
+
+.router-link-active {
+    color: #2196F3;
 }
 </style>
