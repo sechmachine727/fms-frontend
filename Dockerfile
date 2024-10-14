@@ -21,10 +21,14 @@ COPY --from=docker.io/tailscale/tailscale:stable /usr/local/bin/tailscale /app/t
 # Create necessary directories
 RUN mkdir -p /var/run/tailscale /var/cache/tailscale /var/lib/tailscale
 
+# Copy the start script
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
 # Expose port 80 (for Nginx)
 EXPOSE 80
 
 # Use the correct user for Tailscale related processes
 USER tailscale
 
-CMD ["/bin/sh", "-c", "/app/tailscaled --tun=userspace-networking --socks5-server=localhost:3000 & /app/tailscale up --authkey=${TAILSCALE_AUTHKEY} --hostname=fms-frontend && echo 'Tailscale started' && nginx -g 'daemon off;'"]
+CMD ["/app/start.sh"]
