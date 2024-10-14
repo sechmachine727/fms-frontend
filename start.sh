@@ -4,7 +4,7 @@
 /app/tailscaled --tun=userspace-networking --socks5-server=localhost:3000 &
 
 # Bring up Tailscale interface
-/app/tailscale up --authkey="${TAILSCALE_AUTHKEY}" --hostname=fms-frontend
+/app/tailscale up --authkey=tskey-auth-kK1XFqcBBS11CNTRL-FYG32cRGdASs56UfHKRgASD4AQrNdiGd --hostname=fms-frontend
 
 echo "Tailscale started"
 
