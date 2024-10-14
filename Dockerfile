@@ -11,9 +11,6 @@ RUN apk add --no-cache curl
 
 WORKDIR /app
 
-COPY cert/archlinux-cert.pem /etc/ssl/certs/archlinux-cert.pem
-COPY cert/archlinux-key.pem /etc/ssl/private/archlinux-key.pem
-
 # Copy the built files from the build stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
