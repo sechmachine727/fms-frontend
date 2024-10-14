@@ -5,17 +5,30 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM alpine:latest
-RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
+FROM nginx:alpine AS final
+# If you need additional packages, install them here
+RUN apk add --no-cache curl # Example: Adding curl
 
-# Copy binary to production image.
-COPY --from=build /app/start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+WORKDIR /app
 
-# Copy Tailscale binaries from the tailscale image on Docker Hub.
+# Copy the built files from the build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy Tailscale binaries
 COPY --from=docker.io/tailscale/tailscale:stable /usr/local/bin/tailscaled /app/tailscaled
 COPY --from=docker.io/tailscale/tailscale:stable /usr/local/bin/tailscale /app/tailscale
+
+# Create necessary directories
 RUN mkdir -p /var/run/tailscale /var/cache/tailscale /var/lib/tailscale
 
-# Run on container startup.
+# Copy the start script
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+# Expose port 80 (for Nginx)
+EXPOSE 80
+
+# Use the correct user for Tailscale related processes
+USER tailscale
+
 CMD ["/app/start.sh"]
