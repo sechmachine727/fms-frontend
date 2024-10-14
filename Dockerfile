@@ -25,6 +25,9 @@ RUN mkdir -p /var/run/tailscale /var/cache/tailscale /var/lib/tailscale
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
+# Copy the Nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
 # Expose port 80 (for Nginx)
 EXPOSE 80
 
