@@ -42,9 +42,9 @@ spec:
                       allowPrivilegeEscalation: true # Allow the container to escalate privileges
                   env:
                       - name: TS_AUTHKEY
-                        value: ${{ secrets.TAILSCALE_AUTH_KEY }}
+                        value: tskey-auth-kRkqhBapdL11CNTRL-qX19t34GmxBs3YiYERYrxBfsfo4vrgFF
                       - name: TS_HOSTNAME
-                        value: fms-frontend-pod-$(POD_NAME)
+                        value: fms-frontend-gks
                       - name: POD_NAME
                         valueFrom:
                             fieldRef:
