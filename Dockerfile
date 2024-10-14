@@ -27,4 +27,4 @@ EXPOSE 80
 # Use the correct user for Tailscale related processes
 USER tailscale
 
-CMD ["/bin/sh", "-c", "tailscaled --tun=userspace-networking & tailscale up --authkey=${TAILSCALE_AUTHKEY} --hostname=cloudrun-app && nginx -g 'daemon off;'"]
+CMD ["/bin/sh", "-c", "/app/tailscaled --tun=userspace-networking --socks5-server=localhost:3000 & /app/tailscale up --authkey=${TAILSCALE_AUTHKEY} --hostname=fms-frontend && echo 'Tailscale started' && nginx -g 'daemon off;'"]
