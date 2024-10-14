@@ -83,11 +83,11 @@ metadata:
 spec:
     tls:
         - hosts:
-              - yourdomain.com # Replace with your domain
+              -  # Replace with your domain
           secretName: gke-managed-ssl-certificate  # For Google-managed certificates
 
     rules:
-        - host: yourdomain.com # Your domain
+        - host: fms-fa.org # Your domain
           http:
               paths:
                   - path: /
