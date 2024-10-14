@@ -32,6 +32,12 @@ class UserApi {
     return put(newUrl);
   };
 
+   putChangePassword = (account, data) => {
+     const newUrl = url + `/change-password` + `/${account}`;
+    return put(newUrl, data);
+  };
+
+
   delete = (id) => {
     const newUrl = url + `/${id}`;
     return del(newUrl);

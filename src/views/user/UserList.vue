@@ -67,7 +67,7 @@ const validationSchema = toTypedSchema(
         name: z
             .string({ required_error: 'Display Name is required' })
             .min(1, { message: 'User Name is required' })
-            .max(150, { message: 'User Name must not exceed 150 characters' }),
+            .max(50, { message: 'User Name must not exceed 150 characters' }),
         employeeId: z
             .string({ required_error: 'Employee ID is required' })
             .max(20, { message: 'Employee ID must not exceed 20 characters' }),
@@ -392,17 +392,17 @@ const closePopup = () => {
                 <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="users"
                     currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                    tableStyle="min-width: 50rem" scrollable scrollHeight="500px" class="mt-4">
+                    scrollable scrollHeight="500px" class="mt-4">
                     <Column header="No" style="width: 10%">
                         <template #body="slotProps">
                             {{ users.indexOf(slotProps.data) + 1 }}
                         </template>
                     </Column>
-                    <Column field="employeeId" header="Employee ID" style="width: 17%"></Column>
-                    <Column field="account" header="Account" style="width: 10%"></Column>
-                    <Column field="name" header="Name" style="width: 20%"></Column>
-                    <Column field="email" header="Email" style="width: 10%"></Column>
-                    <Column field="department.departmentName" header="Department" style="width: 3%"></Column>
+                    <Column field="employeeId" header="Employee ID" style="width: 180px"></Column>
+                    <Column field="account" header="Account" style="width: 30px"></Column>
+                    <Column field="name" header="Name" style="width: 280px"></Column>
+                    <Column field="email" header="Email" style="width: 280px"></Column>
+                    <Column field="department.departmentName" header="Department" style="width: 20px"></Column>
                     <Column header="Roles" style="width: 10%">
                         <template #body="slotProps">
                             <!-- slotProps.data đại diện cho dữ liệu của một user (một hàng trong bảng) -->
@@ -417,12 +417,12 @@ const closePopup = () => {
                         </template>
                     </Column>
 
-                    <Column alignFrozen="right" field="status" frozen header="Status" style="width: 10%">
+                    <Column alignFrozen="right" field="status" frozen header="Status" style="width: 50px">
                         <template #body="slotProps">
                             <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
                         </template>
                     </Column>
-                    <Column alignFrozen="right" frozen header="Actions" style="width: 10%">
+                    <Column alignFrozen="right" frozen header="Actions" style="width: 50px">
                         <template #body="slotProps">
                             <Button icon="pi pi-ellipsis-v" severity="secondary"
                                 @click="showOptions($event, slotProps.data)" class="p-button-text" />
