@@ -353,7 +353,7 @@ const userRoles = getUserInfo();
                 <Column field="code" header="Topic Code" style="width: 20%">
                     <template #body="slotProps">
                         <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }"
-                            class="router-link-active">{{ slotProps.data.name }}
+                                     class="router-link-active">{{ slotProps.data.code }}
                         </router-link>
                     </template>
                 </Column>
@@ -431,20 +431,6 @@ const userRoles = getUserInfo();
 
 .router-link-active {
     color: #2196F3;
-}
-
-.button-custom {
-    background-color: white;
-    color: red;
-    border: 1px solid rgb(209, 213, 219);
-    border-radius: 7px;
-    transition: background-color 0.3s, color 0.3s;
-    width: 56.36px;
-    height: 38.6px;
-}
-
-.button-custom:hover {
-    background-color: rgb(209, 213, 219);
 }
 
 .truncate {
