@@ -1,4 +1,5 @@
 <script setup>
+import ButtonComponent from '@/components/ButtonComponent.vue';
 import { useLayout } from '@/layout/composables/layout';
 import router from '@/router';
 import { useUserStore } from '@/stores/userStore';
@@ -25,13 +26,20 @@ const validationSchema = toTypedSchema(
             .string({ required_error: 'New Password is required' })
             .min(8, { message: 'New Password must be at least 8 characters long' })
             .max(20, { message: 'New Password must not exceed 20 characters' }),
+        reEnterPassword: z
+            .string({ required_error: 'Confirm Password is required' })
+    }).refine((data) => data.newPassword === data.reEnterPassword, {
+        path: ['reEnterPassword'],
+        message: 'The New and Confirm passwords must match. Please re-type them.',
     })
-)
+);
+
 
 const { handleSubmit, errors, setFieldError, resetForm } = useForm({ validationSchema })
 const toast = useToast();
 const { value: oldPassword } = useField('oldPassword')
 const { value: newPassword } = useField('newPassword')
+const { value: reEnterPassword } = useField('reEnterPassword')
 const onSubmit = handleSubmit((values) => {
     const payload = {
         oldPassword: values.oldPassword,
@@ -91,6 +99,10 @@ const toggle = (event) => {
 
 };
 
+const closeDialog = () => {
+    visible.value = false
+    resetForm();
+}
 </script>
 
 <template>
@@ -127,17 +139,24 @@ const toggle = (event) => {
                 <div class="flex flex-col gap-2">
                     <label for="oldPassword">Old Password<i class="text-red-600">*</i></label>
                     <InputText id="oldPassword" :class="`{ 'p-invalid': errors.oldPassword }`" v-model="oldPassword"
-                        type="text" />
+                        type="password" />
                     <small class="text-red-600" v-if="errors.oldPassword">{{ errors.oldPassword }}</small>
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="newPassword">New Password<i class="text-red-600">*</i></label>
                     <InputText id="newPassword" :class="`{ 'p-invalid': errors.newPassword }`" v-model="newPassword"
-                        type="text" />
+                        type="password" />
                     <small class="text-red-600 " v-if="errors.newPassword">{{ errors.newPassword }}</small>
                 </div>
+                <div class="flex flex-col gap-2">
+                    <label for="reEnterPassword">Re- Enter Password:<i class="text-red-600">*</i></label>
+                    <InputText id="reEnterPassword" :class="`{ 'p-invalid': errors.reEnterPassword }`"
+                        v-model="reEnterPassword" type="password" />
+                    <small class="text-red-600 " v-if="errors.reEnterPassword">{{ errors.reEnterPassword }}</small>
+                </div>
                 <div class="flex justify-end gap-2">
-                    <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
+                    <ButtonComponent text="Cancel" bgColor="bg-white text-red-500" hoverColor="hover:bg-gray-200"
+                        activeColor="active:bg-gray-300" :onClick="closeDialog" />
                     <Button type="submit" label="Save"></Button>
                 </div>
             </div>
