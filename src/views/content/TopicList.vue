@@ -281,7 +281,6 @@ onMounted(() => {
 })
 
 const rolesForAccess = ['ROLE_CONTENT_MANAGER', 'ROLE_FA_MANAGER'];
-
 const userRoles = getUserInfo();
 </script>
 
@@ -293,9 +292,7 @@ const userRoles = getUserInfo();
                 @click="showDialog = true" />
         </div>
         <Divider />
-        <!-- Toast for success message -->
-        <Toast ref="toast" />
-
+        <Toast />
         <div>
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="flex flex-col w-60 mt-1 gap-2">
