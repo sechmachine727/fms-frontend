@@ -14,24 +14,8 @@ WORKDIR /app
 # Copy the built files from the build stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copy Tailscale binaries
-COPY --from=docker.io/tailscale/tailscale:stable /usr/local/bin/tailscaled /app/tailscaled
-COPY --from=docker.io/tailscale/tailscale:stable /usr/local/bin/tailscale /app/tailscale
-
-# Create necessary directories
-RUN mkdir -p /var/run/tailscale /var/cache/tailscale /var/lib/tailscale
-
-# Copy the start script
-COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
-
 # Copy the Nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose port 80 (for Nginx)
 EXPOSE 80
-
-# Use the correct user for Tailscale related processes
-USER tailscale
-
-CMD ["/app/start.sh"]
