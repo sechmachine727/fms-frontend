@@ -39,8 +39,7 @@ const querySearchFromUrl = () => {
 
         if (getQueryStatusFromUrl.value !== "") {
             const values = getQueryStatusFromUrl.value.split(',').map(status => ({ id: status }));
-            const filteredStatus = getStatusArray().filter(item1 => values.some(item2 => item1.id === item2.id));
-            statusOptions.value = filteredStatus;
+            statusOptions.value = getStatusArray().filter(item1 => values.some(item2 => item1.id === item2.id))
         }
         applyFilters()
     }

@@ -9,6 +9,7 @@ import { useToast } from 'primevue/usetoast'
 import { useField, useForm } from 'vee-validate'
 import { onMounted, ref } from 'vue'
 import { z } from 'zod'
+import ButtonComponent from '@/components/ButtonComponent.vue'
 
 const topicStore = useTopicStore()
 const technicalGroupStore = useTechnicalGroupStore()
@@ -66,7 +67,7 @@ const { handleSubmit, errors, setFieldError } = useForm({
     validationSchema
 })
 const { value: code } = useField('code')
-const { value: version } = useField('version')
+// const { value: version } = useField('version')
 const { value: name } = useField('name')
 const { value: technicalGroupType } = useField('technicalGroupType')
 const { value: department } = useField('department')
