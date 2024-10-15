@@ -1,7 +1,7 @@
 <script setup>
-import { useTopicStore } from '@/stores/topicStore';
-import { computed, onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useTopicStore } from '@/stores/topicStore'
+import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 
 const topicStore = useTopicStore()
@@ -99,7 +99,7 @@ onMounted(() => {
     background-color: #f0f4ff;
     font-weight: bold;
     color: #2c3e50;
-    width: 20%;
+    width: 15%;
 }
 
 .assessment-scheme-table .p-datatable-tbody>tr>td {
@@ -124,7 +124,7 @@ table {
 
 th,
 td {
-    padding: 0.75rem;
+    padding: 1rem;
     text-align: left;
     border-bottom: 1px solid #ccc;
 }

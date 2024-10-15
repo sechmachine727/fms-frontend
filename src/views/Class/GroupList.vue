@@ -1,11 +1,11 @@
 <script setup>
-import { useClassStore } from "@/stores/groupStore"; // Correct the import to use `useTraineeStore`
-import { getStatusArray, getStatusLabel } from "@/utils/status";
-import { getUserInfo } from "@/utils/token";
-import Toast from "primevue/toast";
-import { useToast } from "primevue/usetoast";
-import { onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useClassStore } from '@/stores/groupStore' // Correct the import to use `useTraineeStore`
+import { getStatusArray, getStatusLabel } from '@/utils/status'
+import { getUserInfo } from '@/utils/token'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const classes = ref([]);
 const classStore = useClassStore();
@@ -99,7 +99,6 @@ const navigateToAdd = () => {
 };
 
 const userRoles = getUserInfo();
-console.log(userRoles.roles);
 </script>
 
 <template>

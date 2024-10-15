@@ -31,9 +31,9 @@ const validationSchema = toTypedSchema(
             .string({ required_error: 'Code is required' })
             .min(1, { message: 'Code is required' })
             .max(20, { message: 'Code must not exceed 20 characters' }),
-        version: z
-            .string({ required_error: 'Version is required' })
-            .min(1, { message: 'Version is required' }),
+        // version: z
+        //     .string({ required_error: 'Version is required' })
+        //     .min(1, { message: 'Version is required' }),
         trainingProgramName: z
             .string({ required_error: 'Name is required' })
             .min(1, { message: 'Name is required' })
@@ -78,13 +78,14 @@ const { value: description } = useField('description')
 const { value: topicData } = useField('topicData')
 
 const onSubmit = handleSubmit((values) => {
-
+    const currentVersion = trainingProgram.value.version  // Assuming this is fetched from the store or API
+    const newVersion = parseInt(currentVersion) + 1
     // Prepare the request body according to the expected format
     const payload = {
         trainingProgramName: values.trainingProgramName,
         code: values.code,
         departmentId: values.department.id,  // Extract department ID
-        version: values.version,
+        version: newVersion,
         description: values.description || '',  // Ensure description is not undefined
         technicalGroupId: values.technicalGroupCode.id,  // Extract technical group ID
         topicIds: values.topicData[1].map(topic => topic.id)
@@ -194,19 +195,19 @@ onMounted(async () => {
                             <small v-if="errors.code" class="text-red-600"> {{ errors.code }}</small>
                         </div>
 
-                        <div class="flex flex-col md:flex-row gap-4 mt-3">
-                            <div class="flex flex-wrap gap-2 w-full">
-                                <label for="Version">
-                                    Version
-                                    <i class="text-red-600">*</i>
-                                </label>
-                                <InputText id="Version" v-model="version" :class="`{ 'p-invalid': errors.version }`"
-                                    placeholder="Version" type="text" />
-                            </div>
-                        </div>
-                        <div class="flex flex-wrap gap-2 w-full">
-                            <small v-if="errors.version" class="text-red-600"> {{ errors.version }}</small>
-                        </div>
+                        <!--                        <div class="flex flex-col md:flex-row gap-4 mt-3">-->
+                        <!--                            <div class="flex flex-wrap gap-2 w-full">-->
+                        <!--                                <label for="Version">-->
+                        <!--                                    Version-->
+                        <!--                                    <i class="text-red-600">*</i>-->
+                        <!--                                </label>-->
+                        <!--                                <InputText id="Version" v-model="version" :class="`{ 'p-invalid': errors.version }`"-->
+                        <!--                                    placeholder="Version" type="text" />-->
+                        <!--                            </div>-->
+                        <!--                        </div>-->
+                        <!--                        <div class="flex flex-wrap gap-2 w-full">-->
+                        <!--                            <small v-if="errors.version" class="text-red-600"> {{ errors.version }}</small>-->
+                        <!--                        </div>-->
 
                         <div class="flex flex-col md:flex-row gap-4 mt-3">
                             <div class="flex flex-wrap gap-2 w-full">

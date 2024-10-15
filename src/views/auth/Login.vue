@@ -1,16 +1,18 @@
 <script setup>
-import { useAuthStore } from "@/stores/authStore";
-import { getUserInfo } from "@/utils/token";
-import { toTypedSchema } from "@vee-validate/zod";
-import Toast from 'primevue/toast';
-import { useToast } from "primevue/usetoast";
+import { useAuthStore } from '@/stores/authStore'
+import { getUserInfo } from '@/utils/token'
+import { toTypedSchema } from '@vee-validate/zod'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
 
-import { useField, useForm } from "vee-validate";
-import { z } from "zod";
+import { useField, useForm } from 'vee-validate'
+import { z } from 'zod'
+
 const validationSchema = toTypedSchema(
     z.object({
-        account: z.string({ required_error: 'Class Name is required' }),
-        password: z.string().min(8, "Must be 8 or more characters long"),
+        account: z.string({ required_error: 'User Name is required' }),
+        password: z.string({ required_error: 'Password is required' })
+            .min(8, 'Must be 8 or more characters long')
     })
 );
 const toast = useToast();

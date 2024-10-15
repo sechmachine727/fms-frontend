@@ -334,7 +334,7 @@ onMounted(() => {
                                         <i class="pi pi-check"></i>
                                         Activate
                                     </li>
-                                    <li v-if="selectedItem?.status === 'Reviewing' && userRoles.roles.includes('ROLE_FA_MANAGER')"
+                                    <li v-if="selectedItem?.status === 'Reviewing' || selectedItem?.status === 'Declined' && userRoles.roles.includes('ROLE_FA_MANAGER')"
                                         class="flex items-center gap-2 px-2 py-3  cursor-pointer rounded-border
                                     text-green-500 hover:bg-green-100 active:bg-green-100 focus:outline-none focus:ring focus:ring-green-100"
                                         severity="slotProps.data.status === 'Active' ? 'warn' : 'success'"
