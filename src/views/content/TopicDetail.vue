@@ -23,6 +23,13 @@ const generalInfo = computed(() => {
     }
 })
 
+const formatNote = (note) => {
+    if (!note) return ''
+    return note
+        .replace(/\\n/g, '<br>')
+}
+
+
 onMounted(() => {
     const route = useRoute()
     const topicId = route.params.id
@@ -67,7 +74,11 @@ onMounted(() => {
                             <Column field="assessmentName" header="Assessment Name"></Column>
                             <Column field="quantity" header="Quantity"></Column>
                             <Column field="weightedNumber" header="Weighted Number"></Column>
-                            <Column field="note" header="Note"></Column>
+                            <Column field="note" header="Note">
+                                <template #body="slotProps">
+                                    <span v-html="formatNote(slotProps.data.note)"></span>
+                                </template>
+                            </Column>
                         </DataTable>
                     </div>
                 </TabPanel>
