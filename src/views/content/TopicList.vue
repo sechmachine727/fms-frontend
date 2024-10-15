@@ -1,8 +1,8 @@
 <script setup>
 import ButtonComponent from '@/components/ButtonComponent.vue'
 import router from '@/router'
-import { useImportFileStore } from '@/stores/importFileStore'
 import { useDownloadFileStore } from '@/stores/downloadFileStore'
+import { useImportFileStore } from '@/stores/importFileStore'
 import { useTopicStore } from '@/stores/topicStore'
 import { getUserInfo } from '@/utils/token'
 import Toast from 'primevue/toast'
@@ -16,7 +16,7 @@ const importFileStore = useImportFileStore()
 const downloadFileStore = useDownloadFileStore()
 
 const confirm = useConfirm()
-const topics = ref()
+const topics = ref([])
 const selectedItem = ref(null)
 const route = useRoute()
 const searchQuery = ref('')
@@ -353,7 +353,7 @@ const userRoles = getUserInfo();
                 <Column field="code" header="Topic Code" style="width: 20%">
                     <template #body="slotProps">
                         <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }"
-                                     class="router-link-active">{{ slotProps.data.code }}
+                            class="router-link-active">{{ slotProps.data.code }}
                         </router-link>
                     </template>
                 </Column>
