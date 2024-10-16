@@ -17,6 +17,7 @@ export const getStatusLabel = (status) => {
        case 'Active':
             return 'success'
         case 'Inactive':
+        case 'Assigned':
             return 'warn'
         case 'Declined':
             return 'danger'
