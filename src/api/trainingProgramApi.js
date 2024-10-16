@@ -30,9 +30,9 @@ class TrainingProgramApi {
         return put(newUrl)
     }
 
-    putToggleReviewingToDeclined = (id) => {
+    putToggleReviewingToDeclined = (id, reason) => {
         const newUrl = url + `/toggle-reviewing-to-declined/${id}`
-        return put(newUrl)
+        return put(newUrl, { reason })
     }
 
     putToggleActivate = (id) => {
