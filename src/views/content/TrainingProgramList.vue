@@ -146,6 +146,8 @@ const confirmActive = (value) => {
             }).catch((errors) => {
                 if (errors.status === 400) {
                     toast.add({ severity: 'error', summary: errors.response.data, life: 3000 })
+                } else {
+                    toast.add({ severity: 'error', summary: errors.response.data, life: 3000 })
                 }
             })
         }
@@ -179,7 +181,7 @@ const confirmDeactive = (value) => {
     })
 }
 
-// const declineReason = ref('');
+const declineReason = ref('');
 const confirmReject = (value) => {
     confirm.require({
         group: 'templatingReject',
@@ -193,7 +195,7 @@ const confirmReject = (value) => {
             className: 'button-custom'
         },
         accept: () => {
-            trainingProgramStore.fetchToggleReviewingToDeclined(selectedItem.value.id).then(() => {
+            trainingProgramStore.fetchToggleReviewingToDeclined(selectedItem.value.id, declineReason.value).then(() => {
                 trainingProgramStore.fetchTrainingPrograms().then(() => {
                     trainingPrograms.value = trainingProgramStore.trainingPrograms
                 })
@@ -373,15 +375,11 @@ onMounted(() => {
                 <div
                     class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700">
                     <i v-for="(line, index) in slotProps.message.message.split('.')" :key="index"
-                       :class="{ 'text-red-500 font-bold': index === 1 }">
+                        :class="{ 'text-red-500 font-bold': index === 1 }">
                         {{ line }}
                     </i>
-                    <textarea
-                        v-model="declineReason"
-                        class="w-full p-2 border rounded border-gray-300"
-                        placeholder="Please enter the reason for declining..."
-                        rows="4"
-                    ></textarea>
+                    <textarea v-model="declineReason" class="w-full p-2 border rounded border-gray-300"
+                        placeholder="Please enter the reason for declining..." rows="4"></textarea>
                 </div>
             </template>
         </ConfirmDialog>
