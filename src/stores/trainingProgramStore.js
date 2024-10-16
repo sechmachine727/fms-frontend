@@ -88,7 +88,7 @@ export const useTrainingProgramStore = defineStore('trainingProgramStore', {
         // Toggle to Declined from Reviewing (FA Manager)
         async fetchToggleReviewingToDeclined(id, reason) {
             try {
-                const result = await trainingProgramApi.putToggleReviewingToDeclined(id, {reason})
+                const result = await trainingProgramApi.putToggleReviewingToDeclined(id, reason)
                 return result.data
             } catch (error) {
                 console.error('Error toggling to declined:', error)
