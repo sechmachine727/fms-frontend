@@ -1,14 +1,48 @@
 <script setup>
-import ButtonComponent from "@/components/ButtonComponent.vue";
-import router from "@/router";
-import { useClassStore } from "@/stores/groupStore"; // Correct the import to use `useTraineeStore`
-import { getStatusLabel } from "@/utils/status";
-import { onMounted, ref } from 'vue';
-import { useRoute } from "vue-router";
+import ButtonComponent from '@/components/ButtonComponent.vue'
+import router from '@/router'
+import { useClassStore } from '@/stores/groupStore' // Correct the import to use `useTraineeStore`
+import { getStatusLabel } from '@/utils/status'
+import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 const classe = ref();
 const classStore = useClassStore();
 // const router = useRouter();
+
+const groupInfo = computed(() => {
+    if (classStore.classDetail) {
+        return [
+            {
+                label1: 'Group Name', value1: classStore.classDetail.groupName,
+                label2: 'Delivery Type', value2: classStore.classDetail.deliveryTypeName,
+                label3: 'Trainee Type', value3: classStore.classDetail.traineeTypeName
+            },
+            {
+                label1: 'Format Type', value1: classStore.classDetail.formatTypeName,
+                label2: 'Technical Group', value2: classStore.classDetail.technicalGroupCode,
+                label3: 'Training Program', value3: classStore.classDetail.trainingProgramName
+            },
+            {
+                label1: 'Site', value1: classStore.classDetail.siteName,
+                label2: 'Location', value2: classStore.classDetail.locationName,
+                label3: 'Scope', value3: classStore.classDetail.scopeName
+            },
+            {
+                label1: 'Planned Trainee No', value1: classStore.classDetail.traineeNumber,
+                label2: 'Planned Revenue', value2: classStore.classDetail.planRevenue,
+                label3: 'Key Program', value3: classStore.classDetail.keyProgramName
+            },
+            {
+                label1: 'Expected Start Date', value1: classStore.classDetail.expectedStartDate,
+                label2: 'Expected End Date', value2: classStore.classDetail.expectedEndDate,
+                label3: 'Group Admin', value3: classStore.classDetail.assignedUserAccounts.join(', ')
+            }
+        ]
+    } else {
+        return []
+    }
+})
 
 onMounted(() => {
     const route = useRoute()
@@ -44,141 +78,21 @@ const navigateToEdit = (id) => {
             <Divider />
             <TabView>
                 <TabPanel header="Group Info">
-                    <div class="grid grid-cols-1 md:grid-cols-3  pt-2">
-                        <div class="flex items-center h-14 border-t border-b border-l">
-                            <div
-                                class="font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
-                                Group Name
-                            </div>
-                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">
-                                {{ classe?.groupName }}
-                            </div>
-                        </div>
-
-                        <div class="flex items-center h-14 border-t border-b border-l">
-                            <div
-                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
-                                Delivery Type
-                            </div>
-                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">{{
-                                classe?.deliveryTypeName }}</div>
-                        </div>
-                        <div class="flex items-center h-14 border-t border-b border-l">
-                            <div
-                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
-                                Trainee Type</div>
-                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
-                                classe?.traineeTypeName }}</div>
-                        </div>
-                        <!-- <---!--->
-                        <div class="flex items-center h-14 border-t border-b border-l">
-                            <div
-                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
-                                Format Type
-                            </div>
-                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">
-                                {{ classe?.formatTypeName }}
-                            </div>
-                        </div>
-                        <div class="flex items-center h-14 border-t border-b border-l">
-                            <div
-                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
-                                Technical Group
-                            </div>
-                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">{{
-                                classe?.technicalGroupCode }}
-                            </div>
-                        </div>
-                        <div class="flex items-center h-14 border-t border-b border-l">
-                            <div
-                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
-                                Training Program</div>
-                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
-                                classe?.trainingProgramName }}</div>
-                        </div>
-
-                        <div class="flex items-center h-14 border-t border-b border-l">
-                            <div
-                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
-                                Site
-                            </div>
-                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">
-                                {{ classe?.siteName }}
-                            </div>
-                        </div>
-
-
-                        <div class="flex items-center h-14 border-t border-b border-l">
-                            <div
-                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
-                                Location
-                            </div>
-                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">
-                                {{ classe?.locationName }}
-                            </div>
-                        </div>
-                        <div class="flex items-center h-14 border-t border-b border-l">
-                            <div
-                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
-                                Scope
-                            </div>
-                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
-                                classe?.scopeName }}
-                            </div>
-                        </div>
-                        <div class="flex items-center  h-14 border-t border-b border-l">
-                            <div
-                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
-                                Planned Trainee No</div>
-                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
-                                classe?.traineeNumber }}</div>
-                        </div>
-
-                        <div class="flex items-center h-14 border-t border-b border-l">
-                            <div
-                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
-                                Planned Revenue</div>
-                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 ">{{
-                                classe?.planRevenue }}</div>
-                        </div>
-
-                        <div class="flex items-center h-14 border-t border-b border-l">
-                            <div
-                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
-                                Key Program</div>
-                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
-                                classe?.keyProgramName
-                            }}</div>
-                        </div>
-                        <div class="flex items-center h-14 border-t border-b border-l">
-                            <div
-                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
-                                Expected Start Date</div>
-                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
-                                classe?.expectedStartDate
-                            }}</div>
-                        </div>
-                        <div class="flex items-center h-14 border-t border-b border-l">
-                            <div
-                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
-                                Expected End Date</div>
-                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">{{
-                                classe?.expectedEndDate
-                            }}</div>
-                        </div>
-                        <div class="flex items-center h-14 border-t border-b border-l">
-                            <div
-                                class="border-r font-semibold highlight-label-column h-full w-2/5 flex items-center justify-start pl-1">
-                                Group Admin</div>
-                            <div class=" h-full flex items-center ml-1 w-3/5 p-0 border-r">
-                                <span v-for="(user, index) in classe?.assignedUserAccounts" :key="index">
-                                    {{ user }}
-                                    <!-- Thêm dấu phẩy giữa các phần tử, bỏ dấu phẩy cuối cùng -->
-                                    <span v-if="index < classe.assignedUserAccounts.length - 1">, </span>
-                                </span>
-                            </div>
-                        </div>
+                    <div class="general-info mb-8">
+                        <table class="w-full border-collapse">
+                            <tbody>
+                            <tr v-for="classDetail in groupInfo" :key="classDetail.label">
+                                <td class="highlight-label-column">{{ classDetail.label1 }}</td>
+                                <td>{{ classDetail.value1 }}</td>
+                                <td class="highlight-label-column">{{ classDetail.label2 }}</td>
+                                <td>{{ classDetail.value2 }}</td>
+                                <td class="highlight-label-column">{{ classDetail.label3 }}</td>
+                                <td>{{ classDetail.value3 }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
+
                     <div class="mt-4 flex justify-between">
                         <div>
                             <ButtonComponent text="Back to Group List" bgColor="bg-white" hoverColor="hover:bg-gray-200"
@@ -215,5 +129,18 @@ const navigateToEdit = (id) => {
     background-color: #f0f4ff;
     font-weight: bold;
     color: #2c3e50;
+    padding: 0.5rem;
+}
+
+table {
+    width: 100%;
+    border: 1px solid #ccc;
+}
+
+th,
+td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
 }
 </style>

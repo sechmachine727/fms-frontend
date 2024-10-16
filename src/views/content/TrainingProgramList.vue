@@ -146,6 +146,8 @@ const confirmActive = (value) => {
             }).catch((errors) => {
                 if (errors.status === 400) {
                     toast.add({ severity: 'error', summary: errors.response.data, life: 3000 })
+                } else {
+                    toast.add({ severity: 'error', summary: errors.response.data, life: 3000 })
                 }
             })
         }
@@ -179,9 +181,10 @@ const confirmDeactive = (value) => {
     })
 }
 
+const declineReason = ref('');
 const confirmReject = (value) => {
     confirm.require({
-        group: 'templating',
+        group: 'templatingReject',
         message: 'Are you sure you want to decline this Training Program.' + value.code,
         header: 'Decline Training Program',
         acceptProps: {
@@ -192,7 +195,7 @@ const confirmReject = (value) => {
             className: 'button-custom'
         },
         accept: () => {
-            trainingProgramStore.fetchToggleReviewingToDeclined(selectedItem.value.id).then(() => {
+            trainingProgramStore.fetchToggleReviewingToDeclined(selectedItem.value.id, declineReason.value).then(() => {
                 trainingProgramStore.fetchTrainingPrograms().then(() => {
                     trainingPrograms.value = trainingProgramStore.trainingPrograms
                 })
@@ -305,6 +308,7 @@ onMounted(() => {
 
                 <Column field="modifiedDate" header="Last Modified Date" style="min-width: 160px"></Column>
                 <Column field="lastModifiedBy" header="Last Modified By" style="min-width: 160px"></Column>
+                <Column field="description" header="Description" style="min-width: 160px"></Column>
                 <Column alignFrozen="right" field="status" frozen header="Status" style="min-width: 100px">
                     <template #body="slotProps">
                         <Tag :severity="getStatusLabel(slotProps.data.status)" :value="slotProps.data.status" />
@@ -334,7 +338,7 @@ onMounted(() => {
                                         <i class="pi pi-check"></i>
                                         Activate
                                     </li>
-                                    <li v-if="selectedItem?.status === 'Reviewing' && userRoles.roles.includes('ROLE_FA_MANAGER')"
+                                    <li v-if="selectedItem?.status === 'Reviewing' || selectedItem?.status === 'Declined' && userRoles.roles.includes('ROLE_FA_MANAGER')"
                                         class="flex items-center gap-2 px-2 py-3  cursor-pointer rounded-border
                                     text-green-500 hover:bg-green-100 active:bg-green-100 focus:outline-none focus:ring focus:ring-green-100"
                                         severity="slotProps.data.status === 'Active' ? 'warn' : 'success'"
@@ -366,6 +370,19 @@ onMounted(() => {
                 </Column>
             </DataTable>
         </div>
+        <ConfirmDialog group="templatingReject" @reject="handleReject">
+            <template #message="slotProps">
+                <div
+                    class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700">
+                    <i v-for="(line, index) in slotProps.message.message.split('.')" :key="index"
+                        :class="{ 'text-red-500 font-bold': index === 1 }">
+                        {{ line }}
+                    </i>
+                    <textarea v-model="declineReason" class="w-full p-2 border rounded border-gray-300"
+                        placeholder="Please enter the reason for declining..." rows="4"></textarea>
+                </div>
+            </template>
+        </ConfirmDialog>
 
         <ConfirmDialog group="templating">
             <template #message="slotProps">

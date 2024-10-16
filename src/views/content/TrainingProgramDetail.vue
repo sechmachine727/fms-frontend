@@ -27,9 +27,7 @@ const trainingProgramId = route.params.id
 onMounted(() => {
     trainingProgramStore.fetchTrainingProgramDetail(trainingProgramId).then(() => {
         trainingProgram.value = trainingProgramStore.trainingProgram
-        console.log(trainingProgram.value)
         topicInfo.value = trainingProgramStore.trainingProgram.topicInfoList
-        console.log(topicInfo.value)
     })
 })
 
@@ -119,7 +117,7 @@ table {
 }
 
 th, td {
-    padding: 0.75rem;
+    padding: 1rem;
     text-align: left;
     border-bottom: 1px solid #ccc;
 }

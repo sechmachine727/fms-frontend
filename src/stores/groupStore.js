@@ -1,6 +1,6 @@
 // stores/traineeStore.js
-import classApi from "@/api/groupApi";
-import { defineStore } from "pinia";
+import classApi from '@/api/groupApi'
+import { defineStore } from 'pinia'
 
 export const useClassStore = defineStore("classStore", {
     state: () => ({
@@ -28,11 +28,11 @@ export const useClassStore = defineStore("classStore", {
 
         async fetchAddGroup(data) {
             try {
-                const result = await classApi.post(data); 
-                return result.data; 
+                const result = await classApi.post(data)
+                return result.data
             } catch (error) {
                 console.error("Error fetching trainees:", error);
-                throw error; 
+                throw error
             }
         },
 
@@ -50,8 +50,8 @@ export const useClassStore = defineStore("classStore", {
                 || c.trainingProgramName.toLowerCase().includes(searchQuery)
             : true;
 
-        
-            const matchStatusSearch = statusSearchQuery.length > 0
+
+                const matchStatusSearch = statusSearchQuery.length > 0
             ? statusSearchQuery.includes(c.status.toLowerCase())
             : true; // Nếu không có status được chọn, cho phép tất cả
 

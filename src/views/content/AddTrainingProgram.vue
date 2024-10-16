@@ -9,6 +9,7 @@ import { useToast } from 'primevue/usetoast'
 import { useField, useForm } from 'vee-validate'
 import { onMounted, ref } from 'vue'
 import { z } from 'zod'
+import ButtonComponent from '@/components/ButtonComponent.vue'
 
 const topicStore = useTopicStore()
 const technicalGroupStore = useTechnicalGroupStore()
@@ -25,9 +26,9 @@ const validationSchema = toTypedSchema(
             .string({ required_error: 'Code is required' })
             .min(1, { message: 'Code is required' })
             .max(20, { message: 'Code must not exceed 20 characters' }),
-        version: z
-            .string({ required_error: 'Version is required' })
-            .min(1, { message: 'Version is required' }),
+        // version: z
+        //     .string({ required_error: 'Version is required' })
+        //     .min(1, { message: 'Version is required' }),
         name: z
             .string({ required_error: 'Name is required' })
             .min(1, { message: 'Name is required' })
@@ -66,7 +67,7 @@ const { handleSubmit, errors, setFieldError } = useForm({
     validationSchema
 })
 const { value: code } = useField('code')
-const { value: version } = useField('version')
+// const { value: version } = useField('version')
 const { value: name } = useField('name')
 const { value: technicalGroupType } = useField('technicalGroupType')
 const { value: department } = useField('department')
@@ -80,12 +81,11 @@ const onSubmit = handleSubmit((values) => {
         trainingProgramName: values.name,
         code: values.code,
         departmentId: values.department.id,
-        version: parseInt(values.version, 10),
+        version: 1,
         description: values.description || '',
         technicalGroupId: values.technicalGroupType.id,
         topicIds: selectedTopics  // Sending only topic IDs as per API requirement
     }
-    console.log(payload)
     trainingProgramStore.fetchAddTrainingProgram(payload).then(() => {
         toast.add({
             severity: 'success',
@@ -158,16 +158,16 @@ const onChange = (value) => {
                             <small v-if="errors.code" class="text-red-600"> {{ errors.code }}</small>
                         </div>
 
-                        <div class="flex flex-col md:flex-row gap-4 mt-3">
-                            <div class="flex flex-wrap gap-2 w-full">
-                                <label for="Version">
-                                    Version
-                                    <i class="text-red-600">*</i>
-                                </label>
-                                <InputText id="Version" v-model="version" :class="`{ 'p-invalid': errors.version }`"
-                                    placeholder="Version" type="text" />
-                            </div>
-                        </div>
+                        <!--                        <div class="flex flex-col md:flex-row gap-4 mt-3">-->
+                        <!--                            <div class="flex flex-wrap gap-2 w-full">-->
+                        <!--                                <label for="Version">-->
+                        <!--                                    Version-->
+                        <!--                                    <i class="text-red-600">*</i>-->
+                        <!--                                </label>-->
+                        <!--                                <InputText id="Version" v-model="version" :class="`{ 'p-invalid': errors.version }`"-->
+                        <!--                                    placeholder="Version" type="text" />-->
+                        <!--                            </div>-->
+                        <!--                        </div>-->
                         <div class="flex flex-wrap gap-2 w-full">
                             <small v-if="errors.version" class="text-red-600"> {{ errors.version }}</small>
                         </div>

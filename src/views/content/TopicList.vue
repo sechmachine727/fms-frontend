@@ -162,7 +162,7 @@ const confirmDeactive = (value) => {
                 toast.add({ severity: 'success', summary: 'Topics successfully deactivated', life: 3000 })
             }).catch((errors) => {
                 if (errors.status === 400) {
-                    toast.add({ severity: 'error', summary: errors.response.data, life: 3000 })
+                  toast.add({ severity: 'error', summary: 'Can not deactivate topic that has been used ', life: 3000 })
                 }
             })
         }
@@ -362,6 +362,7 @@ const userRoles = getUserInfo();
                         </router-link>
                     </template>
                 </Column>
+              <Column field="version" header="Version" style="width: 10%"></Column>
                 <Column field="technicalGroup.code" header="Technical Group" style="width: 15%"></Column>
                 <Column field="status" header="Status" style="width: 10%">
                     <template #body="slotProps">
