@@ -30,7 +30,7 @@ const groupInfo = computed(() => {
             },
             {
                 label1: 'Planned Trainee No', value1: classStore.classDetail.traineeNumber,
-                label2: 'Planned Revenue', value2: classStore.classDetail.planRevenue,
+                label2: 'Planned Budget', value2: classStore.classDetail.planRevenue,
                 label3: 'Key Program', value3: classStore.classDetail.keyProgramName
             },
             {

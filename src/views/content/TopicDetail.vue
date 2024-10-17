@@ -26,7 +26,8 @@ const generalInfo = computed(() => {
 const formatNote = (note) => {
     if (!note) return ''
     return note
-        .replace(/\\n/g, '<br>')
+
+        .replace(/\n/g, '<br>');
 }
 
 

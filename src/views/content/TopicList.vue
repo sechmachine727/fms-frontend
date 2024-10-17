@@ -2,6 +2,7 @@
 import ButtonComponent from '@/components/ButtonComponent.vue'
 import router from '@/router'
 import { useDownloadFileStore } from '@/stores/downloadFileStore'
+import { useTechnicalGroupStore } from '@/stores/technicalGroupStore'
 import { useImportFileStore } from '@/stores/importFileStore'
 import { useTopicStore } from '@/stores/topicStore'
 import { getUserInfo } from '@/utils/token'
@@ -14,6 +15,8 @@ import { useRoute } from 'vue-router'
 const topicStore = useTopicStore()
 const importFileStore = useImportFileStore()
 const downloadFileStore = useDownloadFileStore()
+const technicalGroupStore = useTechnicalGroupStore()
+const technicalGroups = ref([])
 
 const confirm = useConfirm()
 const topics = ref([])
@@ -23,6 +26,7 @@ const searchQuery = ref('')
 const toast = useToast()
 const statusOptions = ref('')
 const overlay = ref(null)
+const technicalGroupOptionsSearch = ref([])
 const statuses = ref([
     { id: 'All', name: 'All' },
     { id: 'Active', name: 'Active' },
@@ -32,6 +36,7 @@ const statuses = ref([
 const querySearchFromUrl = () => {
     const getQueryFromUrl = ref(route.query.q || '')
     const getQueryActiveFromUrl = ref(route.query.active || '')
+    const getQueryTechnicalGroupFromUrl = ref(route.query.technicalGroup || '')
     if (getQueryFromUrl.value !== '' || getQueryActiveFromUrl.value !== '') {
         if (getQueryFromUrl.value !== '') {
             searchQuery.value = getQueryFromUrl.value
@@ -40,6 +45,11 @@ const querySearchFromUrl = () => {
         if (getQueryActiveFromUrl.value !== '') {
             const value = getQueryActiveFromUrl.value
             statusOptions.value = { id: value, name: value }
+        }
+
+        if (getQueryTechnicalGroupFromUrl.value !== '') {
+            const values = getQueryTechnicalGroupFromUrl.value.split(',').map(technical => ({ code: technical }))
+            technicalGroupOptionsSearch.value = technicalGroups.value.filter(item1 => values.some(item2 => item1.code === item2.code))
         }
 
         applyFilters()
@@ -60,7 +70,8 @@ const buildQueryObject = () => {
 const applyFilters = () => {
     const criteria = {
         searchQuery: searchQuery.value,
-        statusOptions: statusOptions.value
+        statusOptions: statusOptions.value,
+        technicalGroupOptionsSearch: technicalGroupOptionsSearch.value
     }
     topicStore.fetchFilterTopics(criteria)
     topics.value = topicStore.filterTopics
@@ -80,7 +91,18 @@ const handleSearch = () => {
     updateQueryParams()
 }
 
+const clearSearch = () => {
+    searchQuery.value = ''
+    technicalGroupOptionsSearch.value = []
+    statusOptions.value = { id: 'All', name: 'All' }
+    updateQueryParams()
+}
+
 const handleStatusChange = () => {
+    updateQueryParams()
+}
+
+const handleTechnicalGroupChange = () => {
     updateQueryParams()
 }
 
@@ -278,6 +300,10 @@ onMounted(() => {
         topics.value = topicStore.topics
         querySearchFromUrl()
     })
+
+    technicalGroupStore.fetchTechnicalGroup().then(() => {
+        technicalGroups.value = technicalGroupStore.technicalGroups
+    })
 })
 
 const rolesForAccess = ['ROLE_CONTENT_MANAGER', 'ROLE_FA_MANAGER'];
@@ -295,16 +321,23 @@ const userRoles = getUserInfo();
         <Toast />
         <div>
             <div class="flex flex-col md:flex-row gap-4">
-                <div class="flex flex-col w-60 mt-1 gap-2">
+                <div class="flex flex-col w-50 mt-1 gap-2">
                     <label class="w-60" for="contractType">Active</label>
                     <Select id="contractType" v-model="statusOptions" :options="statuses" class="w-full"
                         optionLabel="name" placeholder="Filter status" @change="handleStatusChange"></Select>
                 </div>
-                <div class="flex flex-wrap w-60 gap-2 mt-1">
+                <div class="flex flex-wrap w-50 gap-2">
+                    <label for="technical">Technical Group</label>
+                    <MultiSelect id="technical" v-model="technicalGroupOptionsSearch" :maxSelectedLabels="2"
+                                 :options="technicalGroups" class="w-full" filter optionLabel="code"
+                                 placeholder="Filter Technical Group" @change="handleTechnicalGroupChange" />
+                </div>
+                <div class="flex flex-wrap w-96 gap-2 mt-1">
                     <label for="search">Search</label>
                     <InputText id="search" v-model="searchQuery" class="h-10 w-full"
                         placeholder="Enter to Code, Name ..." type="text" @keyup.enter="handleSearch" />
                 </div>
+                <Button class="mt-8" label="Reset" severity="secondary" @click="clearSearch" />
             </div>
 
             <DataTable :rows="6" :rowsPerPageOptions="[6, 12, 20, 50]" :value="topics"
@@ -375,7 +408,7 @@ const userRoles = getUserInfo();
                 <Column v-if="userRoles?.roles.some(role => rolesForAccess.includes(role))" :exportable="false"
                     alignFrozen="right" frozen header="Action" style="width: 5%">
                     <template #body="slotProps">
-                        <Button class="mr-2" icon="pi pi-ellipsis-v" outlined rounded
+                        <Button class="mr-2 p-button-text" icon="pi pi-ellipsis-v" severity="secondary"
                             @click="showOptions($event, slotProps.data)" />
 
                         <Popover ref="overlay">

@@ -43,6 +43,8 @@ export const useClassStore = defineStore("classStore", {
         fetchFilterClass(criteria) {
             const searchQuery = criteria.searchQuery.toLowerCase() === "" ? null : criteria.searchQuery.trim().toLowerCase()
             const statusSearchQuery = criteria.statusOptions.map(status => status.id.toLowerCase());
+            const technicalGroup = criteria.technicalGroupOptionsSearch.map(technical => technical.technicalGroupCode)
+            const site = criteria.siteOptionsSearch.map(site => site.siteName.toLowerCase())
             this.filterClasses = this.classes.filter((c) => {
             const matchesSearchQuery = searchQuery
                 ? c.groupCode.toLowerCase().includes(searchQuery)
@@ -50,13 +52,19 @@ export const useClassStore = defineStore("classStore", {
                 || c.trainingProgramName.toLowerCase().includes(searchQuery)
             : true;
 
+                const matchesTechnicalGroup = technicalGroup.length
+                    ? technicalGroup.includes(c.technicalGroupCode.toLowerCase())
+                    : true
+
+                const matchesSite = site.length
+                    ? site.includes(c.siteName.toLowerCase())
+                    : true
 
                 const matchStatusSearch = statusSearchQuery.length > 0
             ? statusSearchQuery.includes(c.status.toLowerCase())
-            : true; // Nếu không có status được chọn, cho phép tất cả
+                    : true;
 
-
-             return matchesSearchQuery && matchStatusSearch;
+                return matchesSearchQuery && matchStatusSearch && matchesTechnicalGroup && matchesSite
     });
         }
     },
