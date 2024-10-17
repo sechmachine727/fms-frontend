@@ -358,11 +358,11 @@ const closePopup = () => {
 </script>
 
 <template>
-    <div>
+    <div class="card" style="height: calc(100vh - 4rem - 2rem);">
         <UpdateUser :visible="isDialogVisible" :selectedUser="selectedUser" :departments="departments"
             @userUpdated="handleUserUpdated" :roles="roles" />
         <Toast />
-        <div class="card">
+        <div>
             <div class="mb-4 flex justify-between items-center">
                 <span class="!font-semibold text-2xl">User List ({{ users?.length }})</span>
                 <Button label="Add User" @click="openPopup" />
@@ -398,17 +398,17 @@ const closePopup = () => {
                     currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                     scrollable scrollHeight="500px" class="mt-4">
-                    <Column header="No" style="width: 10%">
+                    <Column header="No" style="width: 50px">
                         <template #body="slotProps">
                             {{ users.indexOf(slotProps.data) + 1 }}
                         </template>
                     </Column>
-                    <Column field="employeeId" header="Employee ID" style="width: 180px"></Column>
+                    <Column field="employeeId" header="Employee ID" style="width: 120px"></Column>
                     <Column field="account" header="Account" style="width: 30px"></Column>
-                    <Column field="name" header="Name" style="width: 280px"></Column>
-                    <Column field="email" header="Email" style="width: 280px"></Column>
+                    <Column field="name" header="Name" style="width: 230px"></Column>
+                    <Column field="email" header="Email" style="width: 180px"></Column>
                     <Column field="department.departmentName" header="Department" style="width: 20px"></Column>
-                    <Column header="Roles" style="width: 10%">
+                    <Column header="Roles" style="width: 200px">
                         <template #body="slotProps">
                             <!-- slotProps.data đại diện cho dữ liệu của một user (một hàng trong bảng) -->
                             <span v-if="slotProps.data.roles && slotProps.data.roles.length">
