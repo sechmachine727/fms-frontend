@@ -518,7 +518,7 @@ const navigateToBack = () => {
                             </label>
                             <MultiSelect v-model="classAdmins" :options="classAdminOptions" optionLabel="account" filter
                                          id="classAdminOptions" :maxSelectedLabels="3" placeholder="Select Admin"
-                                class="w-full md:w-80" />
+                                         class="w-full md:w-80 mt-2" />
                             <small class="text-red-600 " v-if="errors.classAdminOptions"> {{
                                 errors.classAdminOptions
                             }}</small>
