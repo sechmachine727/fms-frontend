@@ -1,40 +1,47 @@
 <script setup>
-import { useClassStore } from '@/stores/groupStore'; // Correct the import to use `useTraineeStore`
-import { getStatusArray, getStatusLabel } from '@/utils/status';
-import { getUserInfo } from '@/utils/token';
-import Toast from 'primevue/toast';
-import { useToast } from 'primevue/usetoast';
-import { onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useClassStore } from '@/stores/groupStore'
+import { useTechnicalGroupStore } from '@/stores/technicalGroupStore'
+import { useSiteStore } from '@/stores/siteStore'
+import { getStatusArray, getStatusLabel } from '@/utils/status'
+import { getUserInfo } from '@/utils/token'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const classes = ref([]);
 const classStore = useClassStore();
 const router = useRouter();
 const toast = useToast();
 const route = useRoute();
+const technicalGroupStore = useTechnicalGroupStore()
+const siteStore = useSiteStore()
 
-onMounted(() => {
-    classStore.fetchClassList().then(() => {
-        classes.value = classStore.classes;
-        querySearchFromUrl();
-    })
+const technicalGroupOptionsSearch = ref([])
+const siteOptionsSearch = ref([])
+const technicalGroups = ref([])
+const sites = ref([])
 
-    const toastMessage = sessionStorage.getItem('toastMessage');
-    if (toastMessage) {
-        const toastData = JSON.parse(toastMessage);
-        toast.add(toastData);
-        sessionStorage.removeItem('toastMessage');
-    }
-
-
-})
 
 const querySearchFromUrl = () => {
     const getQueryFromUrl = ref(route.query.q || "");
     const getQueryStatusFromUrl = ref(route.query.status || "");
-    if (getQueryFromUrl.value !== "" || getQueryStatusFromUrl.value !== "") {
+    const getQuerySiteFromUrl = ref(route.query.site || '')
+    const getQueryTechnicalGroupFromUrl = ref(route.query.technicalGroup || '')
+    if (getQueryFromUrl.value !== '' || getQueryStatusFromUrl.value !== '' ||
+        getQueryTechnicalGroupFromUrl.value !== '' || getQuerySiteFromUrl.value !== '') {
         if (getQueryFromUrl.value !== "") {
             searchQuery.value = getQueryFromUrl.value;
+        }
+
+        if (getQueryTechnicalGroupFromUrl.value !== '') {
+            const values = getQueryTechnicalGroupFromUrl.value.split(',').map(technical => ({ code: technical }))
+            technicalGroupOptionsSearch.value = technicalGroups.value.filter(item1 => values.some(item2 => item1.technicalGroupCode === item2.technicalGroupCode))
+        }
+
+        if (getQuerySiteFromUrl.value !== '') {
+            const values = getQuerySiteFromUrl.value.split(',').map(site => ({ code: site }))
+            siteOptionsSearch.value = sites.value.filter(item1 => values.some(item2 => item1.site === item2.site))
         }
 
         if (getQueryStatusFromUrl.value !== "") {
@@ -54,6 +61,10 @@ const buildQueryObject = () => {
     if (searchQuery.value) {
         query.q = searchQuery.value;
     }
+    if (technicalGroupOptionsSearch.value.length > 0) {
+        const technicalGroupCode = technicalGroupOptionsSearch.value.map(technical => technical.technicalGroupCode)
+        query.technical = technicalGroupCode.join(',')
+    }
     if (statusOptions.value.length > 0) {
         const statusNames = statusOptions.value.map(status => status.id);
         query.status = statusNames.join(',');
@@ -65,6 +76,8 @@ const applyFilters = () => {
     const criteria = {
         searchQuery: searchQuery.value,
         statusOptions: statusOptions.value,
+        technicalGroupOptionsSearch: technicalGroupOptionsSearch.value,
+        siteOptionsSearch: siteOptionsSearch.value
     };
     classStore.fetchFilterClass(criteria)
     classes.value = classStore.filterClasses
@@ -81,12 +94,25 @@ const updateQueryParams = () => {
     applyFilters()
 };
 
+const clearSearch = () => {
+    searchQuery.value = ''
+    technicalGroupOptionsSearch.value = []
+    siteOptionsSearch.value = []
+    statusOptions.value = []
+    updateQueryParams()
+}
 
 const handleStatusChange = () => {
     updateQueryParams();
 }
 
+const handleTechnicalGroupChange = () => {
+    updateQueryParams()
+}
 
+const handleSiteChange = () => {
+    updateQueryParams()
+}
 
 const handleSearch = () => {
     updateQueryParams();
@@ -98,10 +124,32 @@ const navigateToAdd = () => {
 };
 
 const userRoles = getUserInfo();
+
+onMounted(() => {
+    classStore.fetchClassList().then(() => {
+        classes.value = classStore.classes
+        querySearchFromUrl()
+    })
+
+    const toastMessage = sessionStorage.getItem('toastMessage')
+    if (toastMessage) {
+        const toastData = JSON.parse(toastMessage)
+        toast.add(toastData)
+        sessionStorage.removeItem('toastMessage')
+    }
+
+    technicalGroupStore.fetchTechnicalGroup().then(() => {
+        technicalGroups.value = technicalGroupStore.technicalGroups
+    })
+
+    siteStore.fetchSites().then(() => {
+        sites.value = siteStore.sites
+    })
+})
 </script>
 
 <template>
-    <div class="card" style="height: calc(100vh - 4rem - 2rem);">
+    <div class="card">
         <Toast />
         <div class=" mb-4 flex justify-between items-center">
             <span class="font-semibold text-2xl">Group List ({{ classes?.length }})</span>
@@ -119,23 +167,25 @@ const userRoles = getUserInfo();
             <div class="flex flex-wrap w-52 gap-2">
                 <label for="technical">Technical Group</label>
                 <MultiSelect id="technical" v-model="technicalGroupOptionsSearch" :maxSelectedLabels="2"
-                    :options="technicalGroups" class="w-full" filter optionLabel="code"
-                    placeholder="Filter Technical Group" @change="handleTechnicalGroupChange" />
+                             :options="technicalGroups" class="w-full" filter optionLabel="code"
+                             placeholder="Filter Technical Group" @change="handleTechnicalGroupChange" />
             </div>
             <div class="flex flex-wrap w-52 gap-2">
                 <label for="site">Site</label>
-                <MultiSelect id="site" v-model="siteOptionsSearch" :maxSelectedLabels="2" :options="sites"
-                    class="w-full" filter optionLabel="siteName" placeholder="Filter Site" @change="handleSiteChange" />
+                <MultiSelect id="site" v-model="siteOptionsSearch" :maxSelectedLabels="2"
+                             :options="sites" class="w-full" filter optionLabel="siteName"
+                             placeholder="Filter Site" @change="handleSiteChange" />
             </div>
             <div class="flex flex-wrap w-72 gap-2">
                 <label for="search">Search</label>
                 <InputText class="h-10 w-full" v-model="searchQuery" type="text" id="search"
                     placeholder="Enter code, name, training program" @keyup.enter="handleSearch" />
             </div>
+            <Button class="mt-8" label="Reset" severity="secondary" @click="clearSearch" />
+
         </div>
-        <DataTable :value="classes" size="small" :rows="6" scrollHeight="calc(100vh - 12rem)" scrollable
-            :rowsPerPageOptions="[6, 20, 30, 50]" currentPageReportTemplate="{first} to {last} of {totalRecords}"
-            paginator
+        <DataTable :value="classes" :rows="10" scrollable scrollHeight="300px" :rowsPerPageOptions="[10, 20, 30, 50]"
+            currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
             tableStyle="min-width: 50rem" class="mt-4">
             <Column field="no" header="No" style="min-width: 50px">

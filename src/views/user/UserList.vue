@@ -226,14 +226,12 @@ const querySearchFromUrl = () => {
 
         if (getQueryRoleFromUrl.value !== "") {
             const values = getQueryRoleFromUrl.value.split(',').map(role => ({ name: role }));
-            const filteredRole = roles.value.filter(item1 => values.some(item2 => item1.name === item2.name));
-            roleFilterOptions.value = filteredRole;
+            roleFilterOptions.value = roles.value.filter(item1 => values.some(item2 => item1.name === item2.name))
         }
 
         if (getQueryDepartmentFromUrl.value !== "") {
             const values = getQueryDepartmentFromUrl.value.split(',').map(department => ({ departmentName: department }));
-            const filteredDepartment = departments.value.filter(item1 => values.some(item2 => item1.departmentName === item2.departmentName));
-            departmentOptionsSearch.value = filteredDepartment;
+            departmentOptionsSearch.value = departments.value.filter(item1 => values.some(item2 => item1.departmentName === item2.departmentName))
         }
         applyFilters()
     }
@@ -291,7 +289,13 @@ const updateQueryParams = () => {
     applyFilters()
 };
 
-
+const clearSearch = () => {
+    searchQuery.value = ''
+    departmentOptionsSearch.value = []
+    roleFilterOptions.value = []
+    statusOptions.value = { id: 'All', name: 'All' }
+    updateQueryParams()
+}
 
 
 const handleSearch = () => {
@@ -366,8 +370,8 @@ const closePopup = () => {
             <Divider />
             <div>
                 <div class="flex flex-col md:flex-row gap-4">
-                    <div class="flex flex-wrap w-60 gap-2">
-                        <label class="w-60" for="contractType">Active</label>
+                    <div class="flex flex-wrap w-36 gap-2">
+                        <label class="w-32" for="contractType">Active</label>
                         <Select id="contractType" v-model="statusOptions" :options="statuses" class="w-full"
                             optionLabel="name" placeholder="Filter status" @change="handleStatusChange"></Select>
                     </div>
@@ -375,7 +379,7 @@ const closePopup = () => {
                         <label for="role" class="w-32">Role</label>
                         <MultiSelect @change="handleRoleChange" v-model="roleFilterOptions" :options="roles"
                             optionLabel="name" filter placeholder="Filter Roles" id="rolesOptions"
-                            :maxSelectedLabels="3" class="w-full" />
+                                     :maxSelectedLabels="2" class="w-full" />
                     </div>
                     <div class="flex flex-wrap w-60 gap-2">
                         <label for="department">Department</label>
@@ -383,11 +387,12 @@ const closePopup = () => {
                             :options="departments" optionLabel="departmentName" filter placeholder="Filter Department"
                             id="department" :maxSelectedLabels="3" class="w-full" />
                     </div>
-                    <div class="flex flex-wrap w-60 gap-2">
+                    <div class="flex flex-wrap w-80 gap-2">
                         <label for="search">Search</label>
                         <InputText class="h-10 w-full" v-model="searchQuery" type="text" id="search"
                             placeholder="Enter name, account ..." @keyup.enter="handleSearch" />
                     </div>
+                    <Button class="mt-8" label="Reset" severity="secondary" @click="clearSearch" />
                 </div>
                 <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="users"
                     currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
@@ -561,22 +566,4 @@ const closePopup = () => {
     </div>
 </template>
 <style>
-.button-custom {
-    background-color: white;
-    color: red;
-    border: 1px solid rgb(209, 213, 219);
-    border-radius: 7px;
-    transition: background-color 0.3s, color 0.3s;
-    width: 56.36px;
-    height: 38.6px;
-}
-
-.button-custom:hover {
-    background-color: rgb(209, 213, 219);
-}
-
-.no-triangle::before,
-.no-triangle::after {
-    display: none !important;
-}
 </style>

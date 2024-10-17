@@ -63,6 +63,7 @@ export const useTopicStore = defineStore('topicStore', {
 
         fetchFilterTopics(criteria) {
             const searchQuery = criteria.searchQuery.toLowerCase() === '' ? null : criteria.searchQuery.trim().toLowerCase()
+            const technicalGroup = criteria.technicalGroupOptionsSearch.map(technical => technical.code.toLowerCase())
             const statusSearchQuery = criteria.statusOptions.id === 'All' ? null : criteria.statusOptions
             console.log(statusSearchQuery)
             this.filterTopics = this.topics.filter((topic) => {
@@ -72,11 +73,15 @@ export const useTopicStore = defineStore('topicStore', {
                     topic.code.toLowerCase().includes(searchQuery)
                     : true
 
+                const matchesTechnicalGroup = technicalGroup.length
+                    ? technicalGroup.includes(topic.technicalGroup.code.toLowerCase())
+                    : true
+
                 const matchStatusSearch = statusSearchQuery
                     ? topic.status.toLowerCase() === statusSearchQuery.id.toLowerCase()
                     : true
 
-                return matchesSearchQuery && matchStatusSearch
+                return matchesSearchQuery && matchStatusSearch && matchesTechnicalGroup
             })
         }
     },

@@ -109,13 +109,17 @@ export const useTrainingProgramStore = defineStore('trainingProgramStore', {
 
         fetchFilterTrainingPrograms(criteria) {
             const departmentNames = criteria.departmentOptionsSearch.map(department => department.departmentName.toLowerCase())
+            const technicalGroup = criteria.technicalGroupOptionsSearch.map(technical => technical.code.toLowerCase())
             const searchQuery = criteria.searchQuery.toLowerCase() === '' ? null : criteria.searchQuery.trim().toLowerCase()
             const statusSearchQuery = criteria.statusOptions.id === 'All' ? null : criteria.statusOptions
-            console.log(statusSearchQuery)
             this.filterTrainingPrograms = this.trainingPrograms.filter((trainingProgram) => {
                 // Kiểm tra điều kiện lọc theo phòng ban
                 const matchesDepartment = departmentNames.length
                     ? departmentNames.includes(trainingProgram.department.departmentName.toLowerCase())
+                    : true
+
+                const matchesTechnicalGroup = technicalGroup.length
+                    ? technicalGroup.includes(trainingProgram.technicalGroup.code.toLowerCase())
                     : true
 
                 const matchesSearchQuery = searchQuery
@@ -127,7 +131,7 @@ export const useTrainingProgramStore = defineStore('trainingProgramStore', {
                     ? trainingProgram.status.toLowerCase() === statusSearchQuery.id.toLowerCase()
                     : true
 
-                return matchesDepartment && matchesSearchQuery && matchStatusSearch
+                return matchesDepartment && matchesSearchQuery && matchStatusSearch && matchesTechnicalGroup
             })
         }
     },
