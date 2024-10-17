@@ -217,8 +217,7 @@ const onSubmit = handleSubmit((values) => {
     data.value = convertToSchema(values);
     data.value.expectedStartDate = convertToVietnamTime(values.expectedStart).toString();
     data.value.expectedEndDate = convertToVietnamTime(values.expectedEnd).toString();
-    let generateCode = generateClassCode(deliveryType.value.deliveryTypeName, formatType.value.formatTypeName, technicalGroup.value.code, classes.value)
-    classCode.value = generateCode
+    classCode.value = generateClassCode(deliveryType.value.deliveryTypeName, formatType.value.formatTypeName, technicalGroup.value.code, classes.value)
 
     if (handleForm.value.formatType === "Planning") {
         data.value.status = "Planning";
@@ -439,7 +438,7 @@ const navigateToBack = () => {
                                         </InputNumber>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
-                                        <label for="PlannedRevenue">Planned Revenue
+                                        <label for="PlannedRevenue">Planned Budget
                                             <i class="text-red-600">*</i>
                                         </label>
                                         <InputNumber v-model="planRevenue" :min="0" :max="99999999999999" showButtons

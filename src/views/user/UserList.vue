@@ -226,14 +226,12 @@ const querySearchFromUrl = () => {
 
         if (getQueryRoleFromUrl.value !== "") {
             const values = getQueryRoleFromUrl.value.split(',').map(role => ({ name: role }));
-            const filteredRole = roles.value.filter(item1 => values.some(item2 => item1.name === item2.name));
-            roleFilterOptions.value = filteredRole;
+            roleFilterOptions.value = roles.value.filter(item1 => values.some(item2 => item1.name === item2.name))
         }
 
         if (getQueryDepartmentFromUrl.value !== "") {
             const values = getQueryDepartmentFromUrl.value.split(',').map(department => ({ departmentName: department }));
-            const filteredDepartment = departments.value.filter(item1 => values.some(item2 => item1.departmentName === item2.departmentName));
-            departmentOptionsSearch.value = filteredDepartment;
+            departmentOptionsSearch.value = departments.value.filter(item1 => values.some(item2 => item1.departmentName === item2.departmentName))
         }
         applyFilters()
     }
@@ -568,22 +566,4 @@ const closePopup = () => {
     </div>
 </template>
 <style>
-.button-custom {
-    background-color: white;
-    color: red;
-    border: 1px solid rgb(209, 213, 219);
-    border-radius: 7px;
-    transition: background-color 0.3s, color 0.3s;
-    width: 56.36px;
-    height: 38.6px;
-}
-
-.button-custom:hover {
-    background-color: rgb(209, 213, 219);
-}
-
-.no-triangle::before,
-.no-triangle::after {
-    display: none !important;
-}
 </style>
