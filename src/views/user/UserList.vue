@@ -291,7 +291,13 @@ const updateQueryParams = () => {
     applyFilters()
 };
 
-
+const clearSearch = () => {
+    searchQuery.value = ''
+    departmentOptionsSearch.value = []
+    roleFilterOptions.value = []
+    statusOptions.value = { id: 'All', name: 'All' }
+    updateQueryParams()
+}
 
 
 const handleSearch = () => {
@@ -366,8 +372,8 @@ const closePopup = () => {
             <Divider />
             <div>
                 <div class="flex flex-col md:flex-row gap-4">
-                    <div class="flex flex-wrap w-60 gap-2">
-                        <label class="w-60" for="contractType">Active</label>
+                    <div class="flex flex-wrap w-36 gap-2">
+                        <label class="w-32" for="contractType">Active</label>
                         <Select id="contractType" v-model="statusOptions" :options="statuses" class="w-full"
                             optionLabel="name" placeholder="Filter status" @change="handleStatusChange"></Select>
                     </div>
@@ -375,7 +381,7 @@ const closePopup = () => {
                         <label for="role" class="w-32">Role</label>
                         <MultiSelect @change="handleRoleChange" v-model="roleFilterOptions" :options="roles"
                             optionLabel="name" filter placeholder="Filter Roles" id="rolesOptions"
-                            :maxSelectedLabels="3" class="w-full" />
+                                     :maxSelectedLabels="2" class="w-full" />
                     </div>
                     <div class="flex flex-wrap w-60 gap-2">
                         <label for="department">Department</label>
@@ -383,11 +389,12 @@ const closePopup = () => {
                             :options="departments" optionLabel="departmentName" filter placeholder="Filter Department"
                             id="department" :maxSelectedLabels="3" class="w-full" />
                     </div>
-                    <div class="flex flex-wrap w-60 gap-2">
+                    <div class="flex flex-wrap w-80 gap-2">
                         <label for="search">Search</label>
                         <InputText class="h-10 w-full" v-model="searchQuery" type="text" id="search"
                             placeholder="Enter name, account ..." @keyup.enter="handleSearch" />
                     </div>
+                    <Button class="mt-8" label="Reset" severity="secondary" @click="clearSearch" />
                 </div>
                 <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="users"
                     currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator

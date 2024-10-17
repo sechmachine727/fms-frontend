@@ -158,10 +158,10 @@ const validationSchema = toTypedSchema(
         ,
         planRevenue: z
             .number({
-                required_error: "Plan Revenue is required",
-                invalid_type_error: "Plan Revenue is required",
+                required_error: 'Plan Budget is required',
+                invalid_type_error: 'Plan Budget is required'
             })
-            .positive({ message: "Plan Revenue is required" }),
+            .positive({ message: 'Plan Budget is required' }),
         keyProgram: z
             .object({
                 id: z.number({ required_error: "Key Program is required" }).min(1, { message: "Key Program is required" })
@@ -512,13 +512,13 @@ const navigateToBack = () => {
                         </AccordionContent>
                     </AccordionPanel>
                     <AccordionPanel value="0">
-                        <AccordionHeader class="!font-bold">Resource Plaining</AccordionHeader>
+                        <AccordionHeader class="!font-bold">Human Resource</AccordionHeader>
                         <AccordionContent>
                             <label for="classAdmin"> Group Admin
                                 <i class="text-red-600">*</i>
                             </label>
                             <MultiSelect v-model="classAdmins" :options="classAdminOptions" optionLabel="account" filter
-                                placeholder="Select Group Admins" id="classAdminOptions" :maxSelectedLabels="3"
+                                         id="classAdminOptions" :maxSelectedLabels="3" placeholder="Select Admin"
                                 class="w-full md:w-80" />
                             <small class="text-red-600 " v-if="errors.classAdminOptions"> {{
                                 errors.classAdminOptions
