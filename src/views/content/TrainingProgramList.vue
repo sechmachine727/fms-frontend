@@ -263,7 +263,13 @@ onMounted(() => {
                         :options="departments" class="w-full" filter optionLabel="departmentName"
                         placeholder="Filter Region" @change="handleDepartmentChange" />
                 </div>
-                <div class="flex flex-wrap w-60 gap-2">
+                <div class="flex flex-wrap w-52 gap-2">
+                    <label for="technical">Technical Group</label>
+                    <MultiSelect id="technical" v-model="technicalGroupOptionsSearch" :maxSelectedLabels="2"
+                        :options="technicalGroups" class="w-full" filter optionLabel="code"
+                        placeholder="Filter Technical Group" @change="handleTechnicalGroupChange" />
+                </div>
+                <div class="flex flex-wrap w-96 gap-2">
                     <label for="search">Search</label>
                     <InputText id="search" v-model="searchQuery" class="h-10.5 w-full"
                         placeholder="Enter to Code, Name ..." type="text" @keyup.enter="handleSearch" />
@@ -359,7 +365,6 @@ onMounted(() => {
                                         class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border
                                     text-red-500 hover:bg-red-100 active:bg-red-100 focus:outline-none focus:ring focus:ring-red-100"
                                         severity="danger" @click="handleDecline(slotProps.data)">
-
                                         <i class="pi pi-times"></i>
                                         Decline
                                     </li>

@@ -1,19 +1,19 @@
 <script setup>
+import ButtonComponent from '@/components/ButtonComponent.vue'
 import router from '@/router'
 import { useDepartmentStore } from '@/stores/departmentStore'
 import { useTechnicalGroupStore } from '@/stores/technicalGroupStore'
 import { useTopicStore } from '@/stores/topicStore'
-import { useTrainingProgramStore } from '@/stores/trainingProgramStore' // Import the store handling the training programs
+import { useTrainingProgramStore } from '@/stores/trainingProgramStore'; // Import the store handling the training programs
 import { toTypedSchema } from '@vee-validate/zod'
 import { useToast } from 'primevue/usetoast'
 import { useField, useForm } from 'vee-validate'
 import { onMounted, ref } from 'vue'
 import { z } from 'zod'
-import ButtonComponent from '@/components/ButtonComponent.vue'
 
 const topicStore = useTopicStore()
 const technicalGroupStore = useTechnicalGroupStore()
-const trainingProgramStore = useTrainingProgramStore()  // Get the store instance
+const trainingProgramStore = useTrainingProgramStore()
 const departmentStore = useDepartmentStore()
 const toast = useToast()
 const technicalGroupTypeOptions = ref([])
@@ -26,9 +26,6 @@ const validationSchema = toTypedSchema(
             .string({ required_error: 'Code is required' })
             .min(1, { message: 'Code is required' })
             .max(20, { message: 'Code must not exceed 20 characters' }),
-        // version: z
-        //     .string({ required_error: 'Version is required' })
-        //     .min(1, { message: 'Version is required' }),
         name: z
             .string({ required_error: 'Name is required' })
             .min(1, { message: 'Name is required' })
@@ -49,15 +46,13 @@ const validationSchema = toTypedSchema(
             .optional(),
         topicData: z.tuple([
             z.array(z.object({
-                id: z.number(),
                 label: z.string(),
-                value: z.string()
+                value: z.number()
             })),
             z.array(z.object({
-                id: z.number(),
                 label: z.string(),
-                value: z.string()
-            })).min(1, { message: 'At least one topic must be selected' }) // Second array for selected topics
+                value: z.number()
+            })).min(1, { message: "At least one topic must be selected" })
         ])
     })
 )
@@ -67,7 +62,6 @@ const { handleSubmit, errors, setFieldError } = useForm({
     validationSchema
 })
 const { value: code } = useField('code')
-// const { value: version } = useField('version')
 const { value: name } = useField('name')
 const { value: technicalGroupType } = useField('technicalGroupType')
 const { value: department } = useField('department')
@@ -75,8 +69,9 @@ const { value: description } = useField('description')
 const { value: topicData } = useField('topicData')
 
 const onSubmit = handleSubmit((values) => {
+    console.log("sdadasds");
     // Extract the topic IDs (assuming `id` exists in topic objects)
-    const selectedTopics = values.topicData[1].map(topic => topic.id)
+    const selectedTopics = values.topicData[1].map(topic => topic.value)
     const payload = {
         trainingProgramName: values.name,
         code: values.code,
@@ -96,7 +91,6 @@ const onSubmit = handleSubmit((values) => {
         router.push('/content-management/training-program')
 
     }).catch((error) => {
-        console.error('Error updating training program:', error.response.data.error)
         setFieldError('code', error.response.data.trainingProgram)
         // setFieldError('version', error.response.data.version)
     })
@@ -105,15 +99,14 @@ const onSubmit = handleSubmit((values) => {
 const navigateToBack = () => {
     router.push('/content-management/training-program')
 }
-
+const data = ref(null)
 onMounted(() => {
     topicStore.fetchActiveTopics().then(() => {
-        const data = topicStore.topics.map(topic => ({
+        data.value = topicStore.topics.map(topic => ({
             label: `${topic.code} - ${topic.name} - ${topic.version}`,
-            value: topic.code,
-            id: topic.id
+            value: topic.id,
         }))
-        topicData.value = [data, []]
+        topicData.value = [data.value, []]
     })
 
     technicalGroupStore.fetchTechnicalGroup().then(() => {
@@ -127,8 +120,17 @@ onMounted(() => {
 })
 
 const onChange = (value) => {
-    topicData.value.target = value // Update the selected topics
+    topicData.value[0] = value[0]
+    topicData.value[1] = value[1]
 }
+
+const handleChange = (event) => {
+    const search = event.target.value;
+    const sourceData = data.value.filter(item => item.label.toLowerCase().includes(search.toLowerCase()))
+    const targetData = topicData.value[1].map(item => item.value)
+    const filteredData = sourceData.filter(item => !targetData.includes(item.value));
+    topicData.value[0] = filteredData
+};
 </script>
 
 <template>
@@ -143,7 +145,7 @@ const onChange = (value) => {
 
             <form @submit.prevent="onSubmit">
                 <div class="flex gap-4">
-                    <div class="flex-1 ">
+                    <div class="flex-grow-[4]">
                         <div class="flex flex-col md:flex-row gap-4 mt-3">
                             <div class="flex flex-wrap gap-2 w-full">
                                 <label for="Code">
@@ -157,21 +159,9 @@ const onChange = (value) => {
                         <div class="flex flex-wrap gap-2 w-full">
                             <small v-if="errors.code" class="text-red-600"> {{ errors.code }}</small>
                         </div>
-
-                        <!--                        <div class="flex flex-col md:flex-row gap-4 mt-3">-->
-                        <!--                            <div class="flex flex-wrap gap-2 w-full">-->
-                        <!--                                <label for="Version">-->
-                        <!--                                    Version-->
-                        <!--                                    <i class="text-red-600">*</i>-->
-                        <!--                                </label>-->
-                        <!--                                <InputText id="Version" v-model="version" :class="`{ 'p-invalid': errors.version }`"-->
-                        <!--                                    placeholder="Version" type="text" />-->
-                        <!--                            </div>-->
-                        <!--                        </div>-->
                         <div class="flex flex-wrap gap-2 w-full">
                             <small v-if="errors.version" class="text-red-600"> {{ errors.version }}</small>
                         </div>
-
                         <div class="flex flex-col md:flex-row gap-4 mt-3">
                             <div class="flex flex-wrap gap-2 w-full">
                                 <label for="Name">
@@ -219,14 +209,18 @@ const onChange = (value) => {
                         </div>
                     </div>
 
-                    <div class="flex-1">
-                        <div class="mt-2">
+                    <div class="flex-grow-[6]">
+                        <div class="mt-5">
                             <label for="topicData">
                                 Topic
                                 <i class="text-red-600">*</i>
                             </label>
-                            <PickList v-model="topicData" class="mt-3" breakpoint="1400px" @update:modelValue="onChange"
-                                dataKey="value">
+                            <div class="responsive-div">
+                                <InputText class="h-10 w-full" @input="handleChange" type="text" id="search"
+                                    placeholder="Choose or Search a Topic" />
+                            </div>
+                            <PickList style="width: 100%; height: 350px;" v-model="topicData" class="mt-3"
+                                scrollHeight="25rem" breakpoint=" 1400px" @update:modelValue="onChange" dataKey="value">
                                 <template #option="{ option }">
                                     {{ option.label }}
                                 </template>
@@ -254,3 +248,33 @@ const onChange = (value) => {
         </Fluid>
     </div>
 </template>
+
+<style scoped>
+@media (max-width: 1400px) {
+    .responsive-div {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 1401px) and (max-width: 1528px) {
+    .responsive-div {
+        width: 38%;
+        margin-left: 7%;
+    }
+}
+
+@media (min-width: 1529px) and (max-width: 1909px) {
+    .responsive-div {
+        width: 38.5%;
+        margin-left: 7%;
+    }
+}
+
+@media (min-width: 1909px) {
+    .responsive-div {
+        width: 41.5%;
+        margin-left: 5%;
+    }
+}
+</style>

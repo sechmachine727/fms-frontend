@@ -1,11 +1,11 @@
 <script setup>
-import { useClassStore } from '@/stores/groupStore' // Correct the import to use `useTraineeStore`
-import { getStatusArray, getStatusLabel } from '@/utils/status'
-import { getUserInfo } from '@/utils/token'
-import Toast from 'primevue/toast'
-import { useToast } from 'primevue/usetoast'
-import { onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useClassStore } from '@/stores/groupStore'; // Correct the import to use `useTraineeStore`
+import { getStatusArray, getStatusLabel } from '@/utils/status';
+import { getUserInfo } from '@/utils/token';
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
+import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 const classes = ref([]);
 const classStore = useClassStore();
@@ -101,7 +101,7 @@ const userRoles = getUserInfo();
 </script>
 
 <template>
-    <div class="card">
+    <div class="card" style="height: calc(100vh - 4rem - 2rem);">
         <Toast />
         <div class=" mb-4 flex justify-between items-center">
             <span class="font-semibold text-2xl">Group List ({{ classes?.length }})</span>
@@ -116,14 +116,26 @@ const userRoles = getUserInfo();
                     optionLabel="name" filter placeholder="Filter Status" id="department" :maxSelectedLabels="3"
                     class="w-full" />
             </div>
+            <div class="flex flex-wrap w-52 gap-2">
+                <label for="technical">Technical Group</label>
+                <MultiSelect id="technical" v-model="technicalGroupOptionsSearch" :maxSelectedLabels="2"
+                    :options="technicalGroups" class="w-full" filter optionLabel="code"
+                    placeholder="Filter Technical Group" @change="handleTechnicalGroupChange" />
+            </div>
+            <div class="flex flex-wrap w-52 gap-2">
+                <label for="site">Site</label>
+                <MultiSelect id="site" v-model="siteOptionsSearch" :maxSelectedLabels="2" :options="sites"
+                    class="w-full" filter optionLabel="siteName" placeholder="Filter Site" @change="handleSiteChange" />
+            </div>
             <div class="flex flex-wrap w-72 gap-2">
                 <label for="search">Search</label>
                 <InputText class="h-10 w-full" v-model="searchQuery" type="text" id="search"
                     placeholder="Enter code, name, training program" @keyup.enter="handleSearch" />
             </div>
         </div>
-        <DataTable :value="classes" :rows="10" scrollable scrollHeight="300px" :rowsPerPageOptions="[10, 20, 30, 50]"
-            currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
+        <DataTable :value="classes" size="small" :rows="6" scrollHeight="calc(100vh - 12rem)" scrollable
+            :rowsPerPageOptions="[6, 20, 30, 50]" currentPageReportTemplate="{first} to {last} of {totalRecords}"
+            paginator
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
             tableStyle="min-width: 50rem" class="mt-4">
             <Column field="no" header="No" style="min-width: 50px">

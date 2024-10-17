@@ -162,7 +162,7 @@ const confirmDeactive = (value) => {
                 toast.add({ severity: 'success', summary: 'Topics successfully deactivated', life: 3000 })
             }).catch((errors) => {
                 if (errors.status === 400) {
-                  toast.add({ severity: 'error', summary: 'Can not deactivate topic that has been used ', life: 3000 })
+                    toast.add({ severity: 'error', summary: 'Can not deactivate topic that has been used ', life: 3000 })
                 }
             })
         }
@@ -285,7 +285,7 @@ const userRoles = getUserInfo();
 </script>
 
 <template>
-    <div class="card">
+    <div class="card" style="height: calc(100vh - 4rem - 2rem);">
         <div class="flex items-center justify-between mb-2">
             <h1 class="text-2xl">Topic Configuration ({{ topics?.length }})</h1>
             <Button label="Import Topic" v-if="userRoles.roles.includes('ROLE_CONTENT_MANAGER')"
@@ -307,10 +307,10 @@ const userRoles = getUserInfo();
                 </div>
             </div>
 
-            <DataTable :rows="6" :rowsPerPageOptions="[6, 12, 20, 50]" :value="topics"
+            <DataTable :rows="5" :rowsPerPageOptions="[5, 12, 20, 50]" :value="topics"
                 currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                 paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                class="mt-4" tableStyle="min-width: 50rem">
+                class="mt-4">
                 <div class="flex items-center justify-between">
                     <!-- Dialog -->
                     <Dialog v-model:visible="showDialog" class="w-1/3" header="Import Topic" modal
@@ -362,7 +362,7 @@ const userRoles = getUserInfo();
                         </router-link>
                     </template>
                 </Column>
-              <Column field="version" header="Version" style="width: 10%"></Column>
+                <Column field="version" header="Version" style="width: 10%"></Column>
                 <Column field="technicalGroup.code" header="Technical Group" style="width: 15%"></Column>
                 <Column field="status" header="Status" style="width: 10%">
                     <template #body="slotProps">
