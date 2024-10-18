@@ -343,7 +343,7 @@ const navigateToBack = () => {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.deliveryType"> {{
                                             errors.deliveryType
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-3" v-if="errors.traineeType"> {{
@@ -384,12 +384,12 @@ const navigateToBack = () => {
                                     <div class="flex flex-wrap gap-2 w-full ">
                                         <small class="text-red-600 ml-2" v-if="errors.technicalGroup"> {{
                                             errors.technicalGroup
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.trainingProgram"> {{
                                             errors.trainingProgram
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                 </div>
                                 <div class="flex flex-col md:flex-row gap-4 ">
@@ -458,7 +458,7 @@ const navigateToBack = () => {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 " v-if="errors.plannedTrainee"> {{
                                             errors.plannedTrainee
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.planRevenue"> {{
@@ -491,7 +491,7 @@ const navigateToBack = () => {
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 " v-if="errors.expectedStart"> {{
                                             errors.expectedStart
-                                        }}</small>
+                                            }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.expectedEnd"> {{
@@ -517,11 +517,11 @@ const navigateToBack = () => {
                                 <i class="text-red-600">*</i>
                             </label>
                             <MultiSelect v-model="classAdmins" :options="classAdminOptions" optionLabel="account" filter
-                                         id="classAdminOptions" :maxSelectedLabels="3" placeholder="Select Admin"
-                                         class="w-full md:w-80 mt-2" />
+                                id="classAdminOptions" :maxSelectedLabels="3" placeholder="Select Admin"
+                                class="w-full md:w-80 mt-2" />
                             <small class="text-red-600 " v-if="errors.classAdminOptions"> {{
                                 errors.classAdminOptions
-                            }}</small>
+                                }}</small>
                         </AccordionContent>
                     </AccordionPanel>
                 </Accordion>
@@ -591,3 +591,16 @@ const navigateToBack = () => {
         </Dialog>
     </div>
 </template>
+
+
+
+<!-- .superRefine((data, ctx) => {
+if (contractType.value.code === "Official") {
+if (!email.value.endsWith("@fpt.com")) {
+ctx.addIssue({
+path: ['email'],
+message: 'Account must be end with @fpt.com',
+});
+}
+}
+}) -->

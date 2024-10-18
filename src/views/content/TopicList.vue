@@ -2,8 +2,8 @@
 import ButtonComponent from '@/components/ButtonComponent.vue'
 import router from '@/router'
 import { useDownloadFileStore } from '@/stores/downloadFileStore'
-import { useTechnicalGroupStore } from '@/stores/technicalGroupStore'
 import { useImportFileStore } from '@/stores/importFileStore'
+import { useTechnicalGroupStore } from '@/stores/technicalGroupStore'
 import { useTopicStore } from '@/stores/topicStore'
 import { getUserInfo } from '@/utils/token'
 import Toast from 'primevue/toast'
@@ -184,7 +184,7 @@ const confirmDeactive = (value) => {
                 toast.add({ severity: 'success', summary: 'Topics successfully deactivated', life: 3000 })
             }).catch((errors) => {
                 if (errors.status === 400) {
-                  toast.add({ severity: 'error', summary: 'Can not deactivate topic that has been used ', life: 3000 })
+                    toast.add({ severity: 'error', summary: 'Can not deactivate topic that has been used ', life: 3000 })
                 }
             })
         }
@@ -313,7 +313,7 @@ const userRoles = getUserInfo();
 <template>
     <div class="card">
         <div class="flex items-center justify-between mb-2">
-            <h1 class="text-2xl">Topic Configuration ({{ topics?.length }})</h1>
+            <h1 class="!font-semibold text-2xl">Topic Configuration ({{ topics?.length }})</h1>
             <Button label="Import Topic" v-if="userRoles.roles.includes('ROLE_CONTENT_MANAGER')"
                 @click="showDialog = true" />
         </div>
@@ -329,8 +329,8 @@ const userRoles = getUserInfo();
                 <div class="flex flex-wrap w-50 gap-2">
                     <label for="technical">Technical Group</label>
                     <MultiSelect id="technical" v-model="technicalGroupOptionsSearch" :maxSelectedLabels="2"
-                                 :options="technicalGroups" class="w-full" filter optionLabel="code"
-                                 placeholder="Filter Technical Group" @change="handleTechnicalGroupChange" />
+                        :options="technicalGroups" class="w-full" filter optionLabel="code"
+                        placeholder="Filter Technical Group" @change="handleTechnicalGroupChange" />
                 </div>
                 <div class="flex flex-wrap w-96 gap-2 mt-1">
                     <label for="search">Search</label>
@@ -340,10 +340,10 @@ const userRoles = getUserInfo();
                 <Button class="mt-8" label="Reset" severity="secondary" @click="clearSearch" />
             </div>
 
-            <DataTable :rows="6" :rowsPerPageOptions="[6, 12, 20, 50]" :value="topics"
+            <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="topics"
                 currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                 paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                class="mt-4" tableStyle="min-width: 50rem">
+                tableStyle="min-width: 50rem">
                 <div class="flex items-center justify-between">
                     <!-- Dialog -->
                     <Dialog v-model:visible="showDialog" class="w-1/3" header="Import Topic" modal
@@ -380,6 +380,11 @@ const userRoles = getUserInfo();
                         </template>
                     </Dialog>
                 </div>
+                <Column header="No." style="min-width: 70px">
+                    <template #body="slotProps">
+                        {{ slotProps.index + 1 }}
+                    </template>
+                </Column>
                 <Column field="code" header="Topic Code" style="width: 20%">
                     <template #body="slotProps">
                         <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }"
@@ -395,7 +400,7 @@ const userRoles = getUserInfo();
                         </router-link>
                     </template>
                 </Column>
-              <Column field="version" header="Version" style="width: 10%"></Column>
+                <Column field="version" header="Version" style="width: 10%"></Column>
                 <Column field="technicalGroup.code" header="Technical Group" style="width: 15%"></Column>
                 <Column field="status" header="Status" style="width: 10%">
                     <template #body="slotProps">
@@ -454,12 +459,6 @@ const userRoles = getUserInfo();
     </div>
 </template>
 <style>
-.text-2xl {
-    font-size: 1.5rem;
-    line-height: 2rem;
-    font-weight: 700;
-}
-
 .router-link-active {
     color: #2196F3;
 }
@@ -469,5 +468,9 @@ const userRoles = getUserInfo();
     text-overflow: ellipsis;
     white-space: nowrap;
     display: inline-block;
+}
+
+.p-datatable-table-container {
+    height: calc(100vh - 22.7rem);
 }
 </style>

@@ -1,7 +1,7 @@
 .layout-sidebar {
     position: fixed;
     width: 20.2rem;
-    height: 100vh;
+    height: calc(100vh - 4rem - 2rem); /* Chiều cao linh hoạt theo màn hình */
     z-index: 999;
     overflow-y: auto;
     user-select: none;

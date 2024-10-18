@@ -1,5 +1,6 @@
 <script setup>
 import { useClassStore } from "@/stores/groupStore"; // Correct the import to use `useTraineeStore`
+import { getStatusLabel } from "@/utils/status";
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -11,28 +12,6 @@ onMounted(() => {
     classStore.fetchInprogressClassList();
     classes.value = classStore.classes;
 })
-const getStatusLabel = (status) => {
-    switch (status) {
-        case 'Active':
-            return 'success';
-        case 'Planning':
-            return 'secondary';
-        case 'Assign':
-            return 'info';
-        case 'Pending':
-            return 'warn';
-        case 'Close':
-            return 'danger';
-        case 'Reviewing':
-            return 'warn';
-        case 'In Progress':
-            return 'info';
-        case 'Closed':
-            return 'contrast';
-        default:
-            return null;
-    }
-};
 
 const navigateToAdd = () => {
     router.push('/group-management/add');
@@ -50,7 +29,7 @@ const navigateToAdd = () => {
         <DataTable :value="classes" :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]"
             currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-            tableStyle="min-width: 50rem" scrollable scrollHeight="500px" class="mt-6">
+            scrollable tableStyle="min-width: 50rem">
             <Column field="no" header="No" style="min-width: 100px"></Column>
             <Column field="classCode" header="Class Code" style="min-width: 100px"></Column>
             <Column field="traineetype" header="Trainee Type" style="min-width: 150px"></Column>
@@ -77,12 +56,8 @@ const navigateToAdd = () => {
     </div>
 </template>
 
-<style scoped lang="scss">
-:deep(.p-datatable-frozen-tbody) {
-    font-weight: bold;
-}
-
-:deep(.p-datatable-scrollable .p-frozen-column) {
-    font-weight: bold;
+<style>
+.p-datatable-table-container {
+    height: calc(100vh - 18rem);
 }
 </style>

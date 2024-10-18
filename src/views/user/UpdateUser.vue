@@ -64,6 +64,15 @@ const validationSchema = toTypedSchema(
                 id: z.number({ required_error: "Department is required" }).min(1, { message: "Department is required" }),
             }),
         status: z.boolean().default(false),
+    }).superRefine((data, ctx) => {
+        if (contractType.value.code === "Official") {
+            if (!email.value.endsWith("@fpt.com")) {
+                ctx.addIssue({
+                    path: ['email'],
+                    message: contractType.value.code === 'Official' ? 'Account must be end with @fpt.com' : '',
+                });
+            }
+        }
     })
 );
 

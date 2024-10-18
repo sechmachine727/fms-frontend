@@ -1,10 +1,10 @@
 <script setup>
-import ButtonComponent from '@/components/ButtonComponent.vue'
-import router from '@/router'
-import { useClassStore } from '@/stores/groupStore' // Correct the import to use `useTraineeStore`
-import { getStatusLabel } from '@/utils/status'
-import { computed, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import ButtonComponent from '@/components/ButtonComponent.vue';
+import router from '@/router';
+import { useClassStore } from '@/stores/groupStore'; // Correct the import to use `useTraineeStore`
+import { getStatusLabel } from '@/utils/status';
+import { computed, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 
 const classe = ref();
 const classStore = useClassStore();
@@ -72,7 +72,7 @@ const navigateToEdit = (id) => {
             <div class="flex justify-between items-center mb-4">
                 <span class="font-semibold text-xl" v-if="classe">
                     Group Details : {{ classe?.groupCode }}
-                    <Tag :value="classe.status" :class="getStatusLabel(classe?.statuss)" />
+                    <Tag :value="classe.status" :severity="getStatusLabel(classe?.status)" />
                 </span>
             </div>
             <Divider />
@@ -81,14 +81,14 @@ const navigateToEdit = (id) => {
                     <div class="general-info mb-8">
                         <table class="w-full border-collapse">
                             <tbody>
-                            <tr v-for="classDetail in groupInfo" :key="classDetail.label">
-                                <td class="highlight-label-column">{{ classDetail.label1 }}</td>
-                                <td>{{ classDetail.value1 }}</td>
-                                <td class="highlight-label-column">{{ classDetail.label2 }}</td>
-                                <td>{{ classDetail.value2 }}</td>
-                                <td class="highlight-label-column">{{ classDetail.label3 }}</td>
-                                <td>{{ classDetail.value3 }}</td>
-                            </tr>
+                                <tr v-for="classDetail in groupInfo" :key="classDetail.label">
+                                    <td class="highlight-label-column">{{ classDetail.label1 }}</td>
+                                    <td>{{ classDetail.value1 }}</td>
+                                    <td class="highlight-label-column">{{ classDetail.label2 }}</td>
+                                    <td>{{ classDetail.value2 }}</td>
+                                    <td class="highlight-label-column">{{ classDetail.label3 }}</td>
+                                    <td>{{ classDetail.value3 }}</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
