@@ -1,4 +1,4 @@
-// stores/traineeStore.js
+// stores/importFileStore.js
 import importFileApi from '@/api/importFileApi'
 import { defineStore } from 'pinia'
 
@@ -9,18 +9,20 @@ export const useImportFileStore = defineStore('importFileStore', {
     }),
 
     actions: {
-        async fetchImportFile(fileData) {
+        async fetchImportFile(fileData, confirm) {
             try {
-                const result = await importFileApi.post(fileData)
+                // Initial request with the provided file and confirm flag
+                const result = await importFileApi.post(fileData, confirm)
                 this.result = result
                 return result
             } catch (error) {
-                console.error('Failed to import file', error)
-                throw error
+                if (error.response && error.response.status === 409) {
+                    console.error(error)
+                    throw error
+                }
             }
-        }
+        },
     },
 
     getters: {}
 })
-
