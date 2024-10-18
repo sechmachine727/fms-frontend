@@ -3,6 +3,7 @@ import { useClassStore } from '@/stores/groupStore' // Correct the import to use
 import { getStatusLabel } from '@/utils/status'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import ButtonComponent from '@/components/ButtonComponent.vue'
 
 const classes = ref([]);
 const classStore = useClassStore();
