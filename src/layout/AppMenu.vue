@@ -1,7 +1,7 @@
 <script setup>
-import { getUserInfo } from '@/utils/token';
-import { computed, ref } from 'vue';
-import AppMenuItem from './AppMenuItem.vue';
+import { getUserInfo } from '@/utils/token'
+import { computed, ref } from 'vue'
+import AppMenuItem from './AppMenuItem.vue'
 
 const userRoles = getUserInfo(); // Mảng vai trò của người dùng hiện tại
 
@@ -18,7 +18,12 @@ const model = ref([
                 ],
             },
             { label: 'Trainer management', icon: 'pi pi-fw pi-user', to: '#', role: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER'] },
-            { label: 'Trainee management', icon: 'pi pi-fw pi-list', to: '#', role: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER'] },
+            {
+                label: 'Trainee management',
+                icon: 'pi pi-fw pi-user-plus',
+                to: '/trainee-management/trainees',
+                role: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER']
+            },
             {
                 label: 'Content Management',
                 icon: 'pi pi-fw pi-book',
@@ -54,7 +59,7 @@ const model = ref([
                 ],
             },
             { label: 'Technical Group management', icon: 'pi pi-fw pi-list', to: '#', role: ['ROLE_CONTENT_MANAGER'] },
-            { label: 'Trainee Type management', icon: 'pi pi-fw pi-list', to: '#', role: ['ROLE_CONTENT_MANAGER'] },
+            { label: 'Trainee Type management', icon: 'pi pi-fw pi-list', role: ['ROLE_CONTENT_MANAGER'] },
             { label: 'Site management', icon: 'pi pi-fw pi-list', to: '#', role: ['ROLE_FMS_ADMIN'] },
             { label: 'Location management', icon: 'pi pi-fw pi-list', to: '#', role: ['ROLE_FMS_ADMIN'] },
             { label: 'FAQs', icon: 'pi pi-fw pi-question-circle', to: '/#', role: ['all'] },

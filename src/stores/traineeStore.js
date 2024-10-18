@@ -1,6 +1,6 @@
 // stores/traineeStore.js
-import traineeApi from "@/api/traineeApi";
-import { defineStore } from "pinia";
+import traineeApi from '@/api/traineeApi'
+import { defineStore } from 'pinia'
 
 export const useTraineeStore = defineStore("traineeStore", {
     state: () => ({
@@ -10,9 +10,9 @@ export const useTraineeStore = defineStore("traineeStore", {
     }),
 
     actions: {
-        async fetchTrainees(params) {
+        async fetchTrainees() {
             try {
-                this.trainees = await traineeApi.get(params);
+                this.trainees = await traineeApi.get()
             } catch (error) {
                 console.error("Failed to fetch trainees", error);
             } finally {
@@ -20,13 +20,11 @@ export const useTraineeStore = defineStore("traineeStore", {
             }
         },
 
-        async fetchTraineeDetail(params) {
+        async fetchTraineeDetail(id) {
             try {
-                this.trainee = await traineeApi.getDetail(params);
+                this.trainee = await traineeApi.getDetail(id)
             } catch (error) {
                 console.error("Failed to fetch trainee detail", error);
-            } finally {
-                this.isLoading = false;
             }
         },
 

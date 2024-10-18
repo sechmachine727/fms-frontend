@@ -1,6 +1,6 @@
-import AppLayout from '@/layout/AppLayout.vue';
-import { getUserInfo } from '@/utils/token';
-import { createRouter, createWebHistory } from 'vue-router';
+import AppLayout from '@/layout/AppLayout.vue'
+import { getUserInfo } from '@/utils/token'
+import { createRouter, createWebHistory } from 'vue-router'
 
 function isLoggedIn() {
     const userInfo = getUserInfo();
@@ -98,6 +98,20 @@ const router = createRouter({
                     meta: { roles: ['ROLE_FMS_ADMIN'] },
                     component: () => import('@/views/templateEmail/TemplateEmailList.vue')
                 },
+                {
+                    path: '/trainee-management/trainees',
+                    name: 'trainees',
+                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_CONTENT_MANAGER', 'ROLE_DELIVERABLES_MANAGER'] },
+                    component: () => import('@/views/trainee/TraineeList.vue'),
+                    props: true // Pass route params as props to the component
+                },
+                {
+                    path: '/trainee-management/trainee/detail/:id',
+                    name: 'trainee-detail',
+                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_CONTENT_MANAGER', 'ROLE_DELIVERABLES_MANAGER'] },
+                    component: () => import('@/views/trainee/TraineeDetail.vue'),
+                    props: true // Pass route params as props to the component
+                }
             ]
         },
         {
