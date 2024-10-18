@@ -1,7 +1,7 @@
 <script setup>
 import { useClassStore } from '@/stores/groupStore'
-import { useTechnicalGroupStore } from '@/stores/technicalGroupStore'
 import { useSiteStore } from '@/stores/siteStore'
+import { useTechnicalGroupStore } from '@/stores/technicalGroupStore'
 import { getStatusArray, getStatusLabel } from '@/utils/status'
 import { getUserInfo } from '@/utils/token'
 import Toast from 'primevue/toast'
@@ -167,14 +167,13 @@ onMounted(() => {
             <div class="flex flex-wrap w-52 gap-2">
                 <label for="technical">Technical Group</label>
                 <MultiSelect id="technical" v-model="technicalGroupOptionsSearch" :maxSelectedLabels="2"
-                             :options="technicalGroups" class="w-full" filter optionLabel="code"
-                             placeholder="Filter Technical Group" @change="handleTechnicalGroupChange" />
+                    :options="technicalGroups" class="w-full" filter optionLabel="code"
+                    placeholder="Filter Technical Group" @change="handleTechnicalGroupChange" />
             </div>
             <div class="flex flex-wrap w-52 gap-2">
                 <label for="site">Site</label>
-                <MultiSelect id="site" v-model="siteOptionsSearch" :maxSelectedLabels="2"
-                             :options="sites" class="w-full" filter optionLabel="siteName"
-                             placeholder="Filter Site" @change="handleSiteChange" />
+                <MultiSelect id="site" v-model="siteOptionsSearch" :maxSelectedLabels="2" :options="sites"
+                    class="w-full" filter optionLabel="siteName" placeholder="Filter Site" @change="handleSiteChange" />
             </div>
             <div class="flex flex-wrap w-72 gap-2">
                 <label for="search">Search</label>
@@ -184,10 +183,10 @@ onMounted(() => {
             <Button class="mt-8" label="Reset" severity="secondary" @click="clearSearch" />
 
         </div>
-        <DataTable :value="classes" :rows="10" scrollable scrollHeight="300px" :rowsPerPageOptions="[10, 20, 30, 50]"
+        <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="classes"
             currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-            tableStyle="min-width: 50rem" class="mt-4">
+            scrollable tableStyle="min-width: 50rem">
             <Column field="no" header="No" style="min-width: 50px">
                 <template #body="slotProps">
                     {{ classes.indexOf(slotProps.data) + 1 }}
@@ -243,12 +242,8 @@ onMounted(() => {
     </div>
 </template>
 
-<style scoped lang="scss">
-:deep(.p-datatable-frozen-tbody) {
-    font-weight: bold;
-}
-
-:deep(.p-datatable-scrollable .p-frozen-column) {
-    font-weight: bold;
+<style>
+.p-datatable-table-container {
+    height: calc(100vh - 22.7rem);
 }
 </style>

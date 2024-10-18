@@ -280,12 +280,11 @@ onMounted(() => {
 <template>
     <div class="card">
         <div class="flex items-center justify-between mb-2">
-            <h1 class="text-2xl">Training Program List ({{ trainingPrograms?.length }})</h1>
+            <h1 class="!font-semibold text-2xl">Training Program List ({{ trainingPrograms?.length }})</h1>
             <Button label="Add Training Program" v-if="userRoles.roles.includes('ROLE_CONTENT_MANAGER')"
                 @click="navigateToAdd" />
         </div>
         <Divider />
-
         <Toast />
         <div>
             <div class="flex flex-col md:flex-row gap-4">
@@ -303,8 +302,8 @@ onMounted(() => {
                 <div class="flex flex-wrap w-52 gap-2">
                     <label for="technical">Technical Group</label>
                     <MultiSelect id="technical" v-model="technicalGroupOptionsSearch" :maxSelectedLabels="2"
-                                 :options="technicalGroups" class="w-full" filter optionLabel="code"
-                                 placeholder="Filter Technical Group" @change="handleTechnicalGroupChange" />
+                        :options="technicalGroups" class="w-full" filter optionLabel="code"
+                        placeholder="Filter Technical Group" @change="handleTechnicalGroupChange" />
                 </div>
                 <div class="flex flex-wrap w-96 gap-2">
                     <label for="search">Search</label>
@@ -317,7 +316,7 @@ onMounted(() => {
             <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="trainingPrograms"
                 currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                 paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                class="mt-4" scrollHeight="400px" scrollable tableStyle="min-width: 50rem">
+                scrollable tableStyle="min-width: 50rem">
 
                 <Column header="No." style="min-width: 70px">
                     <template #body="slotProps">
@@ -443,13 +442,11 @@ onMounted(() => {
     </div>
 </template>
 <style>
-.text-2xl {
-    font-size: 1.5rem;
-    line-height: 2rem;
-    font-weight: 700;
-}
-
 .router-link-active {
     color: #2196F3;
+}
+
+.p-datatable-table-container {
+    height: calc(100vh - 22.7rem);
 }
 </style>
