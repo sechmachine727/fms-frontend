@@ -394,7 +394,7 @@ const userRoles = getUserInfo();
             <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="topics"
                 currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                 paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                tableStyle="min-width: 50rem">
+                       class="mt-1" tableStyle="min-width: 50rem">
                 <div class="flex items-center justify-between">
                     <!-- Dialog -->
                     <Dialog v-model:visible="showDialog" class="w-1/3" header="Import Topic" modal
@@ -522,6 +522,6 @@ const userRoles = getUserInfo();
 }
 
 .p-datatable-table-container {
-    height: calc(100vh - 22.7rem);
+    height: calc(100vh - 23.2rem);
 }
 </style>

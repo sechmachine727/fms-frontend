@@ -406,7 +406,7 @@ const closePopup = () => {
                 <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="users"
                     currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                    scrollable tableStyle="min-width: 50rem">
+                           class="mt-1" scrollable tableStyle="min-width: 50rem">
                     <Column header="No" style="width: 50px">
                         <template #body="slotProps">
                             {{ users.indexOf(slotProps.data) + 1 }}
@@ -579,6 +579,6 @@ const closePopup = () => {
 </template>
 <style>
 .p-datatable-table-container {
-    height: calc(100vh - 22.7rem);
+    height: calc(100vh - 23.1rem);
 }
 </style>
