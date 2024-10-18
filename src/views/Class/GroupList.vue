@@ -65,6 +65,10 @@ const buildQueryObject = () => {
         const technicalGroupCode = technicalGroupOptionsSearch.value.map(technical => technical.technicalGroupCode)
         query.technical = technicalGroupCode.join(',')
     }
+    if (siteOptionsSearch.value.length > 0) {
+        const site = siteOptionsSearch.value.map(site => site.siteName)
+        query.site = site.join(',')
+    }
     if (statusOptions.value.length > 0) {
         const statusNames = statusOptions.value.map(status => status.id);
         query.status = statusNames.join(',');

@@ -62,27 +62,40 @@ onMounted(() => {
         <div class="p-4">
             <div class="flex justify-between items-center mb-4">
                 <span v-if="traineeDetail" class="font-semibold text-xl">
-                    Trainee Details : {{ traineeDetail?.name }}
+                    Trainee Details: {{ traineeDetail?.name }}
                 </span>
             </div>
 
             <Divider />
             <TabView>
                 <TabPanel header="Trainee Information">
-                    <div class="general-info mb-8">
-                        <table class="w-full border-collapse">
-                            <tbody>
-                            <tr v-for="trainee in generalInfo" :key="trainee.label">
-                                <td class="highlight-label-column">{{ trainee.label1 }}</td>
-                                <td>{{ trainee.value1 }}</td>
-                                <td class="highlight-label-column">{{ trainee.label2 }}</td>
-                                <td>{{ trainee.value2 }}</td>
-                                <td class="highlight-label-column">{{ trainee.label3 }}</td>
-                                <td>{{ trainee.value3 }}</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <Accordion>
+                        <AccordionPanel value="0">
+                            <AccordionHeader>General Info</AccordionHeader>
+                            <AccordionContent>
+                                <div class="general-info mb-8">
+                                    <table class="w-full border-collapse">
+                                        <tbody>
+                                        <tr v-for="trainee in generalInfo" :key="trainee.label">
+                                            <td class="highlight-label-column">{{ trainee.label1 }}</td>
+                                            <td>{{ trainee.value1 }}</td>
+                                            <td class="highlight-label-column">{{ trainee.label2 }}</td>
+                                            <td>{{ trainee.value2 }}</td>
+                                            <td class="highlight-label-column">{{ trainee.label3 }}</td>
+                                            <td>{{ trainee.value3 }}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </AccordionContent>
+                        </AccordionPanel>
+                    </Accordion>
+
+                    <Accordion>
+                        <AccordionPanel value="0">
+                            <AccordionHeader>Entry Info</AccordionHeader>
+                        </AccordionPanel>
+                    </Accordion>
 
                     <div class="mt-4 flex justify-between">
                         <div>

@@ -2,7 +2,7 @@
 import router from '@/router'
 import { useTraineeStore } from '@/stores/traineeStore'
 import { getStatusLabel } from '@/utils/status'
-import { getUserInfo } from '@/utils/token'
+// import { getUserInfo } from '@/utils/token'
 import Toast from 'primevue/toast'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -13,54 +13,56 @@ const traineeStore = useTraineeStore()
 const route = useRoute()
 const searchQuery = ref('')
 const statusOptions = ref('')
-const statuses = ref([
-    { id: 'All', name: 'All' },
-    { id: 'Reviewing', name: 'Reviewing' },
-    { id: 'Declined', name: 'Declined' },
-    { id: 'Active', name: 'Active' },
-    { id: 'Inactive', name: 'Inactive' }
-])
+
+// const statuses = ref([
+//     { id: 'All', name: 'All' },
+//     { id: 'Reviewing', name: 'Reviewing' },
+//     { id: 'Declined', name: 'Declined' },
+//     { id: 'Active', name: 'Active' },
+//     { id: 'Inactive', name: 'Inactive' }
+// ])
 const querySearchFromUrl = () => {
     const getQueryFromUrl = ref(route.query.q || '')
-    const getQueryActiveFromUrl = ref(route.query.active || '')
-    if (getQueryFromUrl.value !== '' || getQueryActiveFromUrl.value !== '') {
+    // const getQueryActiveFromUrl = ref(route.query.active || '' )
+    if (getQueryFromUrl.value !== '') {
         if (getQueryFromUrl.value !== '') {
             searchQuery.value = getQueryFromUrl.value
         }
 
-        if (getQueryActiveFromUrl.value !== '') {
-            const value = getQueryActiveFromUrl.value
-            statusOptions.value = { id: value, name: value }
-        }
+        // if (getQueryActiveFromUrl.value !== '') {
+        //     const value = getQueryActiveFromUrl.value
+        //     statusOptions.value = { id: value, name: value }
+        // }
         applyFilters()
     }
 }
+
 const buildQueryObject = () => {
     const query = {}
 
     if (searchQuery.value) {
         query.q = searchQuery.value
     }
-    if (statusOptions.value && statusOptions.value.id !== 'All') {
-        query.active = statusOptions.value.name // Adjust this to match your status logic
-    }
+    // if (statusOptions.value && statusOptions.value.id !== 'All') {
+    //     query.active = statusOptions.value.name // Adjust this to match your status logic
+    // }
 
     return query
 }
 const applyFilters = () => {
     const criteria = {
         searchQuery: searchQuery.value,
-        statusOptions: statusOptions.value
+        // statusOptions: statusOptions.value,
     }
-    traineeStore.fetchFilterTrainingPrograms(criteria)
-    trainees.value = traineeStore.filterTrainingPrograms
+    traineeStore.fetchFilterTrainee(criteria)
+    trainees.value = traineeStore.filterTrainees
 }
 
 const updateQueryParams = () => {
     // Push the constructed query object to the router
     const query = buildQueryObject()
     router.push({
-        path: '/trainee-management/trainee',
+        path: '/trainee-management/trainees',
         query: query
     })
     applyFilters()
@@ -72,20 +74,22 @@ const handleSearch = () => {
 
 const clearSearch = () => {
     searchQuery.value = ''
-    statusOptions.value = { id: 'All', name: 'All' }
+    // statusOptions.value = { id: 'All', name: 'All' }
     updateQueryParams()
 }
 
-const handleStatusChange = () => {
-    updateQueryParams()
-}
+// const handleStatusChange = () => {
+//     updateQueryParams()
+// }
 
-const userRoles = getUserInfo()
-const rolesForAccess = ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_CONTENT_MANAGER', 'ROLE_DELIVERABLES_MANAGER']
+
+// const userRoles = getUserInfo()
+// const rolesForAccess = ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_CONTENT_MANAGER', 'ROLE_DELIVERABLES_MANAGER']
 
 onMounted(() => {
     traineeStore.fetchTrainees().then(() => {
         trainees.value = traineeStore.trainees
+        querySearchFromUrl()
     })
 
 })
@@ -104,7 +108,7 @@ onMounted(() => {
         <div>
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="flex flex-col w-50 mt-1 gap-2">
-                    <label class="w-32" for="contractType">Active</label>
+                    <label class="w-32" for="contractType">Status</label>
                     <Select id="contractType" v-model="statusOptions" :options="statuses" class="w-full"
                             optionLabel="name" placeholder="Filter status" @change="handleStatusChange"></Select>
                 </div>
