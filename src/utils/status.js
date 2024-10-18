@@ -14,16 +14,19 @@ export const getStatusArray = () => {
 
 export const getStatusLabel = (status) => {
     switch (status) {
-       case 'Active':
+    case 'Planning':
+            return 'secondary'
+    case 'In progress':
+    case 'Active':
             return 'success'
-        case 'Inactive':
-        case 'Assigned':
+    case 'Inactive':
+    case 'Assigned':
             return 'warn'
-        case 'Declined':
+    case 'Declined':
             return 'danger'
-        case 'Reviewing':
+    case 'Reviewing':
             return 'info'
-        default:
+    default:
             return null
     }
 }

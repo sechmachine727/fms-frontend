@@ -54,14 +54,12 @@ const validationSchema = toTypedSchema(
             .optional(),
         topicData: z.tuple([
             z.array(z.object({
-                id: z.number(),
                 label: z.string(),
-                value: z.string()
+                value: z.number()
             })),
             z.array(z.object({
-                id: z.number(),
                 label: z.string(),
-                value: z.string()
+                value: z.number()
             })).nonempty({ message: 'At least one topic must be selected' }) // Second array for selected topics
         ])
     })
@@ -88,7 +86,7 @@ const onSubmit = handleSubmit((values) => {
         version: newVersion,
         description: values.description || '',  // Ensure description is not undefined
         technicalGroupId: values.technicalGroupCode.id,  // Extract technical group ID
-        topicIds: values.topicData[1].map(topic => topic.id)
+        topicIds: values.topicData[1].map(topic => topic.value)
     }
     trainingProgramStore.fetchUpdateTrainingProgram(trainingProgramId, payload).then(() => {
         toast.add({
@@ -100,9 +98,7 @@ const onSubmit = handleSubmit((values) => {
         router.push('/content-management/training-program')
 
     }).catch((error) => {
-        console.error('Error updating training program:', error.response.data.error)
         setFieldError('code', error.response.data.trainingProgram)
-        // setFieldError('version', error.message)
     })
 })
 
@@ -112,9 +108,10 @@ const navigateToBack = () => {
 }
 
 const onChange = (value) => {
-    topicData.value.target = value // Update the selected topics
+    topicData.value[0] = value[0]
+    topicData.value[1] = value[1]
 }
-
+const allTopics = ref(null)
 const route = useRoute()
 const trainingProgramId = route.params.id
 onMounted(async () => {
@@ -136,20 +133,18 @@ onMounted(async () => {
         // Lấy danh sách topic đã chọn từ topicInfoList
         const selectedTopics = trainingProgram.value.topicInfoList.map(topic => ({
             label: `${topic.topicCode} - ${topic.topicName} - ${topic.version}`,
-            value: topic.topicCode,
-            id: topic.id
+            value: topic.id,
         }))
         // Lấy tất cả các topic từ store
         await topicStore.fetchActiveTopics()
-        const allTopics = topicStore.topics.map(topic => ({
+        allTopics.value = topicStore.topics.map(topic => ({
             label: `${topic.code} - ${topic.name} - ${topic.version}`,
-            value: topic.code,
-            id: topic.id
+            value: topic.id,
         }));
 
         // Lọc các topic chưa chọn
         const selectedTopicValues = selectedTopics.map(topic => topic.value) // lấy các giá trị đã chọn
-        const availableTopics = allTopics.filter(topic => !selectedTopicValues.includes(topic.value))
+        const availableTopics = allTopics.value.filter(topic => !selectedTopicValues.includes(topic.value))
 
         // Đặt dữ liệu cho PickList (topic chưa chọn và những topic đã chọn)
         topicData.value = [availableTopics, selectedTopics]
@@ -163,7 +158,13 @@ onMounted(async () => {
     departments.value = departmentStore.departments
 });
 
-
+const handleChange = (event) => {
+    const search = event.target.value;
+    const sourceData = allTopics.value.filter(item => item.label.toLowerCase().includes(search.toLowerCase()))
+    const targetData = topicData.value[1].map(item => item.value)
+    const filteredData = sourceData.filter(item => !targetData.includes(item.value));
+    topicData.value[0] = filteredData
+};
 </script>
 
 <template>
@@ -178,7 +179,7 @@ onMounted(async () => {
 
             <form :value="trainingProgram" @submit.prevent="onSubmit">
                 <div class="flex gap-4">
-                    <div class="flex-1 ">
+                    <div class="flex-grow-[4]">
 
                         <div class="flex flex-col md:flex-row gap-4 mt-3">
                             <div class="flex flex-wrap gap-2 w-full">
@@ -194,21 +195,6 @@ onMounted(async () => {
                         <div class="flex flex-wrap gap-2 w-full">
                             <small v-if="errors.code" class="text-red-600"> {{ errors.code }}</small>
                         </div>
-
-                        <!--                        <div class="flex flex-col md:flex-row gap-4 mt-3">-->
-                        <!--                            <div class="flex flex-wrap gap-2 w-full">-->
-                        <!--                                <label for="Version">-->
-                        <!--                                    Version-->
-                        <!--                                    <i class="text-red-600">*</i>-->
-                        <!--                                </label>-->
-                        <!--                                <InputText id="Version" v-model="version" :class="`{ 'p-invalid': errors.version }`"-->
-                        <!--                                    placeholder="Version" type="text" />-->
-                        <!--                            </div>-->
-                        <!--                        </div>-->
-                        <!--                        <div class="flex flex-wrap gap-2 w-full">-->
-                        <!--                            <small v-if="errors.version" class="text-red-600"> {{ errors.version }}</small>-->
-                        <!--                        </div>-->
-
                         <div class="flex flex-col md:flex-row gap-4 mt-3">
                             <div class="flex flex-wrap gap-2 w-full">
                                 <label for="Name">
@@ -257,14 +243,18 @@ onMounted(async () => {
                         </div>
                     </div>
 
-                    <div class="flex-1">
-                        <div class="flex flex-wrap gap-2 w-full mt-3">
+                    <div class="flex-grow-[6]">
+                        <div class="mt-5">
                             <label for="topicData">
                                 Topic
                                 <i class="text-red-600">*</i>
                             </label>
-                            <PickList v-model="topicData" breakpoint="1400px" dataKey="value"
-                                @update:modelValue="onChange">
+                            <div class="responsive-div">
+                                <InputText class="h-10 w-full" @input="handleChange" type="text" id="search"
+                                    placeholder="Choose or Search a Topic" />
+                            </div>
+                            <PickList style="width: 100%; height: 350px;" v-model="topicData" breakpoint="1400px"
+                                class="mt-3" scrollHeight="25rem" dataKey=" value" @update:modelValue="onChange">
                                 <template #option="{ option }">
                                     {{ option.label }}
                                 </template>
@@ -292,3 +282,32 @@ onMounted(async () => {
         </Fluid>
     </div>
 </template>
+<style scoped>
+@media (max-width: 1400px) {
+    .responsive-div {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 1401px) and (max-width: 1528px) {
+    .responsive-div {
+        width: 39%;
+        margin-left: 6.5%;
+    }
+}
+
+@media (min-width: 1529px) and (max-width: 1909px) {
+    .responsive-div {
+        width: 38.5%;
+        margin-left: 7%;
+    }
+}
+
+@media (min-width: 1909px) {
+    .responsive-div {
+        width: 41.5%;
+        margin-left: 5%;
+    }
+}
+</style>

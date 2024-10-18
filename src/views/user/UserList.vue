@@ -74,6 +74,7 @@ const validationSchema = toTypedSchema(
         contractType: z
             .object({
                 code: z.string({ required_error: "Contract Type is required" }).min(1, { message: "Delivery Type is required" }),
+                name: z.string({ required_error: "Contract Type is required" }).min(1, { message: "Delivery Type is required" }),
             }),
         rolesOptions: z.preprocess(
             (val) => (val === undefined || val === null ? [] : val),
@@ -91,6 +92,15 @@ const validationSchema = toTypedSchema(
                 id: z.number({ required_error: "Department is required" }).min(1, { message: "Department is required" }),
             }),
         status: z.boolean().default(false),
+    }).superRefine((data, ctx) => {
+        if (contractType.value.code === "Official") {
+            if (!email.value.endsWith("@fpt.com")) {
+                ctx.addIssue({
+                    path: ['email'],
+                    message: contractType.value.code === 'Official' ? 'Account must be end with @fpt.com' : '',
+                });
+            }
+        }
     })
 );
 const { handleSubmit, errors, resetForm, setFieldError } = useForm({ validationSchema });
@@ -353,22 +363,21 @@ const openPopup = () => {
 
 const closePopup = () => {
     visible.value = false;
+    resetForm()
 }
-
 </script>
-
 <template>
-    <div>
+    <div class="card">
         <UpdateUser :visible="isDialogVisible" :selectedUser="selectedUser" :departments="departments"
             @userUpdated="handleUserUpdated" :roles="roles" />
         <Toast />
-        <div class="card">
+        <div>
             <div class="mb-4 flex justify-between items-center">
                 <span class="!font-semibold text-2xl">User List ({{ users?.length }})</span>
                 <Button label="Add User" @click="openPopup" />
             </div>
             <Divider />
-            <div>
+            <div class="w-full">
                 <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex flex-wrap w-36 gap-2">
                         <label class="w-32" for="contractType">Active</label>
@@ -379,7 +388,7 @@ const closePopup = () => {
                         <label for="role" class="w-32">Role</label>
                         <MultiSelect @change="handleRoleChange" v-model="roleFilterOptions" :options="roles"
                             optionLabel="name" filter placeholder="Filter Roles" id="rolesOptions"
-                                     :maxSelectedLabels="2" class="w-full" />
+                            :maxSelectedLabels="2" class="w-full" />
                     </div>
                     <div class="flex flex-wrap w-60 gap-2">
                         <label for="department">Department</label>
@@ -397,18 +406,18 @@ const closePopup = () => {
                 <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="users"
                     currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                    scrollable scrollHeight="500px" class="mt-4">
-                    <Column header="No" style="width: 10%">
+                    scrollable tableStyle="min-width: 50rem">
+                    <Column header="No" style="width: 50px">
                         <template #body="slotProps">
                             {{ users.indexOf(slotProps.data) + 1 }}
                         </template>
                     </Column>
-                    <Column field="employeeId" header="Employee ID" style="width: 180px"></Column>
+                    <Column field="employeeId" header="Employee ID" style="width: 260px"></Column>
                     <Column field="account" header="Account" style="width: 30px"></Column>
-                    <Column field="name" header="Name" style="width: 280px"></Column>
-                    <Column field="email" header="Email" style="width: 280px"></Column>
+                    <Column field="name" header="Name" style="width: 230px"></Column>
+                    <Column field="email" header="Email" style="width: 180px"></Column>
                     <Column field="department.departmentName" header="Department" style="width: 20px"></Column>
-                    <Column header="Roles" style="width: 10%">
+                    <Column header="Roles" style="width: 200px">
                         <template #body="slotProps">
                             <!-- slotProps.data đại diện cho dữ liệu của một user (một hàng trong bảng) -->
                             <span v-if="slotProps.data.roles && slotProps.data.roles.length">
@@ -510,8 +519,9 @@ const closePopup = () => {
                             <label for="contractType">Contract Type<i class="text-red-600">*</i></label>
                             <Select id="contractType" v-model="contractType" :options="contractTypes" optionLabel="name"
                                 placeholder="Select One" class="w-full"></Select>
-                            <small class="text-red-600 " v-if="errors.contractType">{{ errors.contractType
-                                }}</small>
+                            <small class="text-red-600 " v-if="errors.contractType">{{
+                                errors.contractType === 'Required' ? 'Contract Type is required' : errors.contractType
+                            }}</small>
                         </div>
                         <div class="flex flex-col gap-2">
                             <label for="role">Role<i class="text-red-600">*</i></label>
@@ -523,7 +533,9 @@ const closePopup = () => {
                             <label for="department">Department<i class="text-red-600">*</i></label>
                             <Select id="department" v-model="department" :options="departments"
                                 optionLabel="departmentName" placeholder="Select One" class="w-full"></Select>
-                            <small class="text-red-600 " v-if="errors.department">{{ errors.department }}</small>
+                            <small class="text-red-600" v-if="errors.department">
+                                {{ errors.department === 'Required' ? 'Department is required' : errors.department }}
+                            </small>
                         </div>
                         <div class="flex  gap-2">
                             <label for="status">Status</label>
@@ -566,4 +578,7 @@ const closePopup = () => {
     </div>
 </template>
 <style>
+.p-datatable-table-container {
+    height: calc(100vh - 22.7rem);
+}
 </style>

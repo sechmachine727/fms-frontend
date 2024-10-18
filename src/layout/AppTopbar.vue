@@ -67,6 +67,7 @@ const onSubmit = handleSubmit((values) => {
 const menu = ref();
 const items = ref([
     {
+        label: userInfo.username,
         items: [
             {
                 label: 'Profile',
@@ -118,14 +119,8 @@ const closeDialog = () => {
                 <span>FMS</span>
             </router-link>
         </div>
-        <div class="card flex justify-center">
-            <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
-
-        </div>
+        <Menu ref="menu" :model="items" :popup="true" />
         <div class="layout-topbar-actions">
-            <span class="mt-3">
-                Welcome to {{ userInfo.username }}
-            </span>
             <div class="layout-topbar-menu-content">
                 <button type="button" @click="toggle" class="layout-topbar-action">
                     <i class="pi pi-user"></i>
