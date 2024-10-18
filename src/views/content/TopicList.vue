@@ -213,80 +213,40 @@ const onFileSelect = (event) => {
     }
 };
 
-// const importFile = async () => {
-//     if (selectedFile.value) {
-//         const formData = new FormData()
-//         formData.append('file', selectedFile.value)
-//
-//         try {
-//             await importFileStore.fetchImportFile(formData)
-//
-//             // Success toast notification
-//             toast.add({
-//                 severity: 'success',
-//                 summary: 'Import Successful',
-//                 detail: 'Topics imported successfully!',
-//                 life: 3000
-//             })
-//
-//             // Fetch the updated topics
-//             await topicStore.fetchTopics()
-//             topics.value = topicStore.topics
-//
-//             // Reset the file and close the dialog
-//             selectedFile.value = null
-//             showDialog.value = false
-//         } catch (error) {
-//             let messageError = error.response.data.split(':')[2];
-//             toast.add({
-//                 severity: 'error',
-//                 summary: 'Import Failed',
-//                 detail: messageError,
-//                 life: 5000
-//             })
-//         }
-//     } else {
-//         // Notify user to select a file
-//         toast.add({
-//             severity: 'warn',
-//             summary: 'No File Selected',
-//             detail: 'Please choose a valid file before importing.',
-//             life: 3000
-//         })
-//     }
-// }
-
 const importFile = async () => {
     if (selectedFile.value) {
         const formData = new FormData()
         formData.append('file', selectedFile.value)
 
         try {
-            // Initial request without confirm
-            await importFileStore.fetchImportFile(formData, { confirm: false })
+            // Initial request without confirm flag
+            const response = await importFileStore.fetchImportFile(formData, false)
 
-            // Success toast notification
-            toast.add({
-                severity: 'success',
-                summary: 'Import Successful',
-                detail: 'Topics imported successfully!',
-                life: 3000
-            });
+            // Handle the case where there's no conflict
+            if (!response.data?.confirm) {
+                // Show success toast notification only when all topics are imported successfully
+                toast.add({
+                    severity: 'success',
+                    summary: 'Import Successful',
+                    detail: 'Topics imported successfully!',
+                    life: 3000
+                })
 
-            // Fetch the updated topics
-            await topicStore.fetchTopics()
-            topics.value = topicStore.topics
+                // Fetch the updated topics
+                await topicStore.fetchTopics()
+                topics.value = topicStore.topics
 
-            // Reset the file and close the dialog
-            selectedFile.value = null
-            showDialog.value = false
+                // Reset the file and close the dialog
+                selectedFile.value = null
+                showDialog.value = false
+            }
 
         } catch (error) {
             if (error.response && error.response.status === 409) {
                 // Conflict detected, show confirmation dialog
                 confirm.require({
                     group: 'templating',
-                    message: 'The file already exists. Do you want to replace it?',
+                    message: 'Some topics already exist. Do you want to replace the existing ones?',
                     header: 'File Conflict',
                     acceptProps: { label: 'Replace' },
                     rejectProps: {
@@ -296,8 +256,8 @@ const importFile = async () => {
                     },
                     accept: async () => {
                         try {
-                            // Re-request with confirm = true
-                            await importFileStore.fetchImportFile(formData, { confirm: true })
+                            // Re-request with confirm = true to replace the existing topics
+                            await importFileStore.fetchImportFile(formData, true)
 
                             // Success toast after replacement
                             toast.add({
@@ -305,7 +265,7 @@ const importFile = async () => {
                                 summary: 'Import Successful',
                                 detail: 'Topics replaced successfully!',
                                 life: 3000
-                            })
+                            });
 
                             // Fetch the updated topics
                             await topicStore.fetchTopics()
@@ -316,29 +276,27 @@ const importFile = async () => {
                             showDialog.value = false
 
                         } catch (error) {
-                            // Handle error during the replacement
+                            // Handle error during the replacement process
                             toast.add({
                                 severity: 'error',
                                 summary: 'Replacement Failed',
                                 detail: 'An error occurred while replacing the file.',
                                 life: 5000
-                            })
+                            });
                         }
                     }
-                })
+                });
             } else {
-                // Handle other errors
-                const messageError = error.response?.data?.message || 'An error occurred during import.'
+                const messageError = error.response?.data?.message
                 toast.add({
                     severity: 'error',
                     summary: 'Import Failed',
                     detail: messageError,
                     life: 5000
-                })
+                });
             }
         }
     } else {
-        // Notify user to select a file
         toast.add({
             severity: 'warn',
             summary: 'No File Selected',
@@ -348,10 +306,9 @@ const importFile = async () => {
     }
 };
 
-
 const cancelUpload = () => {
-    selectedFile.value = null
-    showDialog.value = false
+    selectedFile.value = null // Xóa file đã chọn
+    showDialog.value = false // Đóng dialog
 }
 
 const downloadFile = async () => {
@@ -387,6 +344,7 @@ const downloadFile = async () => {
         })
     }
 }
+
 
 onMounted(() => {
     topicStore.fetchTopics().then(() => {
