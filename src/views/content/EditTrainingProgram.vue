@@ -22,8 +22,6 @@ const departmentStore = useDepartmentStore()
 const trainingProgram = ref(null)
 const technicalGroupCodeOptions = ref([])
 const departments = ref([])
-
-
 // Validation schema using Zod
 const validationSchema = toTypedSchema(
     z.object({

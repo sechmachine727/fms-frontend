@@ -9,56 +9,65 @@ import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { z } from 'zod'
 import Toast from 'primevue/toast'
+import { convertToVietnamTime } from '@/utils/date'
 
 const toast = useToast()
 const traineeStore = useTraineeStore()
 const trainee = ref(null)
+const genderOptions = ([
+    { label: 'Male', value: 'Male' },
+    { label: 'Female', value: 'Female' }
+])
+const genderEnum = z.enum(['Male', 'Female'])
 // Validation schema using Zod
 const validationSchema = toTypedSchema(
     z.object({
         name: z
             .string({ required_error: 'Name is required' })
+            .trim()
             .min(1, { message: 'Name is required' })
             .max(50, { message: 'Name must not exceed 50 characters' }),
         email: z
             .string({ required_error: 'Mail is required' })
+            .trim()
             .min(1, { message: 'Mail is required' })
             .regex(/^[\w-_.+]*[\w-_.]@(\w+\.)+\w+\w$/, { message: 'Invalid email address format' })
             .max(320, { message: 'Email must not exceed 320 characters' }),
         phone: z
             .string({ required_error: 'Phone Number is required' })
-            // .nonnegative()
-            .min(10, { message: 'Phone Number is required' })
-            .max(50, { message: 'Phone Number must not exceed 50 characters' }),
+            .trim()
+            .min(10, { message: 'Phone Number must have 10 characters' })
+            .max(10, { message: 'Phone Number must not exceed 10 characters' }),
         dob: z
             .date({
                 required_error: 'D.O.B is required',
                 invalid_type_error: 'D.O.B is required'
             }),
-        gender: z.optional(z.string()),
-        // .object({
-        //     id: z.number({ required_error: "Gender is required" }).min(1, { message: "Scope is required" })
-        // }),
+        gender: genderEnum,
         gpa: z
             .number({ required_error: 'GPA is required', invalid_type_error: 'GPA must be a number' })
             .positive(),
         address: z
             .string({ required_error: 'Address is required' })
+            .trim()
             .min(1, { message: 'Address is required' })
             .max(100, { message: 'Address must not exceed 100 characters' }),
         nationalId: z
             .string({ required_error: 'National Id is required' })
-            .min(12, { message: 'National Id is required' })
+            .trim()
+            .min(12, { message: 'National Id must have 12 characters' })
             .max(12, { message: 'National Id must not exceed 12 characters' }),
         language: z
-            .optional(z.string()),
+            .optional(z.string().trim()),
         university: z
             .string({ required_error: 'University is required' })
+            .trim()
             .min(1, { message: 'University is required' })
             .max(100, { message: 'University must not exceed 100 characters' }),
         universityGraduationDate: z
             .date({
-                required_error: 'University Graduation Date is required'
+                required_error: 'University Graduation Date is required',
+                invalid_type_error: 'University Graduation Date is required'
             })
     })
 )
@@ -83,15 +92,16 @@ const onSubmit = handleSubmit((values) => {
         name: values.name,
         email: values.email,
         phone: values.phone,
-        dob: values.dob,
+        dob: convertToVietnamTime(values.dob).toString(),
         gender: values.gender,
         gpa: values.gpa,
         address: values.address || '',
         nationalId: values.nationalId,
         language: values.language || '',
         university: values.university,
-        universityGraduationDate: values.universityGraduationDate
+        universityGraduationDate: convertToVietnamTime(values.universityGraduationDate).toString()
     }
+    console.log(payload)
     traineeStore.fetchUpdateTrainee(traineeId, payload).then(() => {
         toast.add({
             severity: 'success',
@@ -99,7 +109,7 @@ const onSubmit = handleSubmit((values) => {
             detail: 'Trainee Profile updated successfully',
             life: 3000
         })
-        router.push('/trainee-management/trainees')
+        router.push('/trainee-management/trainee/detail/:id')
 
     }).catch((error) => {
         setFieldError('code', error.response.data.trainee)
@@ -132,6 +142,7 @@ onMounted(async () => {
         language.value = trainee.value.language || ''
         universityGraduationDate.value = trainee.value.universityGraduationDate || ''
     }
+    console.log(trainee.value)
 })
 </script>
 
@@ -194,9 +205,10 @@ onMounted(async () => {
                                         <label for="gender">Gender
                                             <i class="text-red-600">*</i>
                                         </label>
-                                        <InputText id="gender" v-model="gender"
-                                                   :class="`{ 'p-invalid': errors.gender }`" placeholder="Gender"
-                                                   type="text" />
+                                        <Select id="gender" v-model="gender"
+                                                :options="genderOptions" class="w-full" optionLabel="label"
+                                                optionValue="value"
+                                                placeholder="Select Gender"></Select>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <label for="gpa">GPA
@@ -238,7 +250,6 @@ onMounted(async () => {
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <label for="language">Language
-                                            <i class="text-red-600">*</i>
                                         </label>
                                         <InputText id="language" v-model="language"
                                                    :class="`{ 'p-invalid': errors.language }`" placeholder="Language"
