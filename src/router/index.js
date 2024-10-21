@@ -111,6 +111,13 @@ const router = createRouter({
                     meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_CONTENT_MANAGER', 'ROLE_DELIVERABLES_MANAGER'] },
                     component: () => import('@/views/trainee/TraineeDetail.vue'),
                     props: true // Pass route params as props to the component
+                },
+                {
+                    path: '/trainee-management/trainee/edit/:id',
+                    name: 'trainee-edit',
+                    meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_CONTENT_MANAGER', 'ROLE_DELIVERABLES_MANAGER'] },
+                    component: () => import('@/views/trainee/EditTrainee.vue'),
+                    props: true // Pass route params as props to the component
                 }
             ]
         },

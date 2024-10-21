@@ -29,7 +29,8 @@ const generalInfo = computed(() => {
             },
             {
                 label1: 'Language', value1: traineeStore.trainee.language,
-                label2: 'Address', value2: traineeStore.trainee.address
+                label2: 'Address', value2: traineeStore.trainee.address,
+                label3: 'Faculty', value3: traineeStore.trainee.address
             }
         ]
     } else {
@@ -42,7 +43,7 @@ const navigateToBack = () => {
 }
 
 const navigateToEdit = (id) => {
-    console.log(id)
+    router.push('/trainee-management/trainee/edit/' + id)
 }
 
 onMounted(() => {

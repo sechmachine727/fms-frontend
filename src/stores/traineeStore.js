@@ -47,9 +47,11 @@ export const useTraineeStore = defineStore("traineeStore", {
 
         async fetchUpdateTrainee(id, data) {
             try {
-                this.result = await traineeApi.put(id, data);
+                const result = await traineeApi.put(id, data)
+                return result.data
             } catch (error) {
-                console.error("Failed to fetch trainee detail", error);
+                console.error('Failed to fetch trainee detail', error)
+                throw error
             }
         },
 
