@@ -1,8 +1,9 @@
 <script setup>
-import { useClassStore } from "@/stores/groupStore"; // Correct the import to use `useTraineeStore`
-import { getStatusLabel } from "@/utils/status";
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useClassStore } from '@/stores/groupStore' // Correct the import to use `useTraineeStore`
+import { getStatusLabel } from '@/utils/status'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import ButtonComponent from '@/components/ButtonComponent.vue'
 
 const classes = ref([]);
 const classStore = useClassStore();
@@ -29,7 +30,7 @@ const navigateToAdd = () => {
         <DataTable :value="classes" :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]"
             currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-            scrollable tableStyle="min-width: 50rem">
+                   scrollable tableStyle="min-width: 50rem">
             <Column field="no" header="No" style="min-width: 100px"></Column>
             <Column field="classCode" header="Class Code" style="min-width: 100px"></Column>
             <Column field="traineetype" header="Trainee Type" style="min-width: 150px"></Column>
