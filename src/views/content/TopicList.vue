@@ -219,42 +219,92 @@ const importFile = async () => {
         formData.append('file', selectedFile.value)
 
         try {
-            await importFileStore.fetchImportFile(formData)
+            // Initial request without confirm flag
+            const response = await importFileStore.fetchImportFile(formData, false)
 
-            // Success toast notification
-            toast.add({
-                severity: 'success',
-                summary: 'Import Successful',
-                detail: 'Topics imported successfully!',
-                life: 3000
-            })
+            // Handle the case where there's no conflict
+            if (!response.data?.confirm) {
+                // Show success toast notification only when all topics are imported successfully
+                toast.add({
+                    severity: 'success',
+                    summary: 'Import Successful',
+                    detail: 'Topics imported successfully!',
+                    life: 3000
+                })
 
-            // Fetch the updated topics
-            await topicStore.fetchTopics()
-            topics.value = topicStore.topics
+                // Fetch the updated topics
+                await topicStore.fetchTopics()
+                topics.value = topicStore.topics
 
-            // Reset the file and close the dialog
-            selectedFile.value = null
-            showDialog.value = false
+                // Reset the file and close the dialog
+                selectedFile.value = null
+                showDialog.value = false
+            }
+
         } catch (error) {
-            let messageError = error.response.data.split(':')[2];
-            toast.add({
-                severity: 'error',
-                summary: 'Import Failed',
-                detail: messageError,
-                life: 5000
-            })
+            if (error.response && error.response.status === 409) {
+                // Conflict detected, show confirmation dialog
+                confirm.require({
+                    group: 'templating',
+                    message: 'Some topics already exist. Do you want to replace the existing ones?',
+                    header: 'File Conflict',
+                    acceptProps: { label: 'Replace' },
+                    rejectProps: {
+                        label: 'Cancel',
+                        severity: 'error',
+                        className: 'button-custom'
+                    },
+                    accept: async () => {
+                        try {
+                            // Re-request with confirm = true to replace the existing topics
+                            await importFileStore.fetchImportFile(formData, true)
+
+                            // Success toast after replacement
+                            toast.add({
+                                severity: 'success',
+                                summary: 'Import Successful',
+                                detail: 'Topics replaced successfully!',
+                                life: 3000
+                            });
+
+                            // Fetch the updated topics
+                            await topicStore.fetchTopics()
+                            topics.value = topicStore.topics
+
+                            // Reset the file and close the dialog
+                            selectedFile.value = null
+                            showDialog.value = false
+
+                        } catch (error) {
+                            // Handle error during the replacement process
+                            toast.add({
+                                severity: 'error',
+                                summary: 'Replacement Failed',
+                                detail: 'An error occurred while replacing the file.',
+                                life: 5000
+                            });
+                        }
+                    }
+                });
+            } else {
+                const messageError = error.response?.data?.message
+                toast.add({
+                    severity: 'error',
+                    summary: 'Import Failed',
+                    detail: messageError,
+                    life: 5000
+                });
+            }
         }
     } else {
-        // Notify user to select a file
         toast.add({
             severity: 'warn',
             summary: 'No File Selected',
             detail: 'Please choose a valid file before importing.',
             life: 3000
-        })
+        });
     }
-}
+};
 
 const cancelUpload = () => {
     selectedFile.value = null // Xóa file đã chọn
@@ -294,6 +344,7 @@ const downloadFile = async () => {
         })
     }
 }
+
 
 onMounted(() => {
     topicStore.fetchTopics().then(() => {
@@ -343,7 +394,7 @@ const userRoles = getUserInfo();
             <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="topics"
                 currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                 paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                tableStyle="min-width: 50rem">
+                       class="mt-1" tableStyle="min-width: 50rem">
                 <div class="flex items-center justify-between">
                     <!-- Dialog -->
                     <Dialog v-model:visible="showDialog" class="w-1/3" header="Import Topic" modal
@@ -471,6 +522,6 @@ const userRoles = getUserInfo();
 }
 
 .p-datatable-table-container {
-    height: calc(100vh - 22.7rem);
+    height: calc(100vh - 23.2rem);
 }
 </style>
