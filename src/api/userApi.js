@@ -1,48 +1,49 @@
-import { del, get, post, put } from "../axios";
-const url = "/users";
+import { del, get, post, put } from '../axios'
+
+const url = '/users'
+
 class UserApi {
   get = (search) => {
     if (search === undefined) {
-      search = ""
+      search = ''
     }
-    const newUrl = url + "?search=" + search
-    return get(newUrl, { search });
-  };
+    const newUrl = url + '?search=' + search
+    return get(newUrl, { search })
+  }
 
   getDetail = (id) => {
-    const newUrl = url + `/${id}`;
-    return get(newUrl);
-  };
-    getAllClassAdmins = () => {
-    const newUrl = url + "/class-admins";
-    return get(newUrl);
-  };
+    const newUrl = url + `/${id}`
+    return get(newUrl)
+  }
+  getAllClassAdmins = () => {
+    const newUrl = url + '/class-admins'
+    return get(newUrl)
+  }
   post = (data) => {
-    const result = post(url, data);
-    return result;
-  };
+    const result = post(url, data)
+    return result
+  }
 
   put = (id, data) => {
-    const newUrl = url + `/${id}`;
-    return put(newUrl, data);
-  };
+    const newUrl = url + `/${id}`
+    return put(newUrl, data)
+  }
 
   putUpdateStatus = (id) => {
-    const newUrl = url + `/change-status` + `/${id}`;
-    return put(newUrl);
-  };
+    const newUrl = url + `/change-status` + `/${id}`
+    return put(newUrl)
+  }
 
-   putChangePassword = (account, data) => {
-     const newUrl = url + `/change-password` + `/${account}`;
-    return put(newUrl, data);
-  };
-
+  putChangePassword = (account, data) => {
+    const newUrl = url + `/change-password` + `/${account}`
+    return put(newUrl, data)
+  }
 
   delete = (id) => {
-    const newUrl = url + `/${id}`;
-    return del(newUrl);
-  };
+    const newUrl = url + `/${id}`
+    return del(newUrl)
+  }
 }
 
-const userApi = new UserApi();
-export default userApi;
+const userApi = new UserApi()
+export default userApi

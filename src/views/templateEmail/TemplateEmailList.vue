@@ -1,7 +1,4 @@
-<script setup>
-</script>
+<script setup></script>
 <template>
-    <div>
-        Email Template
-    </div>
+  <div>Email Template</div>
 </template>
