@@ -1,11 +1,13 @@
 <script setup>
 import ButtonComponent from '@/components/ButtonComponent.vue';
+import WorkFlow from '@/components/WorkFlow.vue';
 import router from '@/router';
 import { useClassStore } from '@/stores/groupStore'; // Correct the import to use `useTraineeStore`
 import { getStatusLabel } from '@/utils/status';
+import ViewActivity from '@/views/calendar/ViewActivity.vue';
+import ViewCalendar from '@/views/calendar/ViewCalendar.vue';
 import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-
 const classe = ref();
 const classStore = useClassStore();
 // const router = useRouter();
@@ -43,12 +45,15 @@ const groupInfo = computed(() => {
         return []
     }
 })
-
+const getGroupId = ref(null);
+const expectedStartDate = ref(null);
 onMounted(() => {
     const route = useRoute()
     const groupId = route.params.id
     classStore.fetchClassDetail(groupId).then(() => {
         classe.value = classStore.classDetail
+        getGroupId.value = parseInt(classe.value.id);
+        expectedStartDate.value = classe.value.expectedStartDate;
     })
 })
 
@@ -63,18 +68,42 @@ const handleCancel = () => {
 const navigateToEdit = (id) => {
     console.log(id);
 };
+
+const events = ref([
+    { status: 'Assign', date: '15/10/2020 10:30', icon: 'pi pi-shopping-cart', color: '#9C27B0' },
+    { status: 'Planing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#673AB7' },
+    { status: 'Pending Close', date: '15/10/2020 16:15', icon: 'pi pi-shopping-cart', color: '#FF9800' },
+    { status: 'Close', date: '16/10/2020 10:00', icon: 'pi pi-check', color: '#607D8B' },
+    { status: 'Assign', date: '15/10/2020 10:30', icon: 'pi pi-shopping-cart', color: '#9C27B0' },
+    { status: 'Planing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#673AB7' },
+    { status: 'Pending Close', date: '15/10/2020 16:15', icon: 'pi pi-shopping-cart', color: '#FF9800' },
+    { status: 'Close', date: '16/10/2020 10:00', icon: 'pi pi-check', color: '#607D8B' },
+    { status: 'Assign', date: '15/10/2020 10:30', icon: 'pi pi-shopping-cart', color: '#9C27B0' },
+    { status: 'Planing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#673AB7' },
+    { status: 'Pending Close', date: '15/10/2020 16:15', icon: 'pi pi-shopping-cart', color: '#FF9800' },
+    { status: 'Close', date: '16/10/2020 10:00', icon: 'pi pi-check', color: '#607D8B' }
+]);
+const visibleWorkFlow = ref(false);
+
+const handleShowWorkFlow = () => {
+    visibleWorkFlow.value = true;
+}
+
 </script>
 
 <template>
     <div class="card">
         <div class="p-4">
             <!-- Topic Detail Header -->
-            <div class="flex justify-between items-center mb-4">
+            <div class="flex mb-4">
                 <span class="font-semibold text-xl" v-if="classe">
                     Group Details : {{ classe?.groupCode }}
                     <Tag :value="classe.status" :severity="getStatusLabel(classe?.status)" />
                 </span>
+                <i class="pi pi-question-circle ml-1 cursor-pointer" @click="handleShowWorkFlow" v-if="classe"
+                    style="font-size: 2rem; "></i>
             </div>
+            <WorkFlow v-model:visible="visibleWorkFlow" />
             <Divider />
             <TabView>
                 <TabPanel header="Group Info">
@@ -109,15 +138,13 @@ const navigateToEdit = (id) => {
                         </div>
                     </div>
                 </TabPanel>
-
                 <TabPanel header="Trainee List">
-
                 </TabPanel>
                 <TabPanel header="Calendar">
-
+                    <ViewCalendar :groupId="getGroupId" :expected-start-date="expectedStartDate" />
                 </TabPanel>
                 <TabPanel header="Activities">
-
+                    <ViewActivity :event="events" />
                 </TabPanel>
             </TabView>
         </div>

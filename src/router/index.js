@@ -25,7 +25,7 @@ const router = createRouter({
                     path: '/group-management/list',
                     name: 'group-management',
                     meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER'] },
-                    component: () => import('@/views/Class/GroupList.vue')
+                    component: () => import('@/views/class/GroupList.vue')
                 },
                 {
                     path: '/content-management/topic',
@@ -71,20 +71,20 @@ const router = createRouter({
                     path: '/group-management/add',
                     name: 'group-management-add',
                     meta: { roles: ['ROLE_DELIVERABLES_MANAGER'] },
-                    component: () => import('@/views/Class/GroupAdd.vue')
+                    component: () => import('@/views/class/GroupAdd.vue')
                 },
 
                 {
                     path: '/group-management/detail/:id',
                     name: 'group-detail',
                     meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER'] },
-                    component: () => import('@/views/Class/GroupDetail.vue')
+                    component: () => import('@/views/class/GroupDetail.vue')
                 },
                  {
                     path: '/group-management/in-progress-list',
                     name: 'group-management-in-progress-list',
                     meta: { roles: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER'] },
-                    component: () => import('@/views/Class/InProgress.vue')
+                    component: () => import('@/views/class/InProgress.vue')
                 },
                 {
                     path: '/fms-settings/user-management',

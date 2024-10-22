@@ -8,7 +8,6 @@ import { useField, useForm } from 'vee-validate'
 import { ref, watch } from 'vue'
 import { z } from 'zod'
 
-// Các ref và biến để quản lý giao diện
 const contractTypes = ref([
     { code: "Official", name: "Official" },
     { code: "Collaborator", name: "Collaborator" },
@@ -20,18 +19,13 @@ const handleUpdateUser = () => {
 }
 
 const props = defineProps({
-    visible: Boolean, // Điều khiển hiển thị dialog
-    selectedUser: Object, // Dữ liệu người dùng để cập nhật
+    visible: Boolean,
+    selectedUser: Object,
     departments: Array,
     roles: Array
 });
 
-
-// Lưu người dùng đang được cập nhật
-
 const toast = useToast();
-
-// Validation schema sử dụng vee-validate và zod
 const validationSchema = toTypedSchema(
     z.object({
         account: z

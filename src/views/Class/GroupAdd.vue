@@ -156,12 +156,6 @@ const validationSchema = toTypedSchema(
             })
             .positive({ message: "Planned Trainee is required" })
         ,
-        planRevenue: z
-            .number({
-                required_error: 'Plan Budget is required',
-                invalid_type_error: 'Plan Budget is required'
-            })
-            .positive({ message: 'Plan Budget is required' }),
         keyProgram: z
             .object({
                 id: z.number({ required_error: "Key Program is required" }).min(1, { message: "Key Program is required" })
@@ -207,7 +201,6 @@ const { value: site } = useField("site");
 const { value: location } = useField("location");
 const { value: scope } = useField("scope");
 const { value: plannedTrainee } = useField("plannedTrainee");
-const { value: planRevenue } = useField("planRevenue");
 const { value: keyProgram } = useField("keyProgram");
 const { value: expectedStart } = useField("expectedStart");
 const { value: expectedEnd } = useField("expectedEnd");
@@ -277,7 +270,7 @@ function convertToSchema(data) {
         locationId: data.location?.id || 0,
         expectedStartDate: "",
         expectedEndDate: "",
-        planRevenue: data.planRevenue || 0,
+        planRevenue: 0,
         deliveryTypeId: data.deliveryType?.id || 0,
         traineeTypeId: data.traineeType?.id || 0,
         scopeId: data.scope?.id || 0,
@@ -438,14 +431,6 @@ const navigateToBack = () => {
                                         </InputNumber>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
-                                        <label for="PlannedRevenue">Planned Budget
-                                            <i class="text-red-600">*</i>
-                                        </label>
-                                        <InputNumber v-model="planRevenue" :min="0" :max="99999999999999" showButtons
-                                            mode="decimal">
-                                        </InputNumber>
-                                    </div>
-                                    <div class="flex flex-wrap gap-2 w-full">
                                         <label for="Location">Key Program
                                             <i class="text-red-600">*</i>
                                         </label>
@@ -461,10 +446,6 @@ const navigateToBack = () => {
                                             }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
-                                        <small class="text-red-600 ml-2" v-if="errors.planRevenue"> {{
-                                            errors.planRevenue }}</small>
-                                    </div>
-                                    <div class="flex flex-wrap gap-2 w-full">
                                         <small class="text-red-600 ml-2" v-if="errors.keyProgram"> {{ errors.keyProgram
                                             }}</small>
                                     </div>
@@ -475,7 +456,7 @@ const navigateToBack = () => {
                                             <i class="text-red-600">*</i>
                                         </label>
                                         <DatePicker v-model="expectedStart" :max-date="expectedEnd"
-                                            dateFormat="yy-mm-dd" showIcon fluid iconDisplay="input"
+                                            dateFormat="dd-mm-yy" showIcon fluid iconDisplay="input"
                                             inputId="icondisplay" />
                                     </div>
                                     <div class="flex-auto">
@@ -483,7 +464,7 @@ const navigateToBack = () => {
                                             <i class="text-red-600">*</i>
                                         </label>
                                         <DatePicker v-model="expectedEnd" :min-date="expectedStart"
-                                            dateFormat="yy-mm-dd" showIcon fluid iconDisplay="input"
+                                            dateFormat="dd-mm-yy" showIcon fluid iconDisplay="input"
                                             inputId="icondisplay" />
                                     </div>
                                 </div>

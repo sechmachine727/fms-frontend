@@ -146,16 +146,30 @@ onMounted(() => {
         sites.value = siteStore.sites
     })
 })
+const visibleWorkFlow = ref(false);
+
+const handleShowWorkFlow = () => {
+    visibleWorkFlow.value = true;
+}
 </script>
 
 <template>
     <div class="card">
         <Toast />
         <div class=" mb-4 flex justify-between items-center">
-            <span class="font-semibold text-2xl">Group List ({{ classes?.length }})</span>
+            <div class="flex">
+                <span class="font-semibold text-2xl">Group List ({{ classes?.length }})
+                </span>
+                <div>
+                    <i class="pi pi-question-circle ml-1 cursor-pointer" @click="handleShowWorkFlow" v-if="classes"
+                        style="font-size: 2rem; "></i>
+                </div>
+            </div>
+
             <Button label="Add Group" @click="navigateToAdd"
                 v-if="userRoles.roles.includes('ROLE_DELIVERABLES_MANAGER')" />
         </div>
+        <WorkFlow v-model:visible="visibleWorkFlow" />
         <Divider />
         <div class="flex flex-col md:flex-row gap-4">
             <div class="flex flex-wrap w-60 gap-2">
