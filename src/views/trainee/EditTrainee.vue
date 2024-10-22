@@ -107,8 +107,8 @@ const onSubmit = handleSubmit((values) => {
         router.push('/trainee-management/trainees')
 
     }).catch((error) => {
-        setFieldError('phone', error.response.data.trainee)
-        setFieldError('email', error.response.data.trainee)
+        setFieldError('phone', error.response.data.phone)
+        setFieldError('email', error.response.data.email)
     })
 })
 
@@ -121,6 +121,7 @@ function parseDateFromString(dateString) {
     const [day, month, year] = dateString.split('-').map(Number)
     return new Date(year, month - 1, day)  // month - 1 vì tháng trong Date là 0-based
 }
+
 const route = useRoute()
 const traineeId = route.params.id
 onMounted(async () => {
@@ -153,7 +154,7 @@ onMounted(async () => {
                 <span class="font-semibold text-2xl">Edit Trainee</span>
             </div>
             <Divider />
-            <form @submit.prevent="onSubmit">
+            <form :value="trainee" @submit.prevent="onSubmit">
                 <Accordion value="0">
                     <AccordionPanel value="0">
                         <AccordionHeader class="!font-bold">General Info</AccordionHeader>
@@ -298,15 +299,6 @@ onMounted(async () => {
                                                 errors.universityGraduationDate }}</small>
                                     </div>
                                 </div>
-                                <!--                                <div class="flex flex-wrap">-->
-                                <!--                                    <label for="note">Note</label>-->
-                                <!--                                    <Textarea id="note" v-model="note" rows="4" />-->
-                                <!--                                </div>-->
-                                <!--                                <div class="flex flex-col md:flex-row ">-->
-                                <!--                                    <div class="flex flex-wrap gap-2 w-full">-->
-                                <!--                                        <small class="text-red-600 pt-1" v-if="errors.note"> {{ errors.note }}</small>-->
-                                <!--                                    </div>-->
-                                <!--                                </div>-->
                             </div>
                         </AccordionContent>
                     </AccordionPanel>
@@ -340,29 +332,6 @@ onMounted(async () => {
                 </div>
             </form>
         </Fluid>
-        <Dialog v-model:visible="visible" :style="{ width: '34rem' }" header="Plan Group" modal>
-            <span class="text-surface-500 dark:text-surface-400 block mb-8">Are you sure you want to save this planning
-                Group?</span>
-            <form @submit.prevent="onSubmits">
-                <div class="flex flex-col gap-2">
-                    <div class="flex flex-col gap-2">
-                        <label for="account">Group Code<i class="text-red-600">*</i></label>
-                        <InputText id="classCode" v-model="classCode" :class="`{ 'p-invalid': finalError.classCode }`"
-                                   type="text" />
-                        <small v-if="finalError.classCode" class="text-red-600">{{ finalError.classCode }}</small>
-                    </div>
-                </div>
-                <div class="flex justify-end mt-4">
-                    <ButtonComponent :onClick="closePopupForPlaining" activeColor="active:bg-gray-300"
-                                     bgColor="bg-white text-red-500" hoverColor="hover:bg-gray-200" text="Cancel" />
-                    <button
-                        class=" bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-                        type="submit">
-                        Save
-                    </button>
-                </div>
-            </form>
-        </Dialog>
     </div>
 </template>
 <style scoped>
