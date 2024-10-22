@@ -107,7 +107,8 @@ const onSubmit = handleSubmit((values) => {
         router.push('/trainee-management/trainees')
 
     }).catch((error) => {
-        setFieldError('code', error.response.data.trainee)
+        setFieldError('phone', error.response.data.trainee)
+        setFieldError('email', error.response.data.trainee)
     })
 })
 

@@ -21,9 +21,9 @@ export const useTraineeStore = defineStore("traineeStore", {
             }
         },
 
-        async fetchTraineeDetail(id) {
+        async fetchTraineeDetail(params) {
             try {
-                this.trainee = await traineeApi.getDetail(id)
+                this.trainee = await traineeApi.getDetail(params)
             } catch (error) {
                 console.error("Failed to fetch trainee detail", error);
             }

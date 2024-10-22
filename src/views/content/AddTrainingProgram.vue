@@ -4,7 +4,7 @@ import router from '@/router'
 import { useDepartmentStore } from '@/stores/departmentStore'
 import { useTechnicalGroupStore } from '@/stores/technicalGroupStore'
 import { useTopicStore } from '@/stores/topicStore'
-import { useTrainingProgramStore } from '@/stores/trainingProgramStore'; // Import the store handling the training programs
+import { useTrainingProgramStore } from '@/stores/trainingProgramStore' // Import the store handling the training programs
 import { toTypedSchema } from '@vee-validate/zod'
 import { useToast } from 'primevue/usetoast'
 import { useField, useForm } from 'vee-validate'
@@ -69,7 +69,6 @@ const { value: description } = useField('description')
 const { value: topicData } = useField('topicData')
 
 const onSubmit = handleSubmit((values) => {
-    console.log("sdadasds");
     // Extract the topic IDs (assuming `id` exists in topic objects)
     const selectedTopics = values.topicData[1].map(topic => topic.value)
     const payload = {
