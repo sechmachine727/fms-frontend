@@ -402,7 +402,6 @@ onMounted(() => {
                                         class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border
                                     text-red-500 hover:bg-red-100 active:bg-red-100 focus:outline-none focus:ring focus:ring-red-100"
                                         severity="danger" @click="handleDecline(slotProps.data)">
-
                                         <i class="pi pi-times"></i>
                                         Decline
                                     </li>

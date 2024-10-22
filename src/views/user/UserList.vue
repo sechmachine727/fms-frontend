@@ -406,7 +406,7 @@ const closePopup = () => {
                 <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="users"
                     currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                           class="mt-1" scrollable tableStyle="min-width: 50rem">
+                    class="mt-1" scrollable tableStyle="min-width: 50rem">
                     <Column header="No" style="width: 50px">
                         <template #body="slotProps">
                             {{ users.indexOf(slotProps.data) + 1 }}
@@ -521,7 +521,7 @@ const closePopup = () => {
                                 placeholder="Select One" class="w-full"></Select>
                             <small class="text-red-600 " v-if="errors.contractType">{{
                                 errors.contractType === 'Required' ? 'Contract Type is required' : errors.contractType
-                            }}</small>
+                                }}</small>
                         </div>
                         <div class="flex flex-col gap-2">
                             <label for="role">Role<i class="text-red-600">*</i></label>

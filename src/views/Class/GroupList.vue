@@ -154,7 +154,7 @@ const handleShowWorkFlow = () => {
 </script>
 
 <template>
-    <div class="card">
+    <div class="card" style="height: calc(100vh - 4rem - 2rem);">
         <Toast />
         <div class=" mb-4 flex justify-between items-center">
             <div class="flex">
@@ -200,7 +200,7 @@ const handleShowWorkFlow = () => {
         <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="classes"
             currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                   class="mt-1" scrollable tableStyle="min-width: 50rem">
+            class="mt-1" scrollable tableStyle="min-width: 50rem">
             <Column field="no" header="No" style="min-width: 50px">
                 <template #body="slotProps">
                     {{ classes.indexOf(slotProps.data) + 1 }}

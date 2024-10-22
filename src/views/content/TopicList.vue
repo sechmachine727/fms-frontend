@@ -362,7 +362,7 @@ const userRoles = getUserInfo();
 </script>
 
 <template>
-    <div class="card">
+    <div class="card" style="height: calc(100vh - 4rem - 2rem);">
         <div class="flex items-center justify-between mb-2">
             <h1 class="!font-semibold text-2xl">Topic Configuration ({{ topics?.length }})</h1>
             <Button label="Import Topic" v-if="userRoles.roles.includes('ROLE_CONTENT_MANAGER')"
@@ -394,7 +394,7 @@ const userRoles = getUserInfo();
             <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="topics"
                 currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
                 paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                       class="mt-1" tableStyle="min-width: 50rem">
+                class="mt-1" tableStyle="min-width: 50rem">
                 <div class="flex items-center justify-between">
                     <!-- Dialog -->
                     <Dialog v-model:visible="showDialog" class="w-1/3" header="Import Topic" modal
