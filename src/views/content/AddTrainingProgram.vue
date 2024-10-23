@@ -73,7 +73,6 @@ const { value: description } = useField('description')
 const { value: topicData } = useField('topicData')
 
 const onSubmit = handleSubmit((values) => {
-  console.log('sdadasds')
   // Extract the topic IDs (assuming `id` exists in topic objects)
   const selectedTopics = values.topicData[1].map((topic) => topic.value)
   const payload = {

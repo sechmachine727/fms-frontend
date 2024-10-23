@@ -44,7 +44,7 @@ const model = ref([
       {
         label: 'Trainee management',
         icon: 'pi pi-fw pi-list',
-        to: '#',
+          to: '/trainee-management/trainees',
         role: ['ROLE_FA_MANAGER', 'ROLE_GROUP_ADMIN', 'ROLE_TRAINER', 'ROLE_DELIVERABLES_MANAGER']
       },
       {

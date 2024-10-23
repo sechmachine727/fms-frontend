@@ -1,6 +1,6 @@
 import { post } from '@/axios'
 
-const url = '/import/upload'
+const url = '/import/topics'
 
 class ImportFileAPI {
   post = (data, confirm) => {
