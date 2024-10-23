@@ -1,11 +1,12 @@
-import { get } from "../axios";
-const url = "/sites";
+import { get } from '../axios'
+
+const url = '/sites'
+
 class SiteAPI {
   get = (params) => {
-    return get(url, { params });
-  };
-
+    return get(url, { params })
+  }
 }
 
-const siteApi = new SiteAPI();
-export default siteApi;
+const siteApi = new SiteAPI()
+export default siteApi

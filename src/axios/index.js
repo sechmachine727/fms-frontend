@@ -1,14 +1,14 @@
-import axios from "axios";
-import queryString from "query-string";
+import axios from 'axios'
+import queryString from 'query-string'
 
 const axiosClient = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL,
-    headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-    paramsSerializer: (params) => queryString.stringify(params),
-});
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('token')}`
+  },
+  paramsSerializer: (params) => queryString.stringify(params)
+})
 
 /**
  * GET action
@@ -17,9 +17,9 @@ const axiosClient = axios.create({
  * @returns
  */
 export const get = async (path, params = {}) => {
-    const response = await axiosClient.get(path, params);
-    return response.data;
-};
+  const response = await axiosClient.get(path, params)
+  return response.data
+}
 
 /**
  * POST action
@@ -29,9 +29,9 @@ export const get = async (path, params = {}) => {
  * @returns
  */
 export const post = async (path, data = {}, params = {}) => {
-    const response = await axiosClient.post(path, data, params);
-    return response;
-};
+  const response = await axiosClient.post(path, data, params)
+  return response
+}
 
 /**
  * PUT action
@@ -41,9 +41,9 @@ export const post = async (path, data = {}, params = {}) => {
  * @returns
  */
 export const put = async (path, data = {}, params = {}) => {
-    const response = await axiosClient.put(path, data, params);
-    return response;
-};
+  const response = await axiosClient.put(path, data, params)
+  return response
+}
 
 /**
  * Delete action
@@ -52,6 +52,6 @@ export const put = async (path, data = {}, params = {}) => {
  * @returns
  */
 export const del = async (path, params = {}) => {
-    const response = await axiosClient.delete(path, params);
-    return response;
-};
+  const response = await axiosClient.delete(path, params)
+  return response
+}

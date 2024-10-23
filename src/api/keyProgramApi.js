@@ -1,11 +1,12 @@
-import { get } from "../axios";
-const url = "/key-programs";
+import { get } from '../axios'
+
+const url = '/key-programs'
+
 class KeyProgramAPI {
   get = (params) => {
-    return get(url, { params });
-  };
-
+    return get(url, { params })
+  }
 }
 
-const keyProgramApi = new KeyProgramAPI();
-export default keyProgramApi;
+const keyProgramApi = new KeyProgramAPI()
+export default keyProgramApi

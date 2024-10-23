@@ -1,32 +1,32 @@
 // Hàm để tạo mã lớp
 export const getStatusArray = () => {
-    return [
-        { id: "PLANNING", name: 'Planning' },
-        { id: "ASSIGNED", name: 'Assigned' },
-        { id: "REVIEWING", name: 'Reviewing' },
-        { id: "CANCELLED", name: 'Cancelled' },
-        { id: "DECLINED", name: 'Declined' },
-        { id: "IN_PROGRESS", name: 'In Progress ' },
-        { id: "PENDING_CLOSE", name: 'Pending Close' },
-        { id: "CLOSED", name: 'Closed' },
-    ];
-};
+  return [
+    { id: 'PLANNING', name: 'Planning' },
+    { id: 'ASSIGNED', name: 'Assigned' },
+    { id: 'REVIEWING', name: 'Reviewing' },
+    { id: 'CANCELLED', name: 'Cancelled' },
+    { id: 'DECLINED', name: 'Declined' },
+    { id: 'IN_PROGRESS', name: 'In Progress ' },
+    { id: 'PENDING_CLOSE', name: 'Pending Close' },
+    { id: 'CLOSED', name: 'Closed' }
+  ]
+}
 
 export const getStatusLabel = (status) => {
-    switch (status) {
+  switch (status) {
     case 'Planning':
-            return 'secondary'
+      return 'secondary'
     case 'In progress':
     case 'Active':
-            return 'success'
+      return 'success'
     case 'Inactive':
     case 'Assigned':
-            return 'warn'
+      return 'warn'
     case 'Declined':
-            return 'danger'
+      return 'danger'
     case 'Reviewing':
-            return 'info'
+      return 'info'
     default:
-            return null
-    }
+      return null
+  }
 }
