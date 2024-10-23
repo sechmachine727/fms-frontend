@@ -183,7 +183,8 @@ onMounted(() => {
             </div>
             <div class="flex flex-wrap w-72 gap-2">
                 <label for="search">Search</label>
-                <InputText id="search" v-model="searchQuery" class="h-10 w-full" placeholder="Enter code, name, training program"
+                <InputText id="search" v-model="searchQuery" class="h-10 w-full"
+                           placeholder="Enter code, name, training program"
                            type="text" @keyup.enter="handleSearch" />
             </div>
             <Button class="mt-8" label="Reset" severity="secondary" @click="clearSearch" />
@@ -192,7 +193,8 @@ onMounted(() => {
         <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="classes"
                    class="mt-1" currentPageReportTemplate="{first} to {last} of {totalRecords}"
                    paginator
-                   paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink" scrollable tableStyle="min-width: 50rem">
+                   paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                   scrollable tableStyle="min-width: 50rem">
             <Column field="no" header="No" style="min-width: 50px">
                 <template #body="slotProps">
                     {{ classes.indexOf(slotProps.data) + 1 }}

@@ -367,7 +367,8 @@ const navigateToBack = () => {
                                         </label>
                                         <Select id="TechnicalGroup" v-model="technicalGroup"
                                                 :options="technicalGroupOptions" class="w-full"
-                                                optionLabel="code" placeholder="Select One" @change="handleTechnicalGroupChange"></Select>
+                                                optionLabel="code" placeholder="Select One"
+                                                @change="handleTechnicalGroupChange"></Select>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <label for="TrainingProgram">Training Program
@@ -376,7 +377,8 @@ const navigateToBack = () => {
                                         <Select id="TrainingProgram" v-model="trainingProgram"
                                                 :options="trainingProgramOptions"
                                                 class="w-full"
-                                                optionLabel="trainingProgramNameVersion" placeholder="Select One"></Select>
+                                                optionLabel="trainingProgramNameVersion"
+                                                placeholder="Select One"></Select>
                                     </div>
                                 </div>
                                 <div class="flex flex-col md:flex-row ">
@@ -480,7 +482,8 @@ const navigateToBack = () => {
                                             <i class="text-red-600">*</i>
                                         </label>
                                         <DatePicker v-model="expectedStart" :max-date="expectedEnd"
-                                                    dateFormat="yy-mm-dd" fluid iconDisplay="input" inputId="icondisplay"
+                                                    dateFormat="yy-mm-dd" fluid iconDisplay="input"
+                                                    inputId="icondisplay"
                                                     showIcon />
                                     </div>
                                     <div class="flex-auto">
@@ -488,7 +491,8 @@ const navigateToBack = () => {
                                             <i class="text-red-600">*</i>
                                         </label>
                                         <DatePicker v-model="expectedEnd" :min-date="expectedStart"
-                                                    dateFormat="yy-mm-dd" fluid iconDisplay="input" inputId="icondisplay"
+                                                    dateFormat="yy-mm-dd" fluid iconDisplay="input"
+                                                    inputId="icondisplay"
                                                     showIcon />
                                     </div>
                                 </div>
@@ -521,7 +525,8 @@ const navigateToBack = () => {
                             <label for="classAdmin"> Group Admin
                                 <i class="text-red-600">*</i>
                             </label>
-                            <MultiSelect id="classAdminOptions" v-model="classAdmins" :maxSelectedLabels="3" :options="classAdminOptions"
+                            <MultiSelect id="classAdminOptions" v-model="classAdmins" :maxSelectedLabels="3"
+                                         :options="classAdminOptions"
                                          class="w-full md:w-80 mt-2" filter optionLabel="account"
                                          placeholder="Select Admin" />
                             <small v-if="errors.classAdminOptions" class="text-red-600 "> {{
@@ -537,12 +542,16 @@ const navigateToBack = () => {
                                      hoverColor="hover:bg-gray-200" màu text="Back to Group List" đen />
                     <div class="flex gap-2">
 
-                        <button class="bg-white text-green-500 hover:bg-gray-200 border border-gray-300 active:bg-gray-300   py-2 px-4 rounded-lg transition duration-300 ease-in-out mr-2" type="submit"
-                                @click="handleFormtTypeandStatus(true, 'Planning')">
+                        <button
+                            class="bg-white text-green-500 hover:bg-gray-200 border border-gray-300 active:bg-gray-300   py-2 px-4 rounded-lg transition duration-300 ease-in-out mr-2"
+                            type="submit"
+                            @click="handleFormtTypeandStatus(true, 'Planning')">
                             Plan Group
                         </button>
-                        <button class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" type="submit"
-                                @click="handleFormtTypeandStatus(true, 'Assigned')">
+                        <button
+                            class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
+                            type="submit"
+                            @click="handleFormtTypeandStatus(true, 'Assigned')">
                             Assign to Group Admin
                         </button>
                     </div>
@@ -562,10 +571,12 @@ const navigateToBack = () => {
                     </div>
                 </div>
                 <div class="flex justify-end mt-4">
-                    <ButtonComponent :onClick="closePopupForPlaining" activeColor="active:bg-gray-300" bgColor="bg-white text-red-500"
+                    <ButtonComponent :onClick="closePopupForPlaining" activeColor="active:bg-gray-300"
+                                     bgColor="bg-white text-red-500"
                                      hoverColor="hover:bg-gray-200" text="Cancel" />
-                    <button class=" bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-                            type="submit">
+                    <button
+                        class=" bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
+                        type="submit">
                         Save
                     </button>
                 </div>
@@ -584,10 +595,12 @@ const navigateToBack = () => {
                     </div>
                 </div>
                 <div class="flex justify-end mt-4">
-                    <ButtonComponent :onClick="closePopup" activeColor="active:bg-gray-300" bgColor="bg-white text-red-500"
+                    <ButtonComponent :onClick="closePopup" activeColor="active:bg-gray-300"
+                                     bgColor="bg-white text-red-500"
                                      hoverColor="hover:bg-gray-200" text="Cancel" />
-                    <button class=" bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-                            type="submit">
+                    <button
+                        class=" bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
+                        type="submit">
                         Save
                     </button>
                 </div>

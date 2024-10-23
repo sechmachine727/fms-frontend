@@ -23,7 +23,8 @@ const navigateToAdd = () => {
     <div class="card">
         <div class="mb-4 flex justify-between items-center">
             <span class="!font-semibold text-2xl">Group List ({{ classes?.length }})</span>
-            <ButtonComponent :onClick="navigateToAdd" activeColor="active:bg-emerald-700" bgColor="bg-emerald-500 text-white"
+            <ButtonComponent :onClick="navigateToAdd" activeColor="active:bg-emerald-700"
+                             bgColor="bg-emerald-500 text-white"
                              hoverColor="hover:bg-emerald-600" text="Add Group" />
         </div>
         <Divider />
