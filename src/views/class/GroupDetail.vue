@@ -95,17 +95,14 @@ const navigateToEdit = (id) => {
 
                     <div class="mt-4 flex justify-between">
                         <div>
-                            <ButtonComponent :onClick="navigateToBack" activeColor="active:bg-gray-300"
-                                             bgColor="bg-white"
-                                             hoverColor="hover:bg-gray-200" màu text="Back to Group List" đen />
+                            <ButtonComponent :onClick="navigateToBack" activeColor="active:bg-gray-300" bgColor="bg-white"
+                                hoverColor="hover:bg-gray-200" màu text="Back to Group List" đen />
                             <ButtonComponent :onClick="handleCancel" activeColor="active:bg-gray-300"
-                                             bgColor="bg-white text-red-500" hoverColor="hover:bg-gray-200"
-                                             text="Cancel Group" />
+                                bgColor="bg-white text-red-500" hoverColor="hover:bg-gray-200"
+                                text="Cancel Group" />
                         </div>
                         <div class="flex gap-2">
-                            <button
-                                class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-                                type="submit"
+                            <button class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" type="submit"
                                 @click="navigateToEdit(classe.id)">
                                 Edit Group
                             </button>

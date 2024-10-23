@@ -5,32 +5,31 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import ButtonComponent from '@/components/ButtonComponent.vue'
 
-const classes = ref([])
-const classStore = useClassStore()
-const router = useRouter()
+const classes = ref([]);
+const classStore = useClassStore();
+const router = useRouter();
 
 onMounted(() => {
-    classStore.fetchInprogressClassList()
-    classes.value = classStore.classes
+    classStore.fetchInprogressClassList();
+    classes.value = classStore.classes;
 })
 
 const navigateToAdd = () => {
-    router.push('/group-management/add')
-}
+    router.push('/group-management/add');
+};
 </script>
 
 <template>
     <div class="card">
         <div class="mb-4 flex justify-between items-center">
             <span class="!font-semibold text-2xl">Group List ({{ classes?.length }})</span>
-            <ButtonComponent :onClick="navigateToAdd" activeColor="active:bg-emerald-700"
-                             bgColor="bg-emerald-500 text-white"
-                             hoverColor="hover:bg-emerald-600" text="Add Group" />
+            <ButtonComponent :onClick="navigateToAdd" activeColor="active:bg-emerald-700" bgColor="bg-emerald-500 text-white"
+                hoverColor="hover:bg-emerald-600" text="Add Group" />
         </div>
         <Divider />
         <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="classes"
-                   currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
-                   paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+            currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
+            paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                    scrollable tableStyle="min-width: 50rem">
             <Column field="no" header="No" style="min-width: 100px"></Column>
             <Column field="classCode" header="Class Code" style="min-width: 100px"></Column>
