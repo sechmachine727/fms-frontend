@@ -171,90 +171,43 @@ const handleShowWorkFlow = () => {
       <div class="flex">
         <span class="font-semibold text-2xl">Group List ({{ classes?.length }}) </span>
         <div>
-          <i
-            v-if="classes"
-            class="pi pi-question-circle ml-1 cursor-pointer"
-            style="font-size: 2rem"
-            @click="handleShowWorkFlow"
-          ></i>
+          <i v-if="classes" class="pi pi-question-circle ml-1 cursor-pointer mt-1" style="font-size: 1.7rem"
+            @click="handleShowWorkFlow"></i>
         </div>
       </div>
 
-      <Button
-        v-if="userRoles.roles.includes('ROLE_DELIVERABLES_MANAGER')"
-        label="Add Group"
-        @click="navigateToAdd"
-      />
+      <Button v-if="userRoles.roles.includes('ROLE_DELIVERABLES_MANAGER')" label="Add Group" @click="navigateToAdd" />
     </div>
     <WorkFlow v-model:visible="visibleWorkFlow" />
     <Divider />
     <div class="flex flex-col md:flex-row gap-4">
       <div class="flex flex-wrap w-60 gap-2">
         <label for="department">Status</label>
-        <MultiSelect
-          id="department"
-          v-model="statusOptions"
-          :maxSelectedLabels="3"
-          :options="statusValues"
-          class="w-full"
-          filter
-          optionLabel="name"
-          placeholder="Filter Status"
-          @change="handleStatusChange"
-        />
+        <MultiSelect id="department" v-model="statusOptions" :maxSelectedLabels="3" :options="statusValues"
+          class="w-full" filter optionLabel="name" placeholder="Filter Status" @change="handleStatusChange" />
       </div>
       <div class="flex flex-wrap w-52 gap-2">
         <label for="technical">Technical Group</label>
-        <MultiSelect
-          id="technical"
-          v-model="technicalGroupOptionsSearch"
-          :maxSelectedLabels="2"
-          :options="technicalGroups"
-          class="w-full"
-          filter
-          optionLabel="code"
-          placeholder="Filter Technical Group"
-          @change="handleTechnicalGroupChange"
-        />
+        <MultiSelect id="technical" v-model="technicalGroupOptionsSearch" :maxSelectedLabels="2"
+          :options="technicalGroups" class="w-full" filter optionLabel="code" placeholder="Filter Technical Group"
+          @change="handleTechnicalGroupChange" />
       </div>
       <div class="flex flex-wrap w-52 gap-2">
         <label for="site">Site</label>
-        <MultiSelect
-          id="site"
-          v-model="siteOptionsSearch"
-          :maxSelectedLabels="2"
-          :options="sites"
-          class="w-full"
-          filter
-          optionLabel="siteName"
-          placeholder="Filter Site"
-          @change="handleSiteChange"
-        />
+        <MultiSelect id="site" v-model="siteOptionsSearch" :maxSelectedLabels="2" :options="sites" class="w-full" filter
+          optionLabel="siteName" placeholder="Filter Site" @change="handleSiteChange" />
       </div>
       <div class="flex flex-wrap w-72 gap-2">
         <label for="search">Search</label>
-        <InputText
-          id="search"
-          v-model="searchQuery"
-          class="h-10 w-full"
-          placeholder="Enter code, name, training program"
-          type="text"
-          @keyup.enter="handleSearch"
-        />
+        <InputText id="search" v-model="searchQuery" class="h-10 w-full"
+          placeholder="Enter code, name, training program" type="text" @keyup.enter="handleSearch" />
       </div>
       <Button class="mt-8" label="Reset" severity="secondary" @click="clearSearch" />
     </div>
-    <DataTable
-      :rows="10"
-      :rowsPerPageOptions="[10, 20, 30, 50]"
-      :value="classes"
-      class="mt-1"
-      currentPageReportTemplate="{first} to {last} of {totalRecords}"
-      paginator
+    <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="classes" class="mt-1"
+      currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
       paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-      scrollable
-      tableStyle="min-width: 50rem"
-    >
+      scrollable tableStyle="min-width: 50rem">
       <Column field="no" header="No" style="min-width: 50px">
         <template #body="slotProps">
           {{ classes.indexOf(slotProps.data) + 1 }}
@@ -262,10 +215,8 @@ const handleShowWorkFlow = () => {
       </Column>
       <Column header="Group Code" style="min-width: 100px">
         <template #body="slotProps">
-          <router-link
-            :to="{ name: 'group-detail', params: { id: slotProps.data.id } }"
-            class="router-link-active hover:underline text-blue-400"
-            >{{ slotProps.data.groupCode }}
+          <router-link :to="{ name: 'group-detail', params: { id: slotProps.data.id } }"
+            class="router-link-active hover:underline text-blue-400">{{ slotProps.data.groupCode }}
           </router-link>
         </template>
       </Column>
@@ -283,23 +234,16 @@ const handleShowWorkFlow = () => {
       <Column field="technicalGroupCode" header="Technical Group" style="min-width: 150px"></Column>
       <Column header="Training Program" style="min-width: 150px">
         <template #body="slotProps">
-          <router-link
-            :to="{
-              name: 'training-program-detail',
-              params: { id: slotProps.data.trainingProgramId }
-            }"
-            class="router-link-active hover:underline text-blue-400"
-            >{{ slotProps.data.trainingProgramName }}
+          <router-link :to="{
+            name: 'training-program-detail',
+            params: { id: slotProps.data.trainingProgramId }
+          }" class="router-link-active hover:underline text-blue-400">{{ slotProps.data.trainingProgramName }}
           </router-link>
         </template>
       </Column>
       <Column field="siteName" header="Site" style="min-width: 100px"></Column>
       <Column field="traineeNumber" header="Trainee number" style="min-width: 150px"></Column>
-      <Column
-        field="expectedStartDate"
-        header="Expected Start Date"
-        style="min-width: 160px"
-      ></Column>
+      <Column field="expectedStartDate" header="Expected Start Date" style="min-width: 160px"></Column>
       <Column field="actualStartDate" header="Actual Start Date" style="min-width: 150px"></Column>
       <Column field="expectedEndDate" header="Expected End Date" style="min-width: 150px"></Column>
       <Column field="actualEndDate" header="Actual End Date" style="min-width: 150px"></Column>

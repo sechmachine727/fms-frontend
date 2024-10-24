@@ -281,7 +281,6 @@ function convertToSchema(data) {
     locationId: data.location?.id || 0,
     expectedStartDate: '',
     expectedEndDate: '',
-    planRevenue: 0,
     deliveryTypeId: data.deliveryType?.id || 0,
     traineeTypeId: data.traineeType?.id || 0,
     scopeId: data.scope?.id || 0,
@@ -318,166 +317,97 @@ const navigateToBack = () => {
                       Group Name
                       <i class="text-red-600">*</i>
                     </label>
-                    <InputText
-                      id="classname"
-                      v-model="className"
-                      :class="`{ 'p-invalid': errors.className }`"
-                      placeholder="Group Name"
-                      type="text"
-                    />
+                    <InputText id="classname" v-model="className" :class="`{ 'p-invalid': errors.className }`"
+                      placeholder="Group Name" type="text" />
                   </div>
 
                   <div class="flex flex-wrap gap-2 w-full">
-                    <label for="DeliveryType"
-                      >Delivery Type
+                    <label for="DeliveryType">Delivery Type
                       <i class="text-red-600">*</i>
                     </label>
-                    <Select
-                      id="DeliveryType"
-                      v-model="deliveryType"
-                      :options="deliveryTypeOptions"
-                      class="w-full"
-                      optionLabel="deliveryTypeName"
-                      placeholder="Select One"
-                    ></Select>
+                    <Select id="DeliveryType" v-model="deliveryType" :options="deliveryTypeOptions" class="w-full"
+                      optionLabel="deliveryTypeName" placeholder="Select One"></Select>
                   </div>
                   <div class="flex flex-wrap gap-2 w-full">
-                    <label for="TraineeType"
-                      >Trainee Type
+                    <label for="TraineeType">Trainee Type
                       <i class="text-red-600">*</i>
                     </label>
-                    <Select
-                      id="TraineeType"
-                      v-model="traineeType"
-                      :options="traineeTypeOptions"
-                      class="w-full"
-                      optionLabel="traineeTypeName"
-                      placeholder="Select One"
-                    ></Select>
+                    <Select id="TraineeType" v-model="traineeType" :options="traineeTypeOptions" class="w-full"
+                      optionLabel="traineeTypeName" placeholder="Select One"></Select>
                   </div>
                 </div>
                 <div class="flex flex-col md:flex-row">
                   <div class="flex flex-wrap gap-2 w-full">
                     <small v-if="errors.className" class="text-red-600">
-                      {{ errors.className }}</small
-                    >
+                      {{ errors.className }}</small>
                   </div>
                   <div class="flex flex-wrap gap-2 w-full">
                     <small v-if="errors.deliveryType" class="text-red-600 ml-2">
-                      {{ errors.deliveryType }}</small
-                    >
+                      {{ errors.deliveryType }}</small>
                   </div>
                   <div class="flex flex-wrap gap-2 w-full">
                     <small v-if="errors.traineeType" class="text-red-600 ml-3">
-                      {{ errors.traineeType }}</small
-                    >
+                      {{ errors.traineeType }}</small>
                   </div>
                 </div>
                 <div class="flex flex-col md:flex-row gap-4">
                   <div class="flex flex-wrap gap-2 w-full">
-                    <label for="FormatType"
-                      >Format Type
+                    <label for="FormatType">Format Type
                       <i class="text-red-600">*</i>
                     </label>
-                    <Select
-                      id="FormatType"
-                      v-model="formatType"
-                      :options="formatTypeOptions"
-                      class="w-full"
-                      optionLabel="formatTypeName"
-                      placeholder="Select One"
-                    ></Select>
+                    <Select id="FormatType" v-model="formatType" :options="formatTypeOptions" class="w-full"
+                      optionLabel="formatTypeName" placeholder="Select One"></Select>
                   </div>
                   <div class="flex flex-wrap gap-2 w-full">
-                    <label for="TechnicalGroup"
-                      >Technical Group
+                    <label for="TechnicalGroup">Technical Group
                       <i class="text-red-600">*</i>
                     </label>
-                    <Select
-                      id="TechnicalGroup"
-                      v-model="technicalGroup"
-                      :options="technicalGroupOptions"
-                      class="w-full"
-                      optionLabel="code"
-                      placeholder="Select One"
-                      @change="handleTechnicalGroupChange"
-                    ></Select>
+                    <Select id="TechnicalGroup" v-model="technicalGroup" :options="technicalGroupOptions" class="w-full"
+                      optionLabel="code" placeholder="Select One" @change="handleTechnicalGroupChange"></Select>
                   </div>
                   <div class="flex flex-wrap gap-2 w-full">
-                    <label for="TrainingProgram"
-                      >Training Program
+                    <label for="TrainingProgram">Training Program
                       <i class="text-red-600">*</i>
                     </label>
-                    <Select
-                      id="TrainingProgram"
-                      v-model="trainingProgram"
-                      :options="trainingProgramOptions"
-                      class="w-full"
-                      optionLabel="trainingProgramNameVersion"
-                      placeholder="Select One"
-                    ></Select>
+                    <Select id="TrainingProgram" v-model="trainingProgram" :options="trainingProgramOptions"
+                      class="w-full" optionLabel="trainingProgramNameVersion" placeholder="Select One"></Select>
                   </div>
                 </div>
                 <div class="flex flex-col md:flex-row">
                   <div class="flex flex-wrap gap-2 w-full">
                     <small v-if="errors.formatType" class="text-red-600">
-                      {{ errors.formatType }}</small
-                    >
+                      {{ errors.formatType }}</small>
                   </div>
                   <div class="flex flex-wrap gap-2 w-full">
                     <small v-if="errors.technicalGroup" class="text-red-600 ml-2">
-                      {{ errors.technicalGroup }}</small
-                    >
+                      {{ errors.technicalGroup }}</small>
                   </div>
                   <div class="flex flex-wrap gap-2 w-full">
                     <small v-if="errors.trainingProgram" class="text-red-600 ml-2">
-                      {{ errors.trainingProgram }}</small
-                    >
+                      {{ errors.trainingProgram }}</small>
                   </div>
                 </div>
                 <div class="flex flex-col md:flex-row gap-4">
                   <div class="flex flex-wrap gap-2 w-full">
-                    <label for="Site"
-                      >Site
+                    <label for="Site">Site
                       <i class="text-red-600">*</i>
                     </label>
-                    <Select
-                      id="Site"
-                      v-model="site"
-                      :options="siteOptions"
-                      class="w-full"
-                      optionLabel="siteName"
-                      placeholder="Select One"
-                      @change="handleSiteChange"
-                    ></Select>
+                    <Select id="Site" v-model="site" :options="siteOptions" class="w-full" optionLabel="siteName"
+                      placeholder="Select One" @change="handleSiteChange"></Select>
                   </div>
                   <div class="flex flex-wrap gap-2 w-full">
-                    <label for="Location"
-                      >Location
+                    <label for="Location">Location
                       <i class="text-red-600">*</i>
                     </label>
-                    <Select
-                      id="Location"
-                      v-model="location"
-                      :options="locationOptions"
-                      class="w-full"
-                      optionLabel="locationName"
-                      placeholder="Select One"
-                    ></Select>
+                    <Select id="Location" v-model="location" :options="locationOptions" class="w-full"
+                      optionLabel="locationName" placeholder="Select One"></Select>
                   </div>
                   <div class="flex flex-wrap gap-2 w-full">
-                    <label for="Scope"
-                      >Scope
+                    <label for="Scope">Scope
                       <i class="text-red-600">*</i>
                     </label>
-                    <Select
-                      id="Scope"
-                      v-model="scope"
-                      :options="scopeOptions"
-                      class="w-full"
-                      optionLabel="scopeName"
-                      placeholder="Select One"
-                    ></Select>
+                    <Select id="Scope" v-model="scope" :options="scopeOptions" class="w-full" optionLabel="scopeName"
+                      placeholder="Select One"></Select>
                   </div>
                 </div>
                 <div class="flex flex-col md:flex-row">
@@ -486,8 +416,7 @@ const navigateToBack = () => {
                   </div>
                   <div class="flex flex-wrap gap-2 w-full">
                     <small v-if="errors.location" class="text-red-600 ml-2">
-                      {{ errors.location }}</small
-                    >
+                      {{ errors.location }}</small>
                   </div>
                   <div class="flex flex-wrap gap-2 w-full">
                     <small v-if="errors.scope" class="text-red-600 ml-2"> {{ errors.scope }}</small>
@@ -495,44 +424,28 @@ const navigateToBack = () => {
                 </div>
                 <div class="flex flex-col md:flex-row gap-4">
                   <div class="flex flex-wrap gap-2 w-full">
-                    <label for="PlannedRevenue"
-                      >Planned Trainee No
+                    <label for="PlannedRevenue">Planned Trainee No
                       <i class="text-red-600">*</i>
                     </label>
-                    <InputNumber
-                      v-model="plannedTrainee"
-                      :max="200"
-                      :min="0"
-                      mode="decimal"
-                      showButtons
-                    >
+                    <InputNumber v-model="plannedTrainee" :max="200" :min="0" mode="decimal" showButtons>
                     </InputNumber>
                   </div>
                   <div class="flex flex-wrap gap-2 w-full">
-                    <label for="Location"
-                      >Key Program
+                    <label for="Location">Key Program
                       <i class="text-red-600">*</i>
                     </label>
-                    <Select
-                      id="Location"
-                      v-model="keyProgram"
-                      :options="keyProgramOptions"
-                      class="w-full"
-                      optionLabel="keyProgramName"
-                      placeholder="Select One"
-                    ></Select>
+                    <Select id="Location" v-model="keyProgram" :options="keyProgramOptions" class="w-full"
+                      optionLabel="keyProgramName" placeholder="Select One"></Select>
                   </div>
                 </div>
                 <div class="flex flex-col md:flex-row">
                   <div class="flex flex-wrap gap-2 w-full">
                     <small v-if="errors.plannedTrainee" class="text-red-600">
-                      {{ errors.plannedTrainee }}</small
-                    >
+                      {{ errors.plannedTrainee }}</small>
                   </div>
                   <div class="flex flex-wrap gap-2 w-full">
                     <small v-if="errors.keyProgram" class="text-red-600 ml-2">
-                      {{ errors.keyProgram }}</small
-                    >
+                      {{ errors.keyProgram }}</small>
                   </div>
                 </div>
                 <div class="flex flex-col md:flex-row gap-4">
@@ -541,42 +454,26 @@ const navigateToBack = () => {
                       Expected Start Date
                       <i class="text-red-600">*</i>
                     </label>
-                    <DatePicker
-                      v-model="expectedStart"
-                      :max-date="expectedEnd"
-                      dateFormat="dd-mm-yy"
-                      fluid
-                      iconDisplay="input"
-                      inputId="icondisplay"
-                      showIcon
-                    />
+                    <DatePicker v-model="expectedStart" :max-date="expectedEnd" dateFormat="dd-mm-yy" fluid
+                      iconDisplay="input" inputId="icondisplay" showIcon />
                   </div>
                   <div class="flex-auto">
                     <label for="expectedEnd">
                       Expected End Date
                       <i class="text-red-600">*</i>
                     </label>
-                    <DatePicker
-                      v-model="expectedEnd"
-                      :min-date="expectedStart"
-                      dateFormat="dd-mm-yy"
-                      fluid
-                      iconDisplay="input"
-                      inputId="icondisplay"
-                      showIcon
-                    />
+                    <DatePicker v-model="expectedEnd" :min-date="expectedStart" dateFormat="dd-mm-yy" fluid
+                      iconDisplay="input" inputId="icondisplay" showIcon />
                   </div>
                 </div>
                 <div class="flex flex-col md:flex-row">
                   <div class="flex flex-wrap gap-2 w-full">
                     <small v-if="errors.expectedStart" class="text-red-600">
-                      {{ errors.expectedStart }}</small
-                    >
+                      {{ errors.expectedStart }}</small>
                   </div>
                   <div class="flex flex-wrap gap-2 w-full">
                     <small v-if="errors.expectedEnd" class="text-red-600 ml-2">
-                      {{ errors.expectedEnd }}</small
-                    >
+                      {{ errors.expectedEnd }}</small>
                   </div>
                 </div>
                 <div class="flex flex-wrap">
@@ -598,46 +495,27 @@ const navigateToBack = () => {
                 Group Admin
                 <i class="text-red-600">*</i>
               </label>
-              <MultiSelect
-                id="classAdminOptions"
-                v-model="classAdmins"
-                :maxSelectedLabels="3"
-                :options="classAdminOptions"
-                class="w-full md:w-80 mt-2"
-                filter
-                optionLabel="account"
-                placeholder="Select Admin"
-              />
+              <MultiSelect id="classAdminOptions" v-model="classAdmins" :maxSelectedLabels="3"
+                :options="classAdminOptions" class="w-full md:w-80 mt-2" filter optionLabel="account"
+                placeholder="Select Admin" />
               <small v-if="errors.classAdminOptions" class="text-red-600">
-                {{ errors.classAdminOptions }}</small
-              >
+                {{ errors.classAdminOptions }}</small>
             </AccordionContent>
           </AccordionPanel>
         </Accordion>
 
         <div class="mt-4 flex justify-between">
-          <ButtonComponent
-            :onClick="navigateToBack"
-            activeColor="active:bg-gray-300"
-            bgColor="bg-white"
-            hoverColor="hover:bg-gray-200"
-            màu
-            text="Back to Group List"
-            đen
-          />
+          <ButtonComponent :onClick="navigateToBack" activeColor="active:bg-gray-300" bgColor="bg-white"
+            hoverColor="hover:bg-gray-200" màu text="Back to Group List" đen />
           <div class="flex gap-2">
             <button
               class="bg-white text-green-500 hover:bg-gray-200 border border-gray-300 active:bg-gray-300 py-2 px-4 rounded-lg transition duration-300 ease-in-out mr-2"
-              type="submit"
-              @click="handleFormtTypeandStatus(true, 'Planning')"
-            >
+              type="submit" @click="handleFormtTypeandStatus(true, 'Planning')">
               Plan Group
             </button>
             <button
               class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-              type="submit"
-              @click="handleFormtTypeandStatus(true, 'Assigned')"
-            >
+              type="submit" @click="handleFormtTypeandStatus(true, 'Assigned')">
               Assign to Group Admin
             </button>
           </div>
@@ -645,77 +523,50 @@ const navigateToBack = () => {
       </form>
     </Fluid>
     <Dialog v-model:visible="visible" :style="{ width: '34rem' }" header="Plan Group" modal>
-      <span class="text-surface-500 dark:text-surface-400 block mb-8"
-        >Are you sure you want to save this planning Group?</span
-      >
+      <span class="text-surface-500 dark:text-surface-400 block mb-8">Are you sure you want to save this planning
+        Group?</span>
       <form @submit.prevent="onSubmits">
         <div class="flex flex-col gap-2">
           <div class="flex flex-col gap-2">
             <label for="account">Group Code<i class="text-red-600">*</i></label>
-            <InputText
-              id="classCode"
-              v-model="classCode"
-              :class="`{ 'p-invalid': finalError.classCode }`"
-              type="text"
-            />
+            <InputText id="classCode" v-model="classCode" :class="`{ 'p-invalid': finalError.classCode }`"
+              type="text" />
             <small v-if="finalError.classCode" class="text-red-600">{{
               finalError.classCode
             }}</small>
           </div>
         </div>
         <div class="flex justify-end mt-4">
-          <ButtonComponent
-            :onClick="closePopupForPlaining"
-            activeColor="active:bg-gray-300"
-            bgColor="bg-white text-red-500"
-            hoverColor="hover:bg-gray-200"
-            text="Cancel"
-          />
+          <ButtonComponent :onClick="closePopupForPlaining" activeColor="active:bg-gray-300"
+            bgColor="bg-white text-red-500" hoverColor="hover:bg-gray-200" text="Cancel" />
           <button
             class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-            type="submit"
-          >
+            type="submit">
             Save
           </button>
         </div>
       </form>
     </Dialog>
-    <Dialog
-      v-model:visible="assignedVisible"
-      :style="{ width: '34rem' }"
-      header="Assign to group admin(s)"
-      modal
-    >
-      <span class="text-surface-500 dark:text-surface-400 block mb-8"
-        >Are you sure you want to assign group with the following code to group admin(s)?</span
-      >
+    <Dialog v-model:visible="assignedVisible" :style="{ width: '34rem' }" header="Assign to group admin(s)" modal>
+      <span class="text-surface-500 dark:text-surface-400 block mb-8">Are you sure you want to assign group with the
+        following code to group admin(s)?</span>
       <form @submit.prevent="onSubmits">
         <div class="flex flex-col gap-2">
           <div class="flex flex-col gap-2">
             <label for="account">Group Code<i class="text-red-600">*</i></label>
-            <InputText
-              id="classCode"
-              v-model="classCode"
-              :class="`{ 'p-invalid': finalError.classCode }`"
-              type="text"
-            />
+            <InputText id="classCode" v-model="classCode" :class="`{ 'p-invalid': finalError.classCode }`"
+              type="text" />
             <small v-if="finalError.classCode" class="text-red-600">{{
               finalError.classCode
             }}</small>
           </div>
         </div>
         <div class="flex justify-end mt-4">
-          <ButtonComponent
-            :onClick="closePopup"
-            activeColor="active:bg-gray-300"
-            bgColor="bg-white text-red-500"
-            hoverColor="hover:bg-gray-200"
-            text="Cancel"
-          />
+          <ButtonComponent :onClick="closePopup" activeColor="active:bg-gray-300" bgColor="bg-white text-red-500"
+            hoverColor="hover:bg-gray-200" text="Cancel" />
           <button
             class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-            type="submit"
-          >
+            type="submit">
             Save
           </button>
         </div>
@@ -723,14 +574,3 @@ const navigateToBack = () => {
     </Dialog>
   </div>
 </template>
-
-<!-- .superRefine((data, ctx) => {
-if (contractType.value.code === "Official") {
-if (!email.value.endsWith("@fpt.com")) {
-ctx.addIssue({
-path: ['email'],
-message: 'Account must be end with @fpt.com',
-});
-}
-}
-}) -->

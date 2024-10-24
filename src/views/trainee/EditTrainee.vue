@@ -2,7 +2,7 @@
 import ButtonComponent from '@/components/ButtonComponent.vue'
 import router from '@/router'
 import { useTraineeStore } from '@/stores/traineeStore'
-import { convertToVietnamTime } from '@/utils/date'
+import { convertToVietnamTime, parseDateFromString } from '@/utils/date'
 import { toTypedSchema } from '@vee-validate/zod'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
@@ -50,8 +50,8 @@ const validationSchema = toTypedSchema(
             .max(4.0, 'GPA must be less than or equal to 4.0'),
         address: z.optional(
             z.string()
-            .trim()
-            .max(100, { message: 'Address must not exceed 100 characters' }),
+                .trim()
+                .max(100, { message: 'Address must not exceed 100 characters' }),
         ),
         nationalId: z
             .string({ required_error: 'National Id is required' })
@@ -117,10 +117,6 @@ const navigateToBack = (id) => {
     router.push('/trainee-management/trainee/detail/' + id)
 }
 
-function parseDateFromString(dateString) {
-    const [day, month, year] = dateString.split('-').map(Number)
-    return new Date(year, month - 1, day)  // month - 1 vì tháng trong Date là 0-based
-}
 
 const route = useRoute()
 const traineeId = route.params.id
@@ -167,7 +163,7 @@ onMounted(async () => {
                                             <i class="text-red-600">*</i>
                                         </label>
                                         <InputText id="name" v-model="name" :class="`{ 'p-invalid': errors.name }`"
-                                                   placeholder="Trainee Name" type="text" />
+                                            placeholder="Trainee Name" type="text" />
                                     </div>
 
                                     <div class="flex flex-wrap gap-2 w-full">
@@ -175,14 +171,14 @@ onMounted(async () => {
                                             <i class="text-red-600">*</i>
                                         </label>
                                         <InputText id="email" v-model="email" :class="`{ 'p-invalid': errors.email }`"
-                                                   placeholder="Email" type="text" />
+                                            placeholder="Email" type="text" />
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <label for="phone">Phone
                                             <i class="text-red-600">*</i>
                                         </label>
                                         <InputText id="phone" v-model="phone" :class="`{ 'p-invalid': errors.phone }`"
-                                                   placeholder="Phone" type="text" />
+                                            placeholder="Phone" type="text" />
                                     </div>
                                 </div>
                                 <div class="flex flex-col md:flex-row">
@@ -202,21 +198,21 @@ onMounted(async () => {
                                         <label for="gender">Gender
                                         </label>
                                         <Select id="gender" v-model="gender" :options="genderOptions" class="w-full"
-                                                optionLabel="label" optionValue="value"
-                                                placeholder="Select Gender"></Select>
+                                            optionLabel="label" optionValue="value"
+                                            placeholder="Select Gender"></Select>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <label for="gpa">GPA</label>
-                                        <InputNumber id="gpa" v-model="gpa" :max="4" :min="0" mode="decimal"
-                                                     showButtons step="0.1">
+                                        <InputNumber id="gpa" v-model="gpa" :max="4" :min="0" mode="decimal" showButtons
+                                            step="0.1">
                                         </InputNumber>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <label for="address">Address
                                         </label>
                                         <InputText id="address" v-model="address"
-                                                   :class="`{ 'p-invalid': errors.address }`" placeholder="Address"
-                                                   type="text" />
+                                            :class="`{ 'p-invalid': errors.address }`" placeholder="Address"
+                                            type="text" />
                                     </div>
                                 </div>
                                 <div class="flex flex-col md:flex-row ">
@@ -226,8 +222,8 @@ onMounted(async () => {
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full ">
                                         <small v-if="errors.gpa" class="text-red-600 ml-2"> {{
-                                                errors.gpa
-                                            }}</small>
+                                            errors.gpa
+                                        }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small v-if="errors.address" class="text-red-600"> {{ errors.address
@@ -241,24 +237,22 @@ onMounted(async () => {
                                             <i class="text-red-600">*</i>
                                         </label>
                                         <InputText id="nationalId" v-model="nationalId"
-                                                   :class="`{ 'p-invalid': errors.nationalId }`"
-                                                   placeholder="National Id"
-                                                   type="text" />
+                                            :class="`{ 'p-invalid': errors.nationalId }`" placeholder="National Id"
+                                            type="text" />
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <label for="language">Language
                                         </label>
                                         <InputText id="language" v-model="language"
-                                                   :class="`{ 'p-invalid': errors.language }`" placeholder="Language"
-                                                   type="text" />
+                                            :class="`{ 'p-invalid': errors.language }`" placeholder="Language"
+                                            type="text" />
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <label for="university">University
                                         </label>
                                         <InputText id="university" v-model="university"
-                                                   :class="`{ 'p-invalid': errors.university }`"
-                                                   placeholder="University"
-                                                   type="text" />
+                                            :class="`{ 'p-invalid': errors.university }`" placeholder="University"
+                                            type="text" />
                                     </div>
                                 </div>
 
@@ -278,25 +272,25 @@ onMounted(async () => {
                                             <i class="text-red-600">*</i>
                                         </label>
                                         <DatePicker v-model="dob" dateFormat="dd-mm-yy" fluid iconDisplay="input"
-                                                    inputId="icondisplay" showIcon />
+                                            inputId="icondisplay" showIcon />
                                     </div>
                                     <div class="flex-auto">
                                         <label for="universityGraduationDate"> University Graduation Date
                                             <i class="text-red-600">*</i>
                                         </label>
                                         <DatePicker v-model="universityGraduationDate" dateFormat="dd-mm-yy" fluid
-                                                    iconDisplay="input" inputId="icondisplay" showIcon />
+                                            iconDisplay="input" inputId="icondisplay" showIcon />
                                     </div>
                                 </div>
                                 <div class="flex flex-col md:flex-row ">
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small v-if="errors.dob" class="text-red-600 "> {{
-                                                errors.dob
-                                            }}</small>
+                                            errors.dob
+                                        }}</small>
                                     </div>
                                     <div class="flex flex-wrap gap-2 w-full">
                                         <small v-if="errors.universityGraduationDate" class="text-red-600 ml-2"> {{
-                                                errors.universityGraduationDate }}</small>
+                                            errors.universityGraduationDate }}</small>
                                     </div>
                                 </div>
                             </div>
@@ -321,7 +315,7 @@ onMounted(async () => {
 
                 <div class="mt-4 flex justify-between">
                     <ButtonComponent :onClick="navigateToBack" activeColor="active:bg-gray-300" bgColor="bg-white"
-                                     hoverColor="hover:bg-gray-200" màu text="Back to Trainee Info" đen />
+                        hoverColor="hover:bg-gray-200" màu text="Back to Trainee Info" đen />
                     <div class="flex gap-2">
                         <button
                             class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"

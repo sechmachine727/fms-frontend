@@ -36,6 +36,16 @@ export const useClassStore = defineStore('classStore', {
       }
     },
 
+    async fetchUpdateGroup(id, data) {
+      try {
+        const result = await classApi.put(id, data)
+        return result.data
+      } catch (error) {
+        console.error('Error fetching trainees:', error)
+        throw error
+      }
+    },
+
     fetchInprogressClassList() {
       this.classes = this.classes.filter((c) => c.status === 'In Progress')
     },
@@ -51,8 +61,8 @@ export const useClassStore = defineStore('classStore', {
       this.filterClasses = this.classes.filter((c) => {
         const matchesSearchQuery = searchQuery
           ? c.groupCode.toLowerCase().includes(searchQuery) ||
-            c.groupName.toLowerCase().includes(searchQuery) ||
-            c.trainingProgramName.toLowerCase().includes(searchQuery)
+          c.groupName.toLowerCase().includes(searchQuery) ||
+          c.trainingProgramName.toLowerCase().includes(searchQuery)
           : true
 
         const matchesTechnicalGroup = technicalGroup.length
