@@ -1,13 +1,13 @@
 <script setup>
-import ButtonComponent from '@/components/ButtonComponent.vue'
-import WorkFlow from '@/components/WorkFlow.vue'
-import router from '@/router'
-import { useClassStore } from '@/stores/groupStore' // Correct the import to use `useTraineeStore`
-import { getStatusLabel } from '@/utils/status'
-import ViewActivity from '@/views/calendar/ViewActivity.vue'
-import ViewCalendar from '@/views/calendar/ViewCalendar.vue'
-import { computed, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import ButtonComponent from '@/components/ButtonComponent.vue';
+import WorkFlow from '@/components/WorkFlow.vue';
+import router from '@/router';
+import { useClassStore } from '@/stores/groupStore'; // Correct the import to use `useTraineeStore`
+import { getStatusLabel } from '@/utils/status';
+import ViewActivity from '@/views/calendar/ViewActivity.vue';
+import ViewCalendar from '@/views/calendar/ViewCalendar.vue';
+import { computed, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 
 const classe = ref()
 const classStore = useClassStore()
@@ -43,8 +43,8 @@ const groupInfo = computed(() => {
       {
         label1: 'Planned Trainee No',
         value1: classStore.classDetail.traineeNumber,
-        label2: 'Planned Budget',
-        value2: classStore.classDetail.planRevenue,
+        label2: 'Group Admin',
+        value2: classStore.classDetail.assignedUserAccounts?.join(', '),
         label3: 'Key Program',
         value3: classStore.classDetail.keyProgramName
       },
@@ -53,8 +53,6 @@ const groupInfo = computed(() => {
         value1: classStore.classDetail.expectedStartDate,
         label2: 'Expected End Date',
         value2: classStore.classDetail.expectedEndDate,
-        label3: 'Group Admin',
-        value3: classStore.classDetail.assignedUserAccounts.join(', ')
       }
     ]
   } else {
@@ -81,7 +79,7 @@ const handleCancel = () => {
   console.log('object')
 }
 const navigateToEdit = (id) => {
-  console.log(id)
+  router.push('/group-management/edit/' + id)
 }
 
 const events = ref([
@@ -118,6 +116,11 @@ const visibleWorkFlow = ref(false)
 const handleShowWorkFlow = () => {
   visibleWorkFlow.value = true
 }
+
+const isEdit = (data) => {
+  return data !== 'Planning' || data !== 'Assigned' || data !== 'Reviewing'
+}
+
 </script>
 
 <template>
@@ -129,12 +132,8 @@ const handleShowWorkFlow = () => {
           Group Details : {{ classe?.groupCode }}
           <Tag :severity="getStatusLabel(classe?.status)" :value="classe.status" />
         </span>
-        <i
-          v-if="classe"
-          class="pi pi-question-circle ml-1 cursor-pointer"
-          style="font-size: 2rem"
-          @click="handleShowWorkFlow"
-        ></i>
+        <i v-if="classe" class="pi pi-question-circle ml-1 cursor-pointer mt-1" style="font-size: 1.7rem"
+          @click="handleShowWorkFlow"></i>
       </div>
       <WorkFlow v-model:visible="visibleWorkFlow" />
       <Divider />
@@ -148,8 +147,8 @@ const handleShowWorkFlow = () => {
                   <td>{{ classDetail.value1 }}</td>
                   <td class="highlight-label-column">{{ classDetail.label2 }}</td>
                   <td>{{ classDetail.value2 }}</td>
-                  <td class="highlight-label-column">{{ classDetail.label3 }}</td>
-                  <td>{{ classDetail.value3 }}</td>
+                  <td class="highlight-label-column" v-if="classDetail.label3">{{ classDetail.label3 }}</td>
+                  <td v-if="classDetail.value3">{{ classDetail.value3 }}</td>
                 </tr>
               </tbody>
             </table>
@@ -157,29 +156,15 @@ const handleShowWorkFlow = () => {
 
           <div class="mt-4 flex justify-between">
             <div>
-              <ButtonComponent
-                :onClick="navigateToBack"
-                activeColor="active:bg-gray-300"
-                bgColor="bg-white"
-                hoverColor="hover:bg-gray-200"
-                màu
-                text="Back to Group List"
-                đen
-              />
-              <ButtonComponent
-                :onClick="handleCancel"
-                activeColor="active:bg-gray-300"
-                bgColor="bg-white text-red-500"
-                hoverColor="hover:bg-gray-200"
-                text="Cancel Group"
-              />
+              <ButtonComponent :onClick="navigateToBack" activeColor="active:bg-gray-300" bgColor="bg-white"
+                hoverColor="hover:bg-gray-200" màu text="Back to Group List" đen />
+              <ButtonComponent :onClick="handleCancel" activeColor="active:bg-gray-300" bgColor="bg-white text-red-500"
+                hoverColor="hover:bg-gray-200" text="Cancel Group" />
             </div>
             <div class="flex gap-2">
-              <button
+              <button v-if="isEdit(classe?.status)"
                 class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-                type="submit"
-                @click="navigateToEdit(classe.id)"
-              >
+                type="submit" @click="navigateToEdit(classe?.id)">
                 Edit Group
               </button>
             </div>

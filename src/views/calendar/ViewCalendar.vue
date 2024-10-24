@@ -1,6 +1,6 @@
 <script setup>
 import { useTrainingCalendarStore } from '@/stores/trainingCalendarStore'
-import { convertToVietnamTime } from '@/utils/date'
+import { convertToVietnamTimeWithTimeZone } from '@/utils/date'
 import { getUserInfo } from '@/utils/token'
 import { useToast } from 'primevue/usetoast'
 import { onMounted, reactive, ref } from 'vue'
@@ -20,7 +20,7 @@ const columns = ref([
   { field: 'topicCode', header: 'Code' },
   { field: 'topicName', header: 'Name' },
   { field: 'version', header: 'Version' },
-  { field: 'trainer', header: 'Trainer' } // Thêm cột Trainer
+  { field: 'trainer', header: 'Trainer' }
 ])
 const trainers = ref([])
 const topics = ref([])
@@ -28,7 +28,7 @@ const topicByGroups = ref([])
 const slotTimes = ref([])
 const trainingCalendar = ref([])
 const route = useRoute()
-
+const filteredTopics = ref([])
 onMounted(() => {
   const groupId = route.params.id
   trainingCalendarStore.fectchTrainers().then(() => {
@@ -46,10 +46,15 @@ onMounted(() => {
   trainingCalendarStore.fectchTrainingTopics(groupId).then(() => {
     topicByGroups.value = trainingCalendarStore.topicByGroups
     trainingCalendarStore.fectchTopics().then(() => {
-      topics.value = trainingCalendarStore.topics.filter(
-        (topic) => !topicByGroups.value.some((groupTopic) => groupTopic.id === topic.id)
+      filteredTopics.value = trainingCalendarStore.topics.filter(
+        (topic) => !topicByGroups.value.some((groupTopic) => groupTopic.id === topic.id || groupTopic.topicCode === topic.topicCode)
       )
-      console.log(topics.value)
+      topics.value = filteredTopics.value.map((topic) => {
+        return {
+          label: `[${topic.topicCode}] ${topic.topicName} (${topic.version})`,
+          value: topic.id
+        }
+      })
     })
   })
 })
@@ -75,12 +80,10 @@ const validateForm = () => {
   }
 
   if (!dateSelection.value) {
-    console.log(props.expectedStartDate)
     errorDate.value = 'Actual Start Date is required'
   } else {
     const [day, month, year] = props.expectedStartDate.split('-').map(Number)
     const targetDate = new Date(year, month - 1, day)
-    console.log(targetDate)
     if (dateSelection.value < targetDate) {
       errorDate.value = 'The selected date must be on or after ' + props.expectedStartDate
       isValid = false
@@ -126,7 +129,7 @@ const onSubmit = () => {
   if (validateForm()) {
     const formData = {
       groupId: props.groupId,
-      actualStartDate: convertToVietnamTime(dateSelection.value),
+      actualStartDate: convertToVietnamTimeWithTimeZone(dateSelection.value),
       slotTimeSuggestionId: slotTimeSelection.value.id,
       topics: topicByGroups.value.map((topic) => ({
         topicId: topic.id,
@@ -160,7 +163,29 @@ const selectedChanges = () => {
   const groupId = route.params.id
   trainingCalendarStore.fectchTrainingTopics(groupId).then(() => {
     topicByGroups.value = trainingCalendarStore.topicByGroups
-    topicByGroups.value = topicByGroups.value.concat(selectedTopcis.value)
+    const filterTopicsConCat = filteredTopics.value.filter((topic) => selectedTopcis.value.some((selectedTopic) => selectedTopic.value === topic.id))
+    let uniqueArrTopic = [];
+    if (filterTopicsConCat.length > 1) {
+      for (let i = 0; i < filterTopicsConCat.length; i++) {
+        for (let j = i + 1; j < filterTopicsConCat.length; j++) {
+          if (filterTopicsConCat[i].topicCode === filterTopicsConCat[j].topicCode) {
+            filterTopicsConCat.splice(j, 1);
+            j--;
+            toast.add({
+              severity: 'error',
+              summary: 'Duplicate',
+              detail: 'The topic name ' + filterTopicsConCat[i].topicName + ' is duplicated',
+              life: 4000
+            });
+          }
+        }
+        uniqueArrTopic.push(filterTopicsConCat[i]);
+      }
+    } else {
+      uniqueArrTopic = filterTopicsConCat;
+    }
+
+    topicByGroups.value = topicByGroups.value.concat(uniqueArrTopic)
   })
 }
 const onclose = () => {
@@ -171,28 +196,33 @@ const onclose = () => {
   <Toast />
   <div>
     <div class="mb-4 flex justify-end items-center">
-      <Button
-        v-if="userRoles.roles.includes('ROLE_DELIVERABLES_MANAGER')"
-        label="Generate Calendar"
-        @click="visible = true"
-      />
+      <Button v-if="userRoles.roles.includes('ROLE_DELIVERABLES_MANAGER', 'ROLE_GROUP_ADMIN')" label="Generate Calendar"
+        @click="visible = true" />
     </div>
-    <Divider />
-    <div>
+    <div v-if="trainingCalendar.length > 0">
+      <div class="flex gap-5">
+        <div><span class="font-semibold">Class Start Date:</span> {{ props.expectedStartDate }}</div>
+        <div><span class="font-semibold">Actual Learning Start Date</span> {{ trainingCalendar[0]?.startDate }}</div>
+      </div>
       <Accordion v-for="data in trainingCalendar" :key="data.id" value="{null}">
         <AccordionPanel value="0">
           <AccordionHeader class="flex justify-between items-center">
-            <div class="w-4/6">{{ data.topic.topicName }}</div>
-            <div class="w-1/3">StartDate: {{ data.startDate }} EndDate: {{ data.endDate }}</div>
-            <div class="w-1/6">Trainer: {{ data.trainer.name }}</div>
+            <div class="w-4/6">[{{ data.topic.topicCode }}] {{ data.topic.topicName }} ({{ data.topic.version }})</div>
+            <div class="w-1/2">From: {{ data.startDate }} To: {{ data.endDate }}</div>
+            <div class="w-1/6">
+              PIC: {{ data.trainer.name }}
+            </div>
           </AccordionHeader>
           <AccordionContent>
+            <div>
+              Slot time: [HCM] [FTOWN-1] FWF tối 2,4,6
+            </div>
             <Accordion v-for="lesson in data.lessons" :key="lesson.id">
               <AccordionPanel value="0">
                 <AccordionHeader class="flex justify-between items-center">
-                  <div class="w-2/3">{{ lesson.unit.unitName }} {{ lesson.unit.unitName }}</div>
-                  <div class="w-1/2">
-                    StartDate: {{ lesson.startDate }} EndDate: {{ lesson.endDate }}
+                  <div class="w-4/5">{{ lesson.unit.unitName }} {{ lesson.unit.unitName }}</div>
+                  <div class="w-1/6">
+                    From: {{ lesson.startDate }} To: {{ lesson.endDate }}
                   </div>
                 </AccordionHeader>
                 <AccordionContent>
@@ -214,28 +244,16 @@ const onclose = () => {
 
     <form @submit.prevent="onSubmit">
       <div v-if="visible" class="card flex justify-center">
-        <Dialog
-          v-model:visible="visible"
-          :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
-          :style="{ width: '80rem' }"
-          header="Generate Calendar"
-          maximizable
-          modal
-        >
+        <Dialog v-model:visible="visible" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
+          :style="{ width: '80rem' }" header="Generate Calendar" maximizable modal>
           <div class="flex mb-5">
             <div class="flex flex-col gap-2 h-28">
               <label>
                 Actual Start Date
                 <i class="text-red-600">*</i>
               </label>
-              <DatePicker
-                v-model="dateSelection"
-                fluid
-                iconDisplay="input"
-                required
-                showIcon
-                @update:modelValue="handleDateChange"
-              />
+              <DatePicker v-model="dateSelection" fluid iconDisplay="input" dateFormat="dd-mm-yy" required showIcon
+                @update:modelValue="handleDateChange" />
               <small v-if="errorDate" class="text-red-600">{{ errorDate }}</small>
             </div>
             <div class="flex flex-col gap-2 ml-3 w-80 h-25">
@@ -244,62 +262,28 @@ const onclose = () => {
                 <i class="text-red-600">*</i>
               </label>
               <!-- Field required -->
-              <Select
-                v-model="slotTimeSelection"
-                :options="slotTimes"
-                class="w-full md:w-80"
-                optionLabel="suggestionName"
-                placeholder="Select slot time"
-                required
-                @change="handleSelectChange"
-              />
+              <Select v-model="slotTimeSelection" :options="slotTimes" class="w-full md:w-80"
+                optionLabel="suggestionName" placeholder="Select slot time" required @change="handleSelectChange" />
               <small v-if="errorSlotTime" class="text-red-600">{{ errorSlotTime }}</small>
             </div>
             <div class="flex flex-col gap-2 ml-3 w-56 h-25">
               <label> Topics </label>
-              <MultiSelect
-                v-model="selectedTopcis"
-                :maxSelectedLabels="3"
-                :options="topics"
-                class="w-full md:w-80"
-                display="chip"
-                filter
-                optionLabel="topicName"
-                placeholder="Select Cities"
-                @change="selectedChanges"
-              />
+              <MultiSelect v-model="selectedTopcis" :maxSelectedLabels="3" :options="topics" class="w-full md:w-80"
+                display="chip" filter optionLabel="label" placeholder="Select Cities" @change="selectedChanges" />
             </div>
           </div>
 
           <div>
-            <DataTable
-              :reorderableColumns="true"
-              :value="topicByGroups"
-              scrollHeight="30rem
-                        "
-              scrollable
-              tableStyle="width: full"
-              @rowReorder="onRowReorder"
-            >
+            <DataTable :reorderableColumns="true" :value="topicByGroups" scrollHeight="30rem
+                        " scrollable tableStyle="width: full" @rowReorder="onRowReorder">
               <Column :reorderableColumn="false" headerStyle="width: 3rem" rowReorder />
-              <Column
-                v-for="col of columns"
-                :key="col.field"
-                :field="col.field"
-                :header="col.header"
-              >
+              <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
                 <template #body="slotProps">
                   <!-- Check if the column is 'trainer' to add the Select component -->
                   <div v-if="col.field === 'trainer'" class="flex flex-col">
                     <div class="h-20 flex flex-col w-96 mt-8">
-                      <Select
-                        v-model="slotProps.data.trainer"
-                        :options="trainers"
-                        optionLabel="name"
-                        placeholder="Select Trainer"
-                        required
-                        @change="onchangeTrainer(slotProps.data.id, $event)"
-                      />
+                      <Select v-model="slotProps.data.trainer" :options="trainers" optionLabel="name"
+                        placeholder="Select Trainer" required @change="onchangeTrainer(slotProps.data.id, $event)" />
                       <small v-if="errorTrainers[slotProps.data.id]" class="text-red-600">
                         {{ errorTrainers[slotProps.data.id] }}
                       </small>
@@ -319,9 +303,7 @@ const onclose = () => {
             <Button autofocus label="Cancel" severity="secondary" text @click="onclose" />
             <button
               class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-              type="submit"
-              @click="onSubmit"
-            >
+              type="submit" @click="onSubmit">
               Save
             </button>
           </template>

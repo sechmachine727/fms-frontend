@@ -124,6 +124,17 @@ const router = createRouter({
                     component: () => import('@/views/class/GroupDetail.vue')
                 },
                 {
+                    path: '/group-management/edit/:id',
+                    name: 'group-edit',
+                    meta: {
+                        roles: [
+                            'ROLE_GROUP_ADMIN',
+                            'ROLE_DELIVERABLES_MANAGER'
+                        ]
+                    },
+                    component: () => import('@/views/class/GroupEdit.vue')
+                },
+                {
                     path: '/group-management/in-progress-list',
                     name: 'group-management-in-progress-list',
                     meta: {
