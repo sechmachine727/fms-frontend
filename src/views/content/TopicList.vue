@@ -149,8 +149,8 @@ const confirmActive = (value) => {
     },
     rejectProps: {
       label: 'Cancel',
-      severity: 'error',
-      className: 'button-custom'
+      severity: 'secondary',
+      outlined: true
     },
     accept: () => {
       topicStore
@@ -180,8 +180,8 @@ const confirmDeactive = (value) => {
     },
     rejectProps: {
       label: 'Cancel',
-      severity: 'error',
-      className: 'button-custom'
+      severity: 'secondary',
+      outlined: true
     },
     accept: () => {
       topicStore
@@ -375,11 +375,7 @@ const userRoles = getUserInfo()
   <div class="card" style="height: calc(100vh - 4rem - 2rem)">
     <div class="flex items-center justify-between mb-2">
       <h1 class="!font-semibold text-2xl">Topic Configuration ({{ topics?.length }})</h1>
-      <Button
-        v-if="userRoles.roles.includes('ROLE_CONTENT_MANAGER')"
-        label="Import Topic"
-        @click="showDialog = true"
-      />
+      <Button v-if="userRoles.roles.includes('ROLE_CONTENT_MANAGER')" label="Import Topic" @click="showDialog = true" />
     </div>
     <Divider />
     <Toast />
@@ -387,63 +383,30 @@ const userRoles = getUserInfo()
       <div class="flex flex-col md:flex-row gap-4">
         <div class="flex flex-col w-50 mt-1 gap-2">
           <label class="w-60" for="contractType">Active</label>
-          <Select
-            id="contractType"
-            v-model="statusOptions"
-            :options="statuses"
-            class="w-full"
-            optionLabel="name"
-            placeholder="Filter status"
-            @change="handleStatusChange"
-          ></Select>
+          <Select id="contractType" v-model="statusOptions" :options="statuses" class="w-full" optionLabel="name"
+            placeholder="Filter status" @change="handleStatusChange"></Select>
         </div>
         <div class="flex flex-wrap w-50 gap-2">
           <label for="technical">Technical Group</label>
-          <MultiSelect
-            id="technical"
-            v-model="technicalGroupOptionsSearch"
-            :maxSelectedLabels="2"
-            :options="technicalGroups"
-            class="w-full"
-            filter
-            optionLabel="code"
-            placeholder="Filter Technical Group"
-            @change="handleTechnicalGroupChange"
-          />
+          <MultiSelect id="technical" v-model="technicalGroupOptionsSearch" :maxSelectedLabels="2"
+            :options="technicalGroups" class="w-full" filter optionLabel="code" placeholder="Filter Technical Group"
+            @change="handleTechnicalGroupChange" />
         </div>
         <div class="flex flex-wrap w-96 gap-2 mt-1">
           <label for="search">Search</label>
-          <InputText
-            id="search"
-            v-model="searchQuery"
-            class="h-10 w-full"
-            placeholder="Enter to Code, Name ..."
-            type="text"
-            @keyup.enter="handleSearch"
-          />
+          <InputText id="search" v-model="searchQuery" class="h-10 w-full" placeholder="Enter to Code, Name ..."
+            type="text" @keyup.enter="handleSearch" />
         </div>
         <Button class="mt-8" label="Reset" severity="secondary" @click="clearSearch" />
       </div>
 
-      <DataTable
-        :rows="10"
-        :rowsPerPageOptions="[10, 20, 30, 50]"
-        :value="topics"
-        class="mt-1"
-        currentPageReportTemplate="{first} to {last} of {totalRecords}"
-        paginator
+      <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="topics" class="mt-1"
+        currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
         paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-        tableStyle="min-width: 50rem"
-      >
+        tableStyle="min-width: 50rem">
         <div class="flex items-center justify-between">
           <!-- Dialog -->
-          <Dialog
-            v-model:visible="showDialog"
-            class="w-1/3"
-            header="Import Topic"
-            modal
-            @hide="showDialog = false"
-          >
+          <Dialog v-model:visible="showDialog" class="w-1/3" header="Import Topic" modal @hide="showDialog = false">
             <div class="p-4">
               <ul class="list-disc ml-4">
                 <li><strong>Allowed file types: xls, xlsx</strong></li>
@@ -458,36 +421,18 @@ const userRoles = getUserInfo()
               <!-- File upload component -->
               <div class="flex flex-wrap gap-2 w-full mt-2">
                 <p class="mr-4">Select a file to upload:</p>
-                <FileUpload
-                  :auto="true"
-                  :maxFileSize="5000000"
-                  accept=".xls,.xlsx"
-                  chooseLabel="Choose file..."
-                  customUpload
-                  mode="basic"
-                  @select="onFileSelect"
-                />
-                <span v-if="selectedFile" class="text-gray-700 truncate flex flex-wrap gap-2 w-full"
-                  ><strong>Current file: </strong>{{ selectedFileName }}</span
-                >
+                <FileUpload :auto="true" :maxFileSize="5000000" accept=".xls,.xlsx" chooseLabel="Choose file..."
+                  customUpload mode="basic" @select="onFileSelect" />
+                <span v-if="selectedFile" class="text-gray-700 truncate flex flex-wrap gap-2 w-full"><strong>Current
+                    file: </strong>{{ selectedFileName }}</span>
               </div>
             </div>
 
             <template #footer>
-              <ButtonComponent
-                :onClick="cancelUpload"
-                activeColor="active:bg-gray-300"
-                bgColor="bg-white text-red-500"
-                hoverColor="hover:bg-gray-200"
-                text="Cancel"
-              />
-              <ButtonComponent
-                :onClick="importFile"
-                activeColor="active:bg-emerald-700"
-                bgColor="bg-emerald-500 text-white"
-                hoverColor="hover:bg-emerald-600"
-                text="Import"
-              />
+              <ButtonComponent :onClick="cancelUpload" activeColor="active:bg-gray-300" bgColor="bg-white text-red-500"
+                hoverColor="hover:bg-gray-200" text="Cancel" />
+              <ButtonComponent :onClick="importFile" activeColor="active:bg-emerald-700"
+                bgColor="bg-emerald-500 text-white" hoverColor="hover:bg-emerald-600" text="Import" />
             </template>
           </Dialog>
         </div>
@@ -498,20 +443,16 @@ const userRoles = getUserInfo()
         </Column>
         <Column field="code" header="Topic Code" style="width: 20%">
           <template #body="slotProps">
-            <router-link
-              :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }"
-              class="router-link-active"
-              >{{ slotProps.data.code }}
+            <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }" class="router-link-active">{{
+              slotProps.data.code }}
             </router-link>
           </template>
         </Column>
 
         <Column field="name" header="Topic Name" style="width: 25%">
           <template #body="slotProps">
-            <router-link
-              :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }"
-              class="router-link-active"
-              >{{ slotProps.data.name }}
+            <router-link :to="{ name: 'topic-detail', params: { id: slotProps.data.id } }" class="router-link-active">{{
+              slotProps.data.name }}
             </router-link>
           </template>
         </Column>
@@ -525,40 +466,25 @@ const userRoles = getUserInfo()
         <Column field="modifiedDate" header="Last Modified Date" style="width: 15%"></Column>
         <Column field="lastModifiedBy" header="Last Modified By" style="width: 22%"></Column>
 
-        <Column
-          v-if="userRoles?.roles.some((role) => rolesForAccess.includes(role))"
-          :exportable="false"
-          alignFrozen="right"
-          frozen
-          header="Action"
-          style="width: 5%"
-        >
+        <Column v-if="userRoles?.roles.some((role) => rolesForAccess.includes(role))" :exportable="false"
+          alignFrozen="right" frozen header="Action" style="width: 5%">
           <template #body="slotProps">
-            <Button
-              class="mr-2 p-button-text"
-              icon="pi pi-ellipsis-v"
-              severity="secondary"
-              @click="showOptions($event, slotProps.data)"
-            />
+            <Button class="mr-2 p-button-text" icon="pi pi-ellipsis-v" severity="secondary"
+              @click="showOptions($event, slotProps.data)" />
 
             <Popover ref="overlay">
               <div class="flex flex-col gap-4 w-[8rem]">
                 <ul>
-                  <li
-                    v-if="selectedItem?.status === 'Inactive'"
+                  <li v-if="selectedItem?.status === 'Inactive'"
                     class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border text-green-500 hover:bg-green-100 active:bg-green-100 focus:outline-none focus:ring focus:ring-green-100"
                     severity="slotProps.data.status === 'Active' ? 'warn' : 'success'"
-                    @click="handleActive(slotProps.data)"
-                  >
+                    @click="handleActive(slotProps.data)">
                     <i class="pi pi-check"></i>
                     Activate
                   </li>
-                  <li
-                    v-if="selectedItem?.status === 'Active'"
+                  <li v-if="selectedItem?.status === 'Active'"
                     class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border text-orange-500 hover:bg-orange-100 active:bg-orange-100 focus:outline-none focus:ring focus:ring-orange-100"
-                    severity="danger"
-                    @click="handleDeactive(slotProps.data)"
-                  >
+                    severity="danger" @click="handleDeactive(slotProps.data)">
                     <i class="pi pi-times"></i>
                     Deactive
                   </li>
@@ -571,14 +497,9 @@ const userRoles = getUserInfo()
     </div>
     <ConfirmDialog group="templating">
       <template #message="slotProps">
-        <div
-          class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700"
-        >
-          <i
-            v-for="(line, index) in slotProps.message.message.split('.')"
-            :key="index"
-            :class="{ 'text-red-500 font-bold': index === 1 }"
-          >
+        <div class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700">
+          <i v-for="(line, index) in slotProps.message.message.split('.')" :key="index"
+            :class="{ 'text-red-500 font-bold': index === 1 }">
             {{ line }}
           </i>
         </div>
