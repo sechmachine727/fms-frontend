@@ -10,14 +10,17 @@ import { useTechnicalGroupStore } from '@/stores/technicalGroupStore'
 import { useTraineeTypeStore } from '@/stores/traineeTypeStore'
 import { useTrainingProgramStore } from '@/stores/trainingProgramStore'
 import { useUserStore } from '@/stores/userStore'
-import { convertToVietnamTime, parseDateFromString } from '@/utils/date'
+import { convertToVietnamTimeWithTimeZone, parseDateFromString } from '@/utils/date'
 import { toTypedSchema } from '@vee-validate/zod'
 import Toast from 'primevue/toast'
+import { useConfirm } from 'primevue/useconfirm'
+import { useToast } from 'primevue/usetoast'
 import { useField, useForm } from 'vee-validate'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { z } from 'zod'
-
+const status = ref("")
+const groupCode = ref("")
 const deliveryTypeOptions = ref([])
 const traineeTypeOptions = ref([])
 const formatTypeOptions = ref([])
@@ -40,14 +43,32 @@ const keyProgramStore = useKeyProgramStore()
 const userStore = useUserStore()
 const classStore = useClassStore()
 const route = useRoute();
+const id = ref(null)
 onMounted(() => {
     const groupId = route.params.id
     classStore.fetchClassDetail(groupId).then(() => {
         const classDetail = classStore.classDetail
+        console.log(classDetail);
+        id.value = classDetail.id
         className.value = classDetail.groupName
+        deliveryType.value = classDetail.deliveryType
+        traineeType.value = classDetail.traineeType
+        formatType.value = classDetail.formatType
+        technicalGroup.value = classDetail.technicalGroup
+        trainingProgram.value = classDetail.trainingProgram
+        site.value = classDetail.site
+        location.value = classDetail.location
+        scope.value = classDetail.scope
+        plannedTrainee.value = classDetail.traineeNumber
+        keyProgram.value = classDetail.keyProgram
+        classAdmins.value = classDetail.assignedUsers
+        groupCode.value = classDetail.groupCode
+        status.value = classDetail.status
         expectedStart.value = parseDateFromString(classDetail.expectedStartDate)
         expectedEnd.value = parseDateFromString(classDetail.expectedEndDate)
         note.value = classDetail.note || ''
+        handleTechnicalGroupChange();
+        handleSiteChange();
     })
 
     keyProgramStore.fetchPrograms().then(() => {
@@ -80,6 +101,7 @@ const handleTechnicalGroupChange = () => {
     let technicalId = technicalGroup.value.id
     trainingProgramStore.fetchTrainingProgramsByTechnicalGroup(technicalId).then(() => {
         trainingProgramOptions.value = trainingProgramStore.trainingProgramsByTecnicalGroups
+        console.log(trainingProgramOptions.value);
     })
 }
 
@@ -98,7 +120,7 @@ const validationSchema = toTypedSchema(
             .string({ required_error: 'Group Name is required' })
             .trim()
             .min(1, { message: 'Group Name is required' })
-            .max(20, { message: 'Group Name must not exceed 20 characters' }),
+            .max(255, { message: 'Group Name must not exceed 255 characters' }),
         deliveryType: z.object({
             id: z
                 .number({ required_error: 'Delivery Type is required' })
@@ -192,26 +214,54 @@ const { value: note } = useField('note')
 const data = ref(null)
 const onSubmit = handleSubmit((values) => {
     data.value = convertToSchema(values)
-    console.log(data.value);
+    confirmUpdate(id.value, data.value)
 })
+const toast = useToast()
+const confirm = useConfirm();
+
+const confirmUpdate = (id, data) => {
+    confirm.require({
+        message: 'Are you sure you want to save changes to this class?',
+        header: 'Save changes',
+        rejectProps: {
+            label: 'Cancel',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: 'Save'
+        },
+        accept: () => {
+            classStore.fetchUpdateGroup(id, data).then(() => {
+                toast.add({ severity: 'success', detail: 'Group successfully update.', life: 3000 });
+            }).catch((errors) => {
+                toast.add({ severity: 'error', detail: 'Group update failed' + errors.message, life: 3000 });
+            })
+        },
+        reject: () => {
+        }
+    });
+};
 
 
 function convertToSchema(data) {
     return {
         groupName: data.className || '',
+        groupCode: groupCode.value,
         traineeNumber: data.plannedTrainee || 0,
         trainingProgramId: data.trainingProgram?.id || 0,
         technicalGroupId: data.technicalGroup?.id || 0,
         siteId: data.site?.id || 0,
         locationId: data.location?.id || 0,
-        expectedStartDate: convertToVietnamTime(data.expectedStart).toString(),
-        expectedEndDate: convertToVietnamTime(data.expectedEnd).toString(),
+        expectedStartDate: convertToVietnamTimeWithTimeZone(data.expectedStart).toString(),
+        expectedEndDate: convertToVietnamTimeWithTimeZone(data.expectedEnd).toString(),
         deliveryTypeId: data.deliveryType?.id || 0,
         traineeTypeId: data.traineeType?.id || 0,
         scopeId: data.scope?.id || 0,
         formatTypeId: data.formatType?.id || 0,
         keyProgramId: data.keyProgram?.id || 0,
         note: data.note || '',
+        status: status.value,
         assignedUserIds: data.classAdminOptions.map((option) => option.id) || [0]
     }
 }
@@ -220,6 +270,7 @@ function convertToSchema(data) {
 <template>
     <div class="card flex flex-col gap-6">
         <Toast />
+        <ConfirmDialog></ConfirmDialog>
         <Fluid>
             <div class="font-bold mb-2 block">
                 <span class="font-semibold text-2xl">Edit Group</span>

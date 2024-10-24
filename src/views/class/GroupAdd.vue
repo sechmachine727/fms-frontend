@@ -114,7 +114,7 @@ const validationSchema = toTypedSchema(
       .string({ required_error: 'Group Name is required' })
       .trim()
       .min(1, { message: 'Group Name is required' })
-      .max(20, { message: 'Group Name must not exceed 20 characters' }),
+      .max(255, { message: 'Group Name must not exceed 255 characters' }),
     deliveryType: z.object({
       id: z
         .number({ required_error: 'Delivery Type is required' })

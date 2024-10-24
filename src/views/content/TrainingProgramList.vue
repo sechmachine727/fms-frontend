@@ -175,8 +175,8 @@ const confirmActive = (value) => {
     },
     rejectProps: {
       label: 'Cancel',
-      severity: 'error',
-      className: 'button-custom'
+      severity: 'secondary',
+      outlined: true
     },
     accept: () => {
       trainingProgramStore
@@ -212,7 +212,8 @@ const confirmDeactive = (value) => {
     },
     rejectProps: {
       label: 'Cancel',
-      className: 'button-custom'
+      severity: 'secondary',
+      outlined: true
     },
     accept: () => {
       trainingProgramStore
@@ -320,11 +321,8 @@ onMounted(() => {
       <h1 class="!font-semibold text-2xl">
         Training Program List ({{ trainingPrograms?.length }})
       </h1>
-      <Button
-        v-if="userRoles.roles.includes('ROLE_CONTENT_MANAGER')"
-        label="Add Training Program"
-        @click="navigateToAdd"
-      />
+      <Button v-if="userRoles.roles.includes('ROLE_CONTENT_MANAGER')" label="Add Training Program"
+        @click="navigateToAdd" />
     </div>
     <Divider />
     <Toast />
@@ -332,69 +330,33 @@ onMounted(() => {
       <div class="flex flex-col md:flex-row gap-4">
         <div class="flex flex-col w-50 mt-1 gap-2">
           <label class="w-32" for="contractType">Active</label>
-          <Select
-            id="contractType"
-            v-model="statusOptions"
-            :options="statuses"
-            class="w-full"
-            optionLabel="name"
-            placeholder="Filter status"
-            @change="handleStatusChange"
-          ></Select>
+          <Select id="contractType" v-model="statusOptions" :options="statuses" class="w-full" optionLabel="name"
+            placeholder="Filter status" @change="handleStatusChange"></Select>
         </div>
         <div class="flex flex-wrap w-50 gap-2">
           <label for="department">Region</label>
-          <MultiSelect
-            id="department"
-            v-model="departmentOptionsSearch"
-            :maxSelectedLabels="2"
-            :options="departments"
-            class="w-full"
-            filter
-            optionLabel="departmentName"
-            placeholder="Filter Region"
-            @change="handleDepartmentChange"
-          />
+          <MultiSelect id="department" v-model="departmentOptionsSearch" :maxSelectedLabels="2" :options="departments"
+            class="w-full" filter optionLabel="departmentName" placeholder="Filter Region"
+            @change="handleDepartmentChange" />
         </div>
         <div class="flex flex-wrap w-52 gap-2">
           <label for="technical">Technical Group</label>
-          <MultiSelect
-            id="technical"
-            v-model="technicalGroupOptionsSearch"
-            :maxSelectedLabels="2"
-            :options="technicalGroups"
-            class="w-full"
-            filter
-            optionLabel="code"
-            placeholder="Filter Technical Group"
-            @change="handleTechnicalGroupChange"
-          />
+          <MultiSelect id="technical" v-model="technicalGroupOptionsSearch" :maxSelectedLabels="2"
+            :options="technicalGroups" class="w-full" filter optionLabel="code" placeholder="Filter Technical Group"
+            @change="handleTechnicalGroupChange" />
         </div>
         <div class="flex flex-wrap w-96 gap-2">
           <label for="search">Search</label>
-          <InputText
-            id="search"
-            v-model="searchQuery"
-            class="h-10.5 w-full"
-            placeholder="Enter to Code, Name ..."
-            type="text"
-            @keyup.enter="handleSearch"
-          />
+          <InputText id="search" v-model="searchQuery" class="h-10.5 w-full" placeholder="Enter to Code, Name ..."
+            type="text" @keyup.enter="handleSearch" />
         </div>
         <Button class="mt-8" label="Reset" severity="secondary" @click="clearSearch" />
       </div>
 
-      <DataTable
-        :rows="10"
-        :rowsPerPageOptions="[10, 20, 30, 50]"
-        :value="trainingPrograms"
-        class="mt-1"
-        currentPageReportTemplate="{first} to {last} of {totalRecords}"
-        paginator
+      <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="trainingPrograms" class="mt-1"
+        currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
         paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-        scrollable
-        tableStyle="min-width: 50rem"
-      >
+        scrollable tableStyle="min-width: 50rem">
         <Column header="No." style="min-width: 70px">
           <template #body="slotProps">
             {{ slotProps.index + 1 }}
@@ -402,36 +364,24 @@ onMounted(() => {
         </Column>
         <Column field="code" header="Course Code" style="min-width: 130px">
           <template #body="slotProps">
-            <router-link
-              :to="{ name: 'training-program-detail', params: { id: slotProps.data.id } }"
-              class="router-link-active hover:underline"
-              >{{ slotProps.data.code }}
+            <router-link :to="{ name: 'training-program-detail', params: { id: slotProps.data.id } }"
+              class="router-link-active hover:underline">{{ slotProps.data.code }}
             </router-link>
           </template>
         </Column>
         <Column field="trainingProgramName" header="Training Name" style="min-width: 250px">
           <template #body="slotProps">
-            <router-link
-              :to="{ name: 'training-program-detail', params: { id: slotProps.data.id } }"
-              class="router-link-active hover:underline"
-              >{{ slotProps.data.trainingProgramName }}
+            <router-link :to="{ name: 'training-program-detail', params: { id: slotProps.data.id } }"
+              class="router-link-active hover:underline">{{ slotProps.data.trainingProgramName }}
             </router-link>
           </template>
         </Column>
         <Column field="version" header="Version" style="min-width: 10px"></Column>
         <Column field="department.departmentName" header="Region" style="min-width: 100px"></Column>
-        <Column
-          field="technicalGroup.code"
-          header="Technical Group"
-          style="min-width: 150px"
-        ></Column>
+        <Column field="technicalGroup.code" header="Technical Group" style="min-width: 150px"></Column>
         <Column field="topicInfoList" header="Topic" style="min-width: 400px">
           <template #body="slotProps">
-            <span
-              v-for="(topic, index) in slotProps.data.topicInfoList"
-              :key="topic.topicCode"
-              class="w-full"
-            >
+            <span v-for="(topic, index) in slotProps.data.topicInfoList" :key="topic.topicCode" class="w-full">
               {{ topic.topicCode
               }}<span v-if="index < slotProps.data.topicInfoList.length - 1">, </span>
             </span>
@@ -446,74 +396,51 @@ onMounted(() => {
             <Tag :severity="getStatusLabel(slotProps.data.status)" :value="slotProps.data.status" />
           </template>
         </Column>
-        <Column
-          v-if="userRoles?.roles.some((role) => rolesForAccess.includes(role))"
-          :exportable="false"
-          alignFrozen="right"
-          frozen
-          header="Action"
-          style="min-width: 80px"
-        >
+        <Column v-if="userRoles?.roles.some((role) => rolesForAccess.includes(role))" :exportable="false"
+          alignFrozen="right" frozen header="Action" style="min-width: 80px">
           <template #body="slotProps">
-            <Button
-              class="mr-2 p-button-text"
-              icon="pi pi-ellipsis-v"
-              severity="secondary"
-              @click="showOptions($event, slotProps.data)"
-            />
+            <Button class="mr-2 p-button-text" icon="pi pi-ellipsis-v" severity="secondary"
+              @click="showOptions($event, slotProps.data)" />
 
             <Popover ref="overlay">
               <div class="flex flex-col gap-4 w-[8rem]">
                 <ul>
-                  <li
-                    v-if="userRoles?.roles.includes('ROLE_CONTENT_MANAGER')"
+                  <li v-if="userRoles?.roles.includes('ROLE_CONTENT_MANAGER')"
                     class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border text-zinc-500 hover:bg-zinc-100 active:bg-zinc-100 focus:outline-none focus:ring focus:ring-zinc-100"
-                    severity="secondary"
-                    @click="handleEdit(slotProps.data)"
-                  >
+                    severity="secondary" @click="handleEdit(slotProps.data)">
                     <i class="pi pi-pencil"></i>
                     Edit
                   </li>
-                  <li
-                    v-if="selectedItem?.status === 'Inactive'"
+                  <li v-if="selectedItem?.status === 'Inactive'"
                     class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border text-green-500 hover:bg-green-100 active:bg-green-100 focus:outline-none focus:ring focus:ring-green-100"
                     severity="slotProps.data.status === 'Active' ? 'warn' : 'success'"
-                    @click="handleActive(slotProps.data)"
-                  >
+                    @click="handleActive(slotProps.data)">
                     <i class="pi pi-check"></i>
                     Activate
                   </li>
-                  <li
-                    v-if="
-                      selectedItem?.status === 'Reviewing' ||
-                      (selectedItem?.status === 'Declined' &&
-                        userRoles.roles.includes('ROLE_FA_MANAGER'))
-                    "
+                  <li v-if="
+                    selectedItem?.status === 'Reviewing' ||
+                    (selectedItem?.status === 'Declined' &&
+                      userRoles.roles.includes('ROLE_FA_MANAGER'))
+                  "
                     class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border text-green-500 hover:bg-green-100 active:bg-green-100 focus:outline-none focus:ring focus:ring-green-100"
                     severity="slotProps.data.status === 'Active' ? 'warn' : 'success'"
-                    @click="handleActive(slotProps.data)"
-                  >
+                    @click="handleActive(slotProps.data)">
                     <i class="pi pi-check"></i>
                     Approve
                   </li>
-                  <li
-                    v-if="selectedItem?.status === 'Active'"
+                  <li v-if="selectedItem?.status === 'Active'"
                     class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border text-orange-500 hover:bg-orange-100 active:bg-orange-100 focus:outline-none focus:ring focus:ring-orange-100"
-                    severity="danger"
-                    @click="handleDeactive(slotProps.data)"
-                  >
+                    severity="danger" @click="handleDeactive(slotProps.data)">
                     <i class="pi pi-times"></i>
                     Deactive
                   </li>
-                  <li
-                    v-if="
-                      selectedItem?.status === 'Reviewing' &&
-                      userRoles.roles.includes('ROLE_FA_MANAGER')
-                    "
+                  <li v-if="
+                    selectedItem?.status === 'Reviewing' &&
+                    userRoles.roles.includes('ROLE_FA_MANAGER')
+                  "
                     class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border text-red-500 hover:bg-red-100 active:bg-red-100 focus:outline-none focus:ring focus:ring-red-100"
-                    severity="danger"
-                    @click="handleDecline(slotProps.data)"
-                  >
+                    severity="danger" @click="handleDecline(slotProps.data)">
                     <i class="pi pi-times"></i>
                     Decline
                   </li>
@@ -526,22 +453,13 @@ onMounted(() => {
     </div>
     <ConfirmDialog group="templatingReject" @reject="handleDecline">
       <template #message="slotProps">
-        <div
-          class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700"
-        >
-          <i
-            v-for="(line, index) in slotProps.message.message.split('.')"
-            :key="index"
-            :class="{ 'text-red-500 font-bold': index === 1 }"
-          >
+        <div class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700">
+          <i v-for="(line, index) in slotProps.message.message.split('.')" :key="index"
+            :class="{ 'text-red-500 font-bold': index === 1 }">
             {{ line }}
           </i>
-          <textarea
-            v-model="declineReason"
-            class="w-full p-2 border rounded border-gray-300"
-            placeholder="Please enter the reason for declining..."
-            rows="4"
-          ></textarea>
+          <textarea v-model="declineReason" class="w-full p-2 border rounded border-gray-300"
+            placeholder="Please enter the reason for declining..." rows="4"></textarea>
           <div v-if="!declineReason" class="text-red-500 text-sm">Reason is required</div>
         </div>
       </template>
@@ -549,14 +467,9 @@ onMounted(() => {
 
     <ConfirmDialog group="templating">
       <template #message="slotProps">
-        <div
-          class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700"
-        >
-          <i
-            v-for="(line, index) in slotProps.message.message.split('.')"
-            :key="index"
-            :class="{ 'text-red-500 font-bold': index === 1 }"
-          >
+        <div class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700">
+          <i v-for="(line, index) in slotProps.message.message.split('.')" :key="index"
+            :class="{ 'text-red-500 font-bold': index === 1 }">
             {{ line }}
           </i>
         </div>

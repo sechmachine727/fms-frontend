@@ -185,6 +185,10 @@ const selectedChanges = () => {
       uniqueArrTopic = filterTopicsConCat;
     }
 
+
+    selectedTopcis.value = selectedTopcis.value.filter(topic => {
+      return uniqueArrTopic.some(uniqueTopic => uniqueTopic.id === topic.value);
+    });
     topicByGroups.value = topicByGroups.value.concat(uniqueArrTopic)
   })
 }

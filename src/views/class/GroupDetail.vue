@@ -20,33 +20,33 @@ const groupInfo = computed(() => {
         label1: 'Group Name',
         value1: classStore.classDetail.groupName,
         label2: 'Delivery Type',
-        value2: classStore.classDetail.deliveryTypeName,
+        value2: classStore.classDetail.deliveryType.deliveryTypeName,
         label3: 'Trainee Type',
-        value3: classStore.classDetail.traineeTypeName
+        value3: classStore.classDetail.traineeType.traineeTypeName
       },
       {
         label1: 'Format Type',
-        value1: classStore.classDetail.formatTypeName,
+        value1: classStore.classDetail.formatType.formatTypeName,
         label2: 'Technical Group',
-        value2: classStore.classDetail.technicalGroupCode,
+        value2: classStore.classDetail.technicalGroup.code,
         label3: 'Training Program',
-        value3: classStore.classDetail.trainingProgramName
+        value3: classStore.classDetail.trainingProgram.trainingProgramName
       },
       {
         label1: 'Site',
-        value1: classStore.classDetail.siteName,
+        value1: classStore.classDetail.site.siteName,
         label2: 'Location',
-        value2: classStore.classDetail.locationName,
+        value2: classStore.classDetail.location.locationName,
         label3: 'Scope',
-        value3: classStore.classDetail.scopeName
+        value3: classStore.classDetail.scope.scopeName
       },
       {
         label1: 'Planned Trainee No',
         value1: classStore.classDetail.traineeNumber,
         label2: 'Group Admin',
-        value2: classStore.classDetail.assignedUserAccounts?.join(', '),
+        value2: classStore.classDetail.assignedUsers.map(user => user.account).join(', '),
         label3: 'Key Program',
-        value3: classStore.classDetail.keyProgramName
+        value3: classStore.classDetail.keyProgram.keyProgramName
       },
       {
         label1: 'Expected Start Date',

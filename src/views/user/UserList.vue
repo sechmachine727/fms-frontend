@@ -163,8 +163,8 @@ const confirmActive = (value) => {
     },
     rejectProps: {
       label: 'Cancel',
-      severity: 'error',
-      className: 'button-custom'
+      severity: 'secondary',
+      outlined: true
     },
     accept: () => {
       userStore
@@ -194,8 +194,8 @@ const confirmDeactive = (value) => {
     },
     rejectProps: {
       label: 'Cancel',
-      severity: 'error',
-      className: 'button-custom'
+      severity: 'secondary',
+      outlined: true
     },
     accept: () => {
       userStore
@@ -387,13 +387,8 @@ const closePopup = () => {
 </script>
 <template>
   <div class="card">
-    <UpdateUser
-      :departments="departments"
-      :roles="roles"
-      :selectedUser="selectedUser"
-      :visible="isDialogVisible"
-      @userUpdated="handleUserUpdated"
-    />
+    <UpdateUser :departments="departments" :roles="roles" :selectedUser="selectedUser" :visible="isDialogVisible"
+      @userUpdated="handleUserUpdated" />
     <Toast />
     <div>
       <div class="mb-4 flex justify-between items-center">
@@ -405,68 +400,31 @@ const closePopup = () => {
         <div class="flex flex-col md:flex-row gap-4">
           <div class="flex flex-wrap w-36 gap-2">
             <label class="w-32" for="contractType">Active</label>
-            <Select
-              id="contractType"
-              v-model="statusOptions"
-              :options="statuses"
-              class="w-full"
-              optionLabel="name"
-              placeholder="Filter status"
-              @change="handleStatusChange"
-            ></Select>
+            <Select id="contractType" v-model="statusOptions" :options="statuses" class="w-full" optionLabel="name"
+              placeholder="Filter status" @change="handleStatusChange"></Select>
           </div>
           <div class="flex flex-wrap w-60 gap-2">
             <label class="w-32" for="role">Role</label>
-            <MultiSelect
-              id="rolesOptions"
-              v-model="roleFilterOptions"
-              :maxSelectedLabels="2"
-              :options="roles"
-              class="w-full"
-              filter
-              optionLabel="name"
-              placeholder="Filter Roles"
-              @change="handleRoleChange"
-            />
+            <MultiSelect id="rolesOptions" v-model="roleFilterOptions" :maxSelectedLabels="2" :options="roles"
+              class="w-full" filter optionLabel="name" placeholder="Filter Roles" @change="handleRoleChange" />
           </div>
           <div class="flex flex-wrap w-60 gap-2">
             <label for="department">Department</label>
-            <MultiSelect
-              id="department"
-              v-model="departmentOptionsSearch"
-              :maxSelectedLabels="3"
-              :options="departments"
-              class="w-full"
-              filter
-              optionLabel="departmentName"
-              placeholder="Filter Department"
-              @change="handleDepartmentChange"
-            />
+            <MultiSelect id="department" v-model="departmentOptionsSearch" :maxSelectedLabels="3" :options="departments"
+              class="w-full" filter optionLabel="departmentName" placeholder="Filter Department"
+              @change="handleDepartmentChange" />
           </div>
           <div class="flex flex-wrap w-80 gap-2">
             <label for="search">Search</label>
-            <InputText
-              id="search"
-              v-model="searchQuery"
-              class="h-10 w-full"
-              placeholder="Enter name, account ..."
-              type="text"
-              @keyup.enter="handleSearch"
-            />
+            <InputText id="search" v-model="searchQuery" class="h-10 w-full" placeholder="Enter name, account ..."
+              type="text" @keyup.enter="handleSearch" />
           </div>
           <Button class="mt-8" label="Reset" severity="secondary" @click="clearSearch" />
         </div>
-        <DataTable
-          :rows="10"
-          :rowsPerPageOptions="[10, 20, 30, 50]"
-          :value="users"
-          class="mt-1"
-          currentPageReportTemplate="{first} to {last} of {totalRecords}"
-          paginator
+        <DataTable :rows="10" :rowsPerPageOptions="[10, 20, 30, 50]" :value="users" class="mt-1"
+          currentPageReportTemplate="{first} to {last} of {totalRecords}" paginator
           paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-          scrollable
-          tableStyle="min-width: 50rem"
-        >
+          scrollable tableStyle="min-width: 50rem">
           <Column header="No" style="width: 50px">
             <template #body="slotProps">
               {{ users.indexOf(slotProps.data) + 1 }}
@@ -476,11 +434,7 @@ const closePopup = () => {
           <Column field="account" header="Account" style="width: 30px"></Column>
           <Column field="name" header="Name" style="width: 230px"></Column>
           <Column field="email" header="Email" style="width: 180px"></Column>
-          <Column
-            field="department.departmentName"
-            header="Department"
-            style="width: 20px"
-          ></Column>
+          <Column field="department.departmentName" header="Department" style="width: 20px"></Column>
           <Column header="Roles" style="width: 200px">
             <template #body="slotProps">
               <!-- slotProps.data đại diện cho dữ liệu của một user (một hàng trong bảng) -->
@@ -496,53 +450,37 @@ const closePopup = () => {
 
           <Column alignFrozen="right" field="status" frozen header="Status" style="width: 50px">
             <template #body="slotProps">
-              <Tag
-                :severity="getStatusLabel(slotProps.data.status)"
-                :value="slotProps.data.status"
-              />
+              <Tag :severity="getStatusLabel(slotProps.data.status)" :value="slotProps.data.status" />
             </template>
           </Column>
           <Column alignFrozen="right" frozen header="Actions" style="width: 50px">
             <template #body="slotProps">
-              <Button
-                class="p-button-text"
-                icon="pi pi-ellipsis-v"
-                severity="secondary"
-                @click="showOptions($event, slotProps.data)"
-              />
+              <Button class="p-button-text" icon="pi pi-ellipsis-v" severity="secondary"
+                @click="showOptions($event, slotProps.data)" />
               <Popover ref="overlay">
                 <div class="flex flex-col gap-4 w-40">
                   <ul>
-                    <li
-                      v-if="selectedItem.status === 'Inactive'"
+                    <li v-if="selectedItem.status === 'Inactive'"
                       class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border text-green-500 hover:bg-green-100 active:bg-green-100 focus:outline-none focus:ring focus:ring-green-100"
                       severity="slotProps.data.status === 'Active' ? 'warn' : 'success'"
-                      @click="handleActive(slotProps.data)"
-                    >
+                      @click="handleActive(slotProps.data)">
                       <i class="pi pi-check"></i>
                       Activate
                     </li>
-                    <li
-                      v-if="selectedItem.status === 'Active'"
+                    <li v-if="selectedItem.status === 'Active'"
                       class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border text-orange-500 hover:bg-orange-100 active:bg-orange-100 focus:outline-none focus:ring focus:ring-orange-100"
-                      severity="danger"
-                      @click="handleDeactive(slotProps.data)"
-                    >
+                      severity="danger" @click="handleDeactive(slotProps.data)">
                       <i class="pi pi-times"></i>
                       Deactive
                     </li>
                     <li
                       class="flex items-center gap-2 px-2 py-3 cursor-pointer rounded-border text-zinc-500 hover:bg-zinc-100 active:bg-zinc-100 focus:outline-none focus:ring focus:ring-zinc-100"
-                      severity="secondary"
-                      @click="handleEdit(slotProps.data)"
-                    >
+                      severity="secondary" @click="handleEdit(slotProps.data)">
                       <i class="pi pi-pencil"></i>
                       Edit
                     </li>
-                    <li
-                      class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border"
-                      @click="handleReset(slotProps.data)"
-                    >
+                    <li class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border"
+                      @click="handleReset(slotProps.data)">
                       <i class="pi pi-sync"></i>
                       <!-- Icon cho Reset Password -->
                       Reset Password
@@ -567,54 +505,28 @@ const closePopup = () => {
           <div class="flex flex-col gap-1">
             <div class="flex flex-col gap-2">
               <label for="account">Account<i class="text-red-600">*</i></label>
-              <InputText
-                id="account"
-                v-model="account"
-                :class="`{ 'p-invalid': errors.account }`"
-                type="text"
-              />
+              <InputText id="account" v-model="account" :class="`{ 'p-invalid': errors.account }`" type="text" />
               <small v-if="errors.account" class="text-red-600">{{ errors.account }}</small>
             </div>
             <div class="flex flex-col gap-2">
               <label for="email">Email<i class="text-red-600">*</i></label>
-              <InputText
-                id="email"
-                v-model="email"
-                :class="`{ 'p-invalid': errors.email }`"
-                type="text"
-              />
+              <InputText id="email" v-model="email" :class="`{ 'p-invalid': errors.email }`" type="text" />
               <small v-if="errors.email" class="text-red-600">{{ errors.email }}</small>
             </div>
             <div class="flex flex-col gap-2">
               <label for="name">Display Name<i class="text-red-600">*</i></label>
-              <InputText
-                id="name"
-                v-model="name"
-                :class="`{ 'p-invalid': errors.name }`"
-                type="text"
-              />
+              <InputText id="name" v-model="name" :class="`{ 'p-invalid': errors.name }`" type="text" />
               <small v-if="errors.name" class="text-red-600">{{ errors.name }}</small>
             </div>
             <div class="flex flex-col gap-2">
               <label for="empId">Employee ID</label>
-              <InputText
-                id="empId"
-                v-model="employeeId"
-                :class="`{ 'p-invalid': errors.employeeId }`"
-                type="text"
-              />
+              <InputText id="empId" v-model="employeeId" :class="`{ 'p-invalid': errors.employeeId }`" type="text" />
               <small v-if="errors.employeeId" class="text-red-600">{{ errors.employeeId }}</small>
             </div>
             <div class="flex flex-col gap-2">
               <label for="contractType">Contract Type<i class="text-red-600">*</i></label>
-              <Select
-                id="contractType"
-                v-model="contractType"
-                :options="contractTypes"
-                class="w-full"
-                optionLabel="name"
-                placeholder="Select One"
-              ></Select>
+              <Select id="contractType" v-model="contractType" :options="contractTypes" class="w-full"
+                optionLabel="name" placeholder="Select One"></Select>
               <small v-if="errors.contractType" class="text-red-600">{{
                 errors.contractType === 'Required'
                   ? 'Contract Type is required'
@@ -623,30 +535,16 @@ const closePopup = () => {
             </div>
             <div class="flex flex-col gap-2">
               <label for="role">Role<i class="text-red-600">*</i></label>
-              <MultiSelect
-                id="rolesOptions"
-                v-model="rolesOptions"
-                :maxSelectedLabels="3"
-                :options="roles"
-                class="w-full"
-                filter
-                optionLabel="name"
-                placeholder="Select Roles"
-              />
+              <MultiSelect id="rolesOptions" v-model="rolesOptions" :maxSelectedLabels="3" :options="roles"
+                class="w-full" filter optionLabel="name" placeholder="Select Roles" />
               <small v-if="errors.rolesOptions" class="text-red-600">{{
                 errors.rolesOptions
               }}</small>
             </div>
             <div class="flex flex-col gap-2">
               <label for="department">Department<i class="text-red-600">*</i></label>
-              <Select
-                id="department"
-                v-model="department"
-                :options="departments"
-                class="w-full"
-                optionLabel="departmentName"
-                placeholder="Select One"
-              ></Select>
+              <Select id="department" v-model="department" :options="departments" class="w-full"
+                optionLabel="departmentName" placeholder="Select One"></Select>
               <small v-if="errors.department" class="text-red-600">
                 {{
                   errors.department === 'Required' ? 'Department is required' : errors.department
@@ -657,34 +555,19 @@ const closePopup = () => {
               <label for="status">Status</label>
 
               <!-- Toggle Switch for changing status -->
-              <ToggleSwitch
-                id="status"
-                v-model="status"
-                offIcon="pi pi-times"
-                offLabel="Inactive"
-                onIcon="pi pi-check"
-                onLabel="Active"
-              />
+              <ToggleSwitch id="status" v-model="status" offIcon="pi pi-times" offLabel="Inactive" onIcon="pi pi-check"
+                onLabel="Active" />
 
               <!-- Dynamic Status Text with oval border and lighter background -->
-              <span
-                :class="status ? 'text-green-600 bg-green-100 ' : 'text-yellow-600 bg-yellow-100'"
-                class="ml-2 font-semibold px-3 py-1 rounded-full"
-                >{{ status ? 'Active' : 'Inactive' }}</span
-              >
+              <span :class="status ? 'text-green-600 bg-green-100 ' : 'text-yellow-600 bg-yellow-100'"
+                class="ml-2 font-semibold px-3 py-1 rounded-full">{{ status ? 'Active' : 'Inactive' }}</span>
             </div>
             <div class="flex justify-end mt-4">
-              <ButtonComponent
-                :onClick="closePopup"
-                activeColor="active:bg-gray-300"
-                bgColor="bg-white text-red-500"
-                hoverColor="hover:bg-gray-200"
-                text="Cancel"
-              />
+              <ButtonComponent :onClick="closePopup" activeColor="active:bg-gray-300" bgColor="bg-white text-red-500"
+                hoverColor="hover:bg-gray-200" text="Cancel" />
               <button
                 class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-                type="submit"
-              >
+                type="submit">
                 Save
               </button>
             </div>
@@ -694,14 +577,9 @@ const closePopup = () => {
     </Dialog>
     <ConfirmDialog group="templating">
       <template #message="slotProps">
-        <div
-          class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700"
-        >
-          <i
-            v-for="(line, index) in slotProps.message.message.split('.')"
-            :key="index"
-            :class="{ 'text-red-500 font-bold': index === 1 }"
-          >
+        <div class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700">
+          <i v-for="(line, index) in slotProps.message.message.split('.')" :key="index"
+            :class="{ 'text-red-500 font-bold': index === 1 }">
             {{ line }}
           </i>
         </div>
